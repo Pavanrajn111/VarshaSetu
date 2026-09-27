@@ -105,7 +105,7 @@ export function ForecastPanel() {
  * Onset Outlook Card
  * Explicit, independent error isolation: evaluates onset.error and onset.probability === null
  */
-function OnsetOutlookCard({ onset }: { onset?: OnsetOutlook }) {
+function OnsetOutlookCard({ onset }: { onset: OnsetOutlook | undefined }) {
   const isOnsetUnavailable = !onset || onset.error || onset.probability === null;
 
   return (
@@ -135,7 +135,7 @@ function OnsetOutlookCard({ onset }: { onset?: OnsetOutlook }) {
       </CardHeader>
 
       <CardContent className="pt-5">
-        {isOnsetUnavailable ? (
+        {isOnsetUnavailable || onset.probability === null ? (
           /* Isolated Muted Fallback State */
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border/80 bg-background/40 p-6 text-center">
             <AlertTriangle className="size-6 text-muted-foreground mb-2 opacity-70" />
@@ -162,7 +162,7 @@ function OnsetOutlookCard({ onset }: { onset?: OnsetOutlook }) {
                 </span>
                 <span className="text-xs text-muted-foreground">
                   (Cutoff:{" "}
-                  {onset.cutoff
+                  {onset.cutoff !== null && onset.cutoff !== undefined
                     ? `${Math.round(onset.cutoff > 1 ? onset.cutoff : onset.cutoff * 100)}%`
                     : "N/A"}
                   )
@@ -219,7 +219,7 @@ function OnsetOutlookCard({ onset }: { onset?: OnsetOutlook }) {
  * 4-Week Horizon Grid
  * Per-target fault isolation: each target cell independently checks error / probability === null
  */
-function HorizonGrid({ horizons }: { horizons?: Record<string, HorizonForecast> }) {
+function HorizonGrid({ horizons }: { horizons: Record<string, HorizonForecast> | undefined }) {
   const weeks = [1, 2, 3, 4];
 
   // Helper to extract horizon by week number or key
@@ -322,7 +322,7 @@ function TargetCell({
 }: {
   title: string;
   icon: React.ReactNode;
-  target?: TargetPrediction | null;
+  target: TargetPrediction | null | undefined;
   colorClass: string;
   textColorClass: string;
 }) {

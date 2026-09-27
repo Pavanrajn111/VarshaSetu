@@ -37,7 +37,7 @@ import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AppHeader } from "@/components/AppHeader";
-import { ForecastDashboard } from "@/components/ForecastDashboard";
+import { LandingRainBackground } from "@/components/LandingRainBackground";
 
 const ClimateGlobe = lazy(() =>
   import("@/components/ClimateGlobe").then((module) => ({ default: module.ClimateGlobe })),
@@ -289,22 +289,66 @@ const workflow = [
 ];
 
 export function VarshaSetuLanding() {
+  const reduceMotion = useReducedMotion() ?? false;
+
+  const scrollToSection = (id: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <main className="relative overflow-clip bg-background text-foreground">
+      {/* Landing-exclusive rain animation */}
+      <LandingRainBackground reduceMotion={reduceMotion} />
+
       <AppHeader showProgress={true}>
         <div className="flex items-center gap-2">
+          {/* Desktop Section Navigation with Smooth Auto-Scroll */}
+          <nav className="hidden md:flex items-center gap-1 font-mono text-xs">
+            <button
+              type="button"
+              onClick={scrollToSection("problem")}
+              className="px-2.5 py-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-glass/80 transition-colors cursor-pointer"
+            >
+              The Problem
+            </button>
+            <button
+              type="button"
+              onClick={scrollToSection("workflow")}
+              className="px-2.5 py-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-glass/80 transition-colors cursor-pointer"
+            >
+              Workflow
+            </button>
+            <button
+              type="button"
+              onClick={scrollToSection("features")}
+              className="px-2.5 py-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-glass/80 transition-colors cursor-pointer"
+            >
+              Features
+            </button>
+            <button
+              type="button"
+              onClick={scrollToSection("science")}
+              className="px-2.5 py-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-glass/80 transition-colors cursor-pointer"
+            >
+              The Science
+            </button>
+            <button
+              type="button"
+              onClick={scrollToSection("impact")}
+              className="px-2.5 py-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-glass/80 transition-colors cursor-pointer"
+            >
+              Impact
+            </button>
+          </nav>
+
           <Button
             asChild
-            variant="outline"
             size="sm"
-            className="border-border/80 bg-glass/80 backdrop-blur-lg h-8 text-xs"
-          >
-            <a href="#impact">Impact</a>
-          </Button>
-          <Button
-            asChild
-            size="sm"
-            className="bg-signal text-signal-foreground hover:bg-signal/90 font-medium h-8 text-xs"
+            className="bg-signal text-signal-foreground hover:bg-signal/90 font-medium h-8 text-xs shadow-signal"
           >
             <Link to="/dashboard">
               Live Studio <ArrowRight className="ml-1 h-3 w-3" />
@@ -390,9 +434,9 @@ export function VarshaSetuLanding() {
                 size="lg"
                 className="h-12 bg-signal px-6 text-signal-foreground shadow-signal hover:bg-signal/90"
               >
-                <a href="/dashboard">
+                <Link to="/dashboard">
                   Launch Prediction Studio <ArrowRight />
-                </a>
+                </Link>
               </Button>
               <Button
                 asChild
@@ -438,7 +482,10 @@ export function VarshaSetuLanding() {
         </div>
       </section>
 
-      <section className="section-band relative z-10 border-b border-border/60 py-24 sm:py-32">
+      <section
+        id="problem"
+        className="section-band relative z-10 border-b border-border/60 py-24 sm:py-32"
+      >
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <SectionHeading
             index="01"
@@ -622,12 +669,86 @@ export function VarshaSetuLanding() {
 
       <section
         id="dashboard"
-        className="relative z-10 border-b border-border/60 bg-slate-950/90 py-16 sm:py-24"
+        className="section-band relative z-10 border-b border-border/60 py-20 sm:py-28"
       >
-        <ForecastDashboard />
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card/75 p-8 shadow-2xl backdrop-blur-xl sm:p-12 lg:p-16">
+            <div className="absolute right-0 top-0 -mr-16 -mt-16 size-80 rounded-full bg-signal/10 blur-3xl" />
+            <div className="relative z-10 max-w-3xl">
+              <Badge
+                variant="outline"
+                className="mb-4 gap-2 border-signal/30 bg-signal/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-signal"
+              >
+                <Zap className="size-3" /> Live Prediction Studio
+              </Badge>
+              <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                See meteorological intelligence in action.
+              </h2>
+              <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
+                Explore the dedicated Varsha Setu operations dashboard for Karnataka’s 236 taluks.
+                Inspect calibrated multi-week probabilities, ensemble rainfall trends, and agronomic
+                decisions.
+              </p>
+
+              <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="rounded-xl border border-border/60 bg-background/50 p-4">
+                  <div className="flex items-center gap-2.5 text-signal">
+                    <CloudRain className="size-4" />
+                    <span className="font-mono text-xs font-semibold uppercase tracking-wider">
+                      4-Week Outlook
+                    </span>
+                  </div>
+                  <p className="mt-1.5 text-xs text-muted-foreground">
+                    Sub-seasonal active monsoon, break spell, and heavy rainfall probabilities.
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-border/60 bg-background/50 p-4">
+                  <div className="flex items-center gap-2.5 text-cyan">
+                    <BarChart3 className="size-4" />
+                    <span className="font-mono text-xs font-semibold uppercase tracking-wider">
+                      7–30d Outlook
+                    </span>
+                  </div>
+                  <p className="mt-1.5 text-xs text-muted-foreground">
+                    Multi-source ensemble precipitation trends logged across global models.
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-border/60 bg-background/50 p-4">
+                  <div className="flex items-center gap-2.5 text-warning">
+                    <Sprout className="size-4" />
+                    <span className="font-mono text-xs font-semibold uppercase tracking-wider">
+                      Crop & Soil Rules
+                    </span>
+                  </div>
+                  <p className="mt-1.5 text-xs text-muted-foreground">
+                    Regional soil moisture retention and stage-specific agronomic advisories.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-10 flex flex-wrap items-center gap-4">
+                <Button
+                  asChild
+                  size="lg"
+                  className="h-12 bg-signal px-8 text-signal-foreground shadow-signal hover:bg-signal/90 font-medium"
+                >
+                  <Link to="/dashboard">
+                    Launch Prediction Studio <ArrowRight className="ml-2 size-4" />
+                  </Link>
+                </Button>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Languages className="size-4 text-signal" />
+                  <span>Available in ಕನ್ನಡ, English & हिन्दी</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section className="relative z-10 border-b border-border/60 py-24 sm:py-32">
+      <section id="science" className="relative z-10 border-b border-border/60 py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <SectionHeading
             index="04"

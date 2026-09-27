@@ -102,6 +102,9 @@ export function LocationPicker() {
     const distData = districts.find((d) => d.district === distName);
     if (distData && distData.taluks.length > 0) {
       const firstTaluk = distData.taluks[0];
+      if (!firstTaluk) {
+        return;
+      }
       setSelectedTaluk(firstTaluk.taluk_name);
       setLocation({
         lat: firstTaluk.lat,

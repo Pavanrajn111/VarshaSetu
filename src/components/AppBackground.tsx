@@ -65,7 +65,7 @@ export function AppBackground({ reduceMotion: reduceMotionProp }: AppBackgroundP
 
       {/* Layer 1: High-altitude monsoon cloud shelf (slow, broad, soft cyan-teal) */}
       <div
-        className="absolute -top-[15%] -left-[10%] h-[650px] w-[950px] rounded-full opacity-[0.16] blur-[95px] will-change-transform"
+        className="absolute -top-[15%] -left-[10%] h-[650px] w-[950px] rounded-full opacity-[0.16] blur-[45px] will-change-transform"
         style={{
           background:
             "radial-gradient(circle at 45% 45%, color-mix(in oklab, var(--scene-atmosphere, #087eb4) 65%, var(--signal, #38bdf8) 35%) 0%, color-mix(in oklab, var(--signal, #38bdf8) 25%, transparent) 55%, transparent 75%)",
@@ -75,7 +75,7 @@ export function AppBackground({ reduceMotion: reduceMotionProp }: AppBackgroundP
 
       {/* Layer 2: Mid-altitude deep atmospheric moisture mass (parallax counter-drift) */}
       <div
-        className="absolute top-[28%] -right-[12%] h-[750px] w-[1050px] rounded-full opacity-[0.13] blur-[110px] will-change-transform"
+        className="absolute top-[28%] -right-[12%] h-[750px] w-[1050px] rounded-full opacity-[0.13] blur-[50px] will-change-transform"
         style={{
           background:
             "radial-gradient(circle at 55% 50%, color-mix(in oklab, var(--cyan, #06b6d4) 50%, var(--primary, #38bdf8) 50%) 0%, color-mix(in oklab, var(--scene-ocean, #08152f) 30%, transparent) 60%, transparent 80%)",
@@ -85,7 +85,7 @@ export function AppBackground({ reduceMotion: reduceMotionProp }: AppBackgroundP
 
       {/* Layer 3: Low-altitude ambient mist veil (subtle, wide ground atmosphere) */}
       <div
-        className="absolute -bottom-[10%] left-[15%] h-[550px] w-[1100px] rounded-full opacity-[0.11] blur-[100px] will-change-transform"
+        className="absolute -bottom-[10%] left-[15%] h-[550px] w-[1100px] rounded-full opacity-[0.11] blur-[45px] will-change-transform"
         style={{
           background:
             "radial-gradient(ellipse at 50% 50%, color-mix(in oklab, var(--signal, #38bdf8) 40%, transparent) 0%, color-mix(in oklab, var(--card, #0f172a) 40%, transparent) 65%, transparent 85%)",

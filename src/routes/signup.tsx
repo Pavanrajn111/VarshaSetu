@@ -83,8 +83,8 @@ function SignupPage() {
       return;
     }
 
-    const cleanPhone = phoneNumber.replace(/[^\d]/g, "");
-    if (cleanPhone.length !== 10 || !["6", "7", "8", "9"].includes(cleanPhone[0])) {
+    const cleanPhone = phoneNumber.replace(/\D/g, "");
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
       setErrorMsg(
         "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.",
       );

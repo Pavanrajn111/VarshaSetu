@@ -4,6 +4,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useRef,
   type ReactNode,
 } from "react";
 import type { ForecastResponse, SupportedLanguage } from "@/lib/types";
@@ -76,6 +77,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [advisoryError, setAdvisoryError] = useState<string | null>(null);
 
   const { user } = useAuth();
+  const forecastRequestIdRef = useRef<number>(0);
 
   // Pre-fill user default location & language when authenticated
   useEffect(() => {
@@ -132,6 +134,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     async (overrideLoc?: LocationState, overrideLang?: SupportedLanguage) => {
       const activeLoc = overrideLoc || location;
       const activeLang = overrideLang || language;
+      const requestId = ++forecastRequestIdRef.current;
 
       setIsLoadingForecast(true);
       setForecastError(null);
@@ -152,11 +155,17 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
       try {
         const data = await attemptFetch();
+        if (requestId !== forecastRequestIdRef.current) {
+          return;
+        }
         setForecast(data);
         if (data.advisory_text) {
           setAdvisoryText(data.advisory_text);
         }
       } catch (err: unknown) {
+        if (requestId !== forecastRequestIdRef.current) {
+          return;
+        }
         if (err instanceof ApiError && err.isRateLimited() && err.retryAfterSeconds) {
           const waitSec = err.retryAfterSeconds;
           setRateLimitCountdown(waitSec);
@@ -164,8 +173,14 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
           // Auto-retry once after retryAfter duration
           setTimeout(async () => {
+            if (requestId !== forecastRequestIdRef.current) {
+              return;
+            }
             try {
               const retryData = await attemptFetch();
+              if (requestId !== forecastRequestIdRef.current) {
+                return;
+              }
               setForecast(retryData);
               setForecastError(null);
               setRateLimitCountdown(null);
@@ -173,6 +188,9 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
                 setAdvisoryText(retryData.advisory_text);
               }
             } catch (retryErr: unknown) {
+              if (requestId !== forecastRequestIdRef.current) {
+                return;
+              }
               const msg =
                 retryErr instanceof Error
                   ? retryErr.message
@@ -189,7 +207,9 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
           setForecastError(msg);
         }
       } finally {
-        setIsLoadingForecast(false);
+        if (requestId === forecastRequestIdRef.current) {
+          setIsLoadingForecast(false);
+        }
       }
     },
     [location, language, cropType, cropStage],
@@ -201,9 +221,9 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     setAdvisoryError(null);
 
     try {
-      const w1Break = forecast?.targets?.target_break_w1;
-      const w1Heavy = forecast?.targets?.target_heavy_w1;
-      const w1Active = forecast?.targets?.target_active_w1;
+      const w1Break = forecast?.targets?.["target_break_w1"];
+      const w1Heavy = forecast?.targets?.["target_heavy_w1"];
+      const w1Active = forecast?.targets?.["target_active_w1"];
 
       const res = await apiClient.getAdvisory({
         district: location.district || "Uttara Kannada",

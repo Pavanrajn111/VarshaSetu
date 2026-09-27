@@ -34,8 +34,8 @@ export async function sendChatMessage(message: string, context?: ChatContext): P
   }
 
   // Extract key metrics from active forecast
-  const w1 = fc.horizons?.w1 || fc.horizons?.week_1;
-  const w2 = fc.horizons?.w2 || fc.horizons?.week_2;
+  const w1 = fc.horizons?.["w1"];
+  const w2 = fc.horizons?.["w2"];
   const soil = fc.soil;
   const onset = fc.onset;
 

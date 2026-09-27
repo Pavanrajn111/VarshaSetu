@@ -22,15 +22,12 @@ import type {
 export const TOKEN_STORAGE_KEY = "varsha_setu_token";
 
 const API_BASE_URL = (
-  import.meta.env.VITE_API_BASE_URL ||
-  import.meta.env.VITE_BACKEND_URL ||
-  "http://localhost:8000"
+  (import.meta.env["VITE_API_BASE_URL"] as string | undefined) || "http://localhost:8000"
 ).replace(/\/+$/, "");
 
-console.log("[Varsha Setu] Active API Base URL:", API_BASE_URL);
-
-const ADVISORY_API_KEY =
-  import.meta.env.VITE_ADVISORY_API_KEY || import.meta.env.VITE_ADVISORY_AUDIO_API_KEY || "";
+if (import.meta.env.DEV) {
+  console.log("[Varsha Setu] Active API Base URL:", API_BASE_URL);
+}
 
 export class ApiError extends Error {
   status: number;
@@ -41,8 +38,12 @@ export class ApiError extends Error {
     super(message);
     this.name = "ApiError";
     this.status = status;
-    this.details = details;
-    this.retryAfterSeconds = retryAfterSeconds;
+    if (details !== undefined) {
+      this.details = details;
+    }
+    if (retryAfterSeconds !== undefined) {
+      this.retryAfterSeconds = retryAfterSeconds;
+    }
   }
 
   isValidationError(): boolean {
@@ -172,27 +173,31 @@ export const apiClient = {
       });
     }
 
+    const { headers: customHeaders, body: _callerBody, ...restOpts } = opts ?? {};
+
     const token = getStoredToken();
-    const headers: Record<string, string> = {
+    const baseHeaders: Record<string, string> = {
       "Content-Type": "application/json",
       Accept: "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(opts?.headers as Record<string, string>),
     };
 
-    if (path.includes("/advisory/audio") || opts?.injectApiKey) {
-      if (ADVISORY_API_KEY) {
-        headers["X-API-Key"] = ADVISORY_API_KEY;
-      }
+    const finalHeaders: Record<string, string> = {
+      ...baseHeaders,
+      ...(customHeaders as Record<string, string> | undefined),
+    };
+
+    const fetchInit: RequestInit = {
+      ...restOpts,
+      method: "POST",
+      headers: finalHeaders,
+    };
+
+    if (body !== undefined) {
+      fetchInit.body = JSON.stringify(body);
     }
 
-    const res = await fetch(url.toString(), {
-      method: "POST",
-      headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-      ...opts,
-    });
-
+    const res = await fetch(url.toString(), fetchInit);
     return handleFetchResponse<T>(res);
   },
 
@@ -206,21 +211,31 @@ export const apiClient = {
       });
     }
 
+    const { headers: customHeaders, body: _callerBody, ...restOpts } = opts ?? {};
+
     const token = getStoredToken();
-    const headers: Record<string, string> = {
+    const baseHeaders: Record<string, string> = {
       "Content-Type": "application/json",
       Accept: "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(opts?.headers as Record<string, string>),
     };
 
-    const res = await fetch(url.toString(), {
-      method: "PATCH",
-      headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-      ...opts,
-    });
+    const finalHeaders: Record<string, string> = {
+      ...baseHeaders,
+      ...(customHeaders as Record<string, string> | undefined),
+    };
 
+    const fetchInit: RequestInit = {
+      ...restOpts,
+      method: "PATCH",
+      headers: finalHeaders,
+    };
+
+    if (body !== undefined) {
+      fetchInit.body = JSON.stringify(body);
+    }
+
+    const res = await fetch(url.toString(), fetchInit);
     return handleFetchResponse<T>(res);
   },
 
@@ -239,7 +254,6 @@ export const apiClient = {
   },
 
   async computeForecast(payload: ForecastRequest): Promise<ForecastResponse> {
-    console.log("[apiClient.computeForecast] Outgoing payload:", payload);
     return this.post<ForecastResponse>("/forecast", payload);
   },
 
@@ -260,26 +274,20 @@ export const apiClient = {
   },
 
   async getAdvisory(payload: AdvisoryRequest): Promise<AdvisoryResponse> {
-    console.log("[apiClient.getAdvisory] Outgoing payload:", payload);
     return this.post<AdvisoryResponse>("/advisory", payload);
   },
 
   async streamAdvisoryAudio(text: string, language: SupportedLanguage): Promise<Blob> {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
-    if (ADVISORY_API_KEY) {
-      headers["X-API-Key"] = ADVISORY_API_KEY;
-    }
-
     const res = await fetch(`${API_BASE_URL}/advisory/audio`, {
       method: "POST",
-      headers,
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ text, language }),
     });
 
     if (res.status === 401) {
-      throw new ApiError("Authentication required: Missing or invalid VITE_ADVISORY_API_KEY.", 401);
+      throw new ApiError("Advisory voice synthesis requires server authorization.", 401);
     }
 
     if (res.status === 429) {

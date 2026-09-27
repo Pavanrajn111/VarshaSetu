@@ -25,6 +25,7 @@ export function NotificationOptInPanel() {
   const [langPreference, setLangPreference] = useState<SupportedLanguage>(globalLanguage);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,6 +53,9 @@ export function NotificationOptInPanel() {
         crop: cropType,
       });
       setSubmitted(true);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Subscription failed. Please try again.";
+      setPhoneError(msg);
     } finally {
       setIsSubmitting(false);
     }

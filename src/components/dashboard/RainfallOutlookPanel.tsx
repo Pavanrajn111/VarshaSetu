@@ -99,8 +99,7 @@ interface CustomTooltipProps {
 
 function CustomOutlookTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload || !payload.length) return null;
-  const data: DailyOutlookRecord & { dayIndex: number; formattedDate: string } =
-    payload[0]?.payload;
+  const data = payload[0]?.payload;
   if (!data) return null;
 
   const isBlended = data.forecast_basis === "blended";
