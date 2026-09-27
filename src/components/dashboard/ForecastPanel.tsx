@@ -1,11 +1,11 @@
-import React from 'react';
-import { useDashboard } from '@/context/DashboardContext';
-import type { TargetPrediction, OnsetOutlook } from '@/lib/types';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { useDashboard } from "@/context/DashboardContext";
+import type { TargetPrediction, OnsetOutlook, HorizonForecast } from "@/lib/types";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import {
   CloudRain,
   AlertTriangle,
@@ -18,16 +18,11 @@ import {
   CloudLightning,
   Calendar,
   AlertOctagon,
-} from 'lucide-react';
+} from "lucide-react";
 
 export function ForecastPanel() {
-  const {
-    forecast,
-    isLoadingForecast,
-    forecastError,
-    rateLimitCountdown,
-    loadForecast,
-  } = useDashboard();
+  const { forecast, isLoadingForecast, forecastError, rateLimitCountdown, loadForecast } =
+    useDashboard();
 
   if (isLoadingForecast && !forecast) {
     return (
@@ -70,7 +65,7 @@ export function ForecastPanel() {
             Rate Limiter Active (429)
           </AlertTitle>
           <AlertDescription className="text-xs">
-            System is pacing high-concurrency requests. Auto-retrying in{' '}
+            System is pacing high-concurrency requests. Auto-retrying in{" "}
             <span className="font-mono font-bold text-foreground">{rateLimitCountdown}s</span>...
           </AlertDescription>
         </Alert>
@@ -130,7 +125,10 @@ function OnsetOutlookCard({ onset }: { onset?: OnsetOutlook }) {
               </p>
             </div>
           </div>
-          <Badge variant="outline" className="border-cyan/40 bg-cyan/10 font-mono text-[10px] text-cyan">
+          <Badge
+            variant="outline"
+            className="border-cyan/40 bg-cyan/10 font-mono text-[10px] text-cyan"
+          >
             Climatology + ML
           </Badge>
         </div>
@@ -147,7 +145,7 @@ function OnsetOutlookCard({ onset }: { onset?: OnsetOutlook }) {
             <p className="mt-2 max-w-md text-xs text-muted-foreground">
               {onset?.error
                 ? `Onset model notice: ${onset.error}`
-                : 'Onset probability model is temporarily offline or uninitialized for this spatial coordinate.'}
+                : "Onset probability model is temporarily offline or uninitialized for this spatial coordinate."}
             </p>
           </div>
         ) : (
@@ -160,10 +158,14 @@ function OnsetOutlookCard({ onset }: { onset?: OnsetOutlook }) {
               </div>
               <div className="mt-2 flex items-baseline gap-2">
                 <span className="font-display text-3xl font-semibold text-foreground">
-                  {Math.round((onset.probability > 1 ? onset.probability : onset.probability * 100))}%
+                  {Math.round(onset.probability > 1 ? onset.probability : onset.probability * 100)}%
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  (Cutoff: {onset.cutoff ? `${Math.round(onset.cutoff > 1 ? onset.cutoff : onset.cutoff * 100)}%` : 'N/A'})
+                  (Cutoff:{" "}
+                  {onset.cutoff
+                    ? `${Math.round(onset.cutoff > 1 ? onset.cutoff : onset.cutoff * 100)}%`
+                    : "N/A"}
+                  )
                 </span>
               </div>
               <div className="mt-3">
@@ -185,10 +187,14 @@ function OnsetOutlookCard({ onset }: { onset?: OnsetOutlook }) {
                 Historical Normal Window
               </div>
               <div className="mt-2 font-display text-xl font-medium text-foreground">
-                {onset.normal_date_window || 'June 05 – June 10'}
+                {onset.normal_date_window || "June 05 – June 10"}
+              </div>
+              <div className="mt-1 text-[11px] text-muted-foreground">
+                Climatological baseline reference (Monsoon onset occurs annually May–June).
               </div>
               <div className="mt-2 text-xs text-muted-foreground">
-                Status Tag: <span className="font-mono text-signal">{onset.status_tag || 'Standard'}</span>
+                Status Tag:{" "}
+                <span className="font-mono text-signal">{onset.status_tag || "Standard"}</span>
               </div>
             </div>
 
@@ -198,7 +204,8 @@ function OnsetOutlookCard({ onset }: { onset?: OnsetOutlook }) {
                 Dynamical Drivers
               </div>
               <div className="mt-2 text-xs leading-relaxed text-foreground/90">
-                {onset.driver_outlook || 'Synoptic flow and Bay of Bengal low-pressure development align with baseline.'}
+                {onset.driver_outlook ||
+                  "Synoptic flow and Bay of Bengal low-pressure development align with baseline."}
               </div>
             </div>
           </div>
@@ -212,16 +219,17 @@ function OnsetOutlookCard({ onset }: { onset?: OnsetOutlook }) {
  * 4-Week Horizon Grid
  * Per-target fault isolation: each target cell independently checks error / probability === null
  */
-function HorizonGrid({ horizons }: { horizons?: Record<string, any> }) {
+function HorizonGrid({ horizons }: { horizons?: Record<string, HorizonForecast> }) {
   const weeks = [1, 2, 3, 4];
 
   // Helper to extract horizon by week number or key
-  const getHorizon = (weekNum: number) => {
+  const getHorizon = (weekNum: number): HorizonForecast | null => {
     if (!horizons) return null;
     return (
       horizons[`week_${weekNum}`] ||
       horizons[String(weekNum)] ||
-      Object.values(horizons).find((h: any) => h.week === weekNum)
+      Object.values(horizons).find((h) => h.week === weekNum) ||
+      null
     );
   };
 
@@ -328,7 +336,10 @@ function TargetCell({
           <span>{title}</span>
         </div>
         {isUnavailable ? (
-          <Badge variant="outline" className="border-border text-[9px] font-mono text-muted-foreground">
+          <Badge
+            variant="outline"
+            className="border-border text-[9px] font-mono text-muted-foreground"
+          >
             Offline
           </Badge>
         ) : target.triggered ? (
@@ -336,7 +347,10 @@ function TargetCell({
             ⚠️ ALERT
           </Badge>
         ) : (
-          <Badge variant="outline" className="border-success/30 bg-success/10 font-mono text-[9px] text-success">
+          <Badge
+            variant="outline"
+            className="border-success/30 bg-success/10 font-mono text-[9px] text-success"
+          >
             ✔️ Normal
           </Badge>
         )}
@@ -352,8 +366,12 @@ function TargetCell({
       ) : (
         /* Valid Probability Bar */
         (() => {
-          const prob = Math.round(target.probability! > 1 ? target.probability! : target.probability! * 100);
-          const cutoff = target.cutoff ? Math.round(target.cutoff > 1 ? target.cutoff : target.cutoff * 100) : null;
+          const prob = Math.round(
+            target.probability! > 1 ? target.probability! : target.probability! * 100,
+          );
+          const cutoff = target.cutoff
+            ? Math.round(target.cutoff > 1 ? target.cutoff : target.cutoff * 100)
+            : null;
           return (
             <div className="mt-2.5 space-y-1.5">
               <div className="flex items-center justify-between font-mono text-xs">

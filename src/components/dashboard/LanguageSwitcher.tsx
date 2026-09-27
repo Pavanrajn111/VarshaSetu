@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { useDashboard } from '@/context/DashboardContext';
-import { useAuth } from '@/context/AuthContext';
-import type { SupportedLanguage } from '@/lib/types';
-import { Languages, Bookmark, Check } from 'lucide-react';
-import { toast } from 'sonner';
+import React, { useState } from "react";
+import { useDashboard } from "@/context/DashboardContext";
+import { useAuth } from "@/context/AuthContext";
+import type { SupportedLanguage } from "@/lib/types";
+import { Languages, Bookmark, Check } from "lucide-react";
+import { toast } from "sonner";
 
 /**
  * CORRECTION 1: Language values must strictly be codes ('en' | 'kn' | 'hi').
  * Display labels are UI text only.
  */
 const LANGUAGES: Array<{ code: SupportedLanguage; label: string }> = [
-  { code: 'en', label: 'English' },
-  { code: 'kn', label: 'ಕನ್ನಡ' },
-  { code: 'hi', label: 'हिन्दी' },
+  { code: "en", label: "English" },
+  { code: "kn", label: "ಕನ್ನಡ" },
+  { code: "hi", label: "हिन्दी" },
 ];
 
 export function LanguageSwitcher() {
@@ -29,7 +29,7 @@ export function LanguageSwitcher() {
       const langName = LANGUAGES.find((l) => l.code === language)?.label || language;
       toast.success(`Saved ${langName} as your default language.`);
     } catch {
-      toast.error('Failed to save default language.');
+      toast.error("Failed to save default language.");
     } finally {
       setIsSaving(false);
     }
@@ -51,8 +51,8 @@ export function LanguageSwitcher() {
                 onClick={() => setLanguage(lang.code)}
                 className={`rounded px-2.5 py-1 font-mono text-xs transition-all ${
                   isActive
-                    ? 'bg-signal text-signal-foreground font-semibold shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-background/40'
+                    ? "bg-signal text-signal-foreground font-semibold shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/40"
                 }`}
               >
                 {lang.label}
@@ -68,11 +68,11 @@ export function LanguageSwitcher() {
           type="button"
           onClick={handleSaveDefault}
           disabled={isSaving || isCurrentDefault}
-          title={isCurrentDefault ? 'Current default language' : 'Save as default language'}
+          title={isCurrentDefault ? "Current default language" : "Save as default language"}
           className={`flex items-center gap-1 rounded-md border px-2 py-1 font-mono text-[10px] transition-all ${
             isCurrentDefault
-              ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400 cursor-default'
-              : 'border-border/70 bg-glass/60 text-muted-foreground hover:text-foreground hover:border-signal/50 hover:bg-signal/10'
+              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 cursor-default"
+              : "border-border/70 bg-glass/60 text-muted-foreground hover:text-foreground hover:border-signal/50 hover:bg-signal/10"
           }`}
         >
           {isCurrentDefault ? (

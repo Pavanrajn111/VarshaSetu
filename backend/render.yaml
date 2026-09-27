@@ -14,8 +14,10 @@ services:
         value: 8000
       - key: CORS_ORIGINS
         sync: false
-      - key: ADVISORY_AUDIO_API_KEY
+      - key: AUTH_JWT_SECRET
         generateValue: true
+      - key: ENABLE_SCHEDULER
+        value: "true"
       - key: OPEN_METEO_TIMEOUT_SECONDS
         value: "8.0"
       - key: NOMINATIM_TIMEOUT_SECONDS

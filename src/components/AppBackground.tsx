@@ -26,10 +26,7 @@ export function AppBackground({ reduceMotion: reduceMotionProp }: AppBackgroundP
   }
 
   return (
-    <div
-      className="pointer-events-none fixed inset-0 z-20 overflow-hidden"
-      aria-hidden="true"
-    >
+    <div className="pointer-events-none fixed inset-0 z-20 overflow-hidden" aria-hidden="true">
       <style>{`
         @keyframes cloud-drift-primary {
           0% {
@@ -109,9 +106,5 @@ export function AppBackground({ reduceMotion: reduceMotionProp }: AppBackgroundP
 }
 
 export function AppBackgroundScope({ children }: { children: ReactNode }) {
-  return (
-    <AppBackgroundContext.Provider value={true}>
-      {children}
-    </AppBackgroundContext.Provider>
-  );
+  return <AppBackgroundContext.Provider value={true}>{children}</AppBackgroundContext.Provider>;
 }

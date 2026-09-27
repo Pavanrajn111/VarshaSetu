@@ -6,7 +6,7 @@
  * String labels like "English" are UI display only.
  */
 
-export type SupportedLanguage = 'en' | 'kn' | 'hi';
+export type SupportedLanguage = "en" | "kn" | "hi";
 
 export interface CandidateLocation {
   name: string;
@@ -18,7 +18,7 @@ export interface CandidateLocation {
 }
 
 export interface LocationResolveResponse {
-  status: 'success' | 'disambiguation_required' | 'not_found' | 'error';
+  status: "success" | "disambiguation_required" | "not_found" | "error";
   query: string;
   disambiguation_required: boolean;
   scale_tag: string;
@@ -176,8 +176,8 @@ export interface DailyOutlookRecord {
   ecmwf_mm: number | null;
   climatology_mm: number | null;
   combined_mm: number;
-  forecast_basis: 'blended' | 'climatology_only';
-  source_agreement: 'HIGH' | 'MODERATE' | 'LOW' | 'CLIMATOLOGY';
+  forecast_basis: "blended" | "climatology_only";
+  source_agreement: "HIGH" | "MODERATE" | "LOW" | "CLIMATOLOGY";
   actual_precip_mm?: number | null;
 }
 
@@ -203,11 +203,11 @@ export interface UserProfile {
   id: number;
   full_name: string;
   phone_number: string;
-  role: 'farmer' | 'officer' | 'admin';
+  role: "farmer" | "officer" | "admin";
   preferred_language: SupportedLanguage;
   default_taluk?: string | null;
   default_district?: string | null;
-  notification_prefs?: Record<string, any>;
+  notification_prefs?: Record<string, unknown>;
   created_at: string;
 }
 
@@ -222,4 +222,3 @@ export interface AuthMeResponse {
   status: string;
   user: UserProfile;
 }
-

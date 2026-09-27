@@ -1,22 +1,39 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
-import { useState, type FormEvent } from 'react';
-import { useAuth } from '@/context/AuthContext';
-import { AppHeader } from '@/components/AppHeader';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CloudRain, Lock, Phone, AlertCircle, ArrowRight, Eye, EyeOff, Sliders } from 'lucide-react';
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState, type FormEvent } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { AppHeader } from "@/components/AppHeader";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  CloudRain,
+  Lock,
+  Phone,
+  AlertCircle,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  Sliders,
+} from "lucide-react";
 
-export const Route = createFileRoute('/login')({
+export const Route = createFileRoute("/login")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: 'Log In | Varsha Setu' },
+      { title: "Log In | Varsha Setu" },
       {
-        name: 'description',
-        content: 'Log in to your Varsha Setu agricultural intelligence account for personalized crop advisories.',
+        name: "description",
+        content:
+          "Log in to your Varsha Setu agricultural intelligence account for personalized crop advisories.",
       },
     ],
   }),
@@ -27,8 +44,8 @@ function LoginPage() {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,23 +55,23 @@ function LoginPage() {
     e.preventDefault();
     setErrorMsg(null);
 
-    const cleanPhone = phoneNumber.replace(/[^\d]/g, '');
+    const cleanPhone = phoneNumber.replace(/[^\d]/g, "");
     if (cleanPhone.length < 10) {
-      setErrorMsg('Please enter a valid 10-digit mobile number.');
+      setErrorMsg("Please enter a valid 10-digit mobile number.");
       return;
     }
     if (!password) {
-      setErrorMsg('Please enter your password.');
+      setErrorMsg("Please enter your password.");
       return;
     }
 
     setIsSubmitting(true);
     try {
       await login(phoneNumber, password);
-      navigate({ to: '/dashboard' });
+      navigate({ to: "/dashboard" });
     } catch {
       // Backend guarantees a generic 401 message; match exactly
-      setErrorMsg('Invalid phone number or password.');
+      setErrorMsg("Invalid phone number or password.");
     } finally {
       setIsSubmitting(false);
     }
@@ -64,7 +81,12 @@ function LoginPage() {
     <div className="relative min-h-screen text-foreground flex flex-col justify-between">
       {/* Shared Unified Header */}
       <AppHeader showProgress={false}>
-        <Button asChild variant="outline" size="sm" className="h-8 border-border/80 bg-glass/80 text-xs">
+        <Button
+          asChild
+          variant="outline"
+          size="sm"
+          className="h-8 border-border/80 bg-glass/80 text-xs"
+        >
           <Link to="/dashboard">
             <Sliders className="mr-1.5 size-3.5 text-signal" /> Studio
           </Link>
@@ -83,14 +105,18 @@ function LoginPage() {
                 Log In to Varsha Setu
               </CardTitle>
               <CardDescription className="text-xs text-muted-foreground sm:text-sm">
-                Access your personalized agro-climatic predictions, saved taluks, and last-mile advisories.
+                Access your personalized agro-climatic predictions, saved taluks, and last-mile
+                advisories.
               </CardDescription>
             </CardHeader>
 
             <form onSubmit={handleLogin}>
               <CardContent className="space-y-4">
                 {errorMsg && (
-                  <Alert variant="destructive" className="border-rose-500/30 bg-rose-500/10 text-rose-300 py-2.5">
+                  <Alert
+                    variant="destructive"
+                    className="border-rose-500/30 bg-rose-500/10 text-rose-300 py-2.5"
+                  >
                     <AlertCircle className="size-4 shrink-0 text-rose-400" />
                     <AlertDescription className="text-xs">{errorMsg}</AlertDescription>
                   </Alert>
@@ -129,7 +155,7 @@ function LoginPage() {
                   <div className="relative flex items-center rounded-md border border-border/80 bg-background/50 focus-within:border-signal focus-within:ring-1 focus-within:ring-signal">
                     <Input
                       id="password"
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
@@ -140,7 +166,7 @@ function LoginPage() {
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="mr-3 text-muted-foreground hover:text-foreground transition-colors"
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                       {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                     </button>
@@ -155,7 +181,7 @@ function LoginPage() {
                   className="w-full bg-signal text-signal-foreground hover:bg-signal/90 font-medium text-sm h-10 shadow-lg shadow-signal/20"
                 >
                   {isSubmitting ? (
-                    'Signing In...'
+                    "Signing In..."
                   ) : (
                     <>
                       Sign In to Studio <ArrowRight className="ml-1.5 size-4" />
@@ -164,7 +190,7 @@ function LoginPage() {
                 </Button>
 
                 <div className="text-center text-xs text-muted-foreground">
-                  Don&apos;t have an account?{' '}
+                  Don&apos;t have an account?{" "}
                   <Link to="/signup" className="font-semibold text-signal hover:underline">
                     Create free account
                   </Link>

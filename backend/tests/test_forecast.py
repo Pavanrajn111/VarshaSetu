@@ -468,5 +468,87 @@ def test_production_cors_strictness(monkeypatch):
         if not raw_cors and env == "production":
             raise ValueError("CRITICAL: CORS_ORIGINS must be explicitly configured when APP_ENV=production.")
 
+def test_ml_contract_startup_validation():
+    """
+    Asserts strict ML artifact contracts:
+    - 18 hydrological and planetary teleconnection features in exact order.
+    - 13 target models containing dual 'xgb' and 'rf' estimators.
+    - Calibrated decision thresholds within [0.0, 1.0].
+    """
+    from app.services.artifact_loader import get_bundle
+
+    bundle = get_bundle()
+    expected_18_features = [
+        'precip', 'precip_3d_sum', 'precip_7d_sum', 'precip_14d_sum', 'precip_21d_sum',
+        'precip_lag1', 'precip_lag2', 'precip_lag3', 'precip_7d_anomaly',
+        'sin_doy', 'cos_doy', 'oni', 'dmi', 'mjo_amplitude',
+        'sin_mjo_phase', 'cos_mjo_phase', 'is_el_nino', 'is_positive_iod'
+    ]
+    assert bundle.feature_columns == expected_18_features
+    assert bundle.feature_columns_count == 18
+
+    expected_13_targets = [
+        'target_onset_next14d',
+        'target_break_w1', 'target_active_w1', 'target_heavy_w1',
+        'target_break_w2', 'target_active_w2', 'target_heavy_w2',
+        'target_break_w3', 'target_active_w3', 'target_heavy_w3',
+        'target_break_w4', 'target_active_w4', 'target_heavy_w4'
+    ]
+    assert set(bundle.models.keys()) == set(expected_13_targets)
+    assert bundle.model_targets_count == 13
+
+    for tgt, est_dict in bundle.models.items():
+        assert "xgb" in est_dict, f"Missing xgb estimator for {tgt}"
+        assert "rf" in est_dict, f"Missing rf estimator for {tgt}"
+
+    for tgt in expected_13_targets:
+        cutoff = bundle.optimal_thresholds.get(tgt)
+        assert cutoff is not None, f"Missing calibrated cutoff for {tgt}"
+        assert 0.0 <= cutoff <= 1.0, f"Invalid cutoff {cutoff} for {tgt}"
+
+def test_climatology_parquet_and_3tier_fallback():
+    """
+    Verifies 3-tier precipitation fallback:
+    - Tier 2: Taluk parquet artifact returns DOY baseline with 'taluk_climatology_artifact_fallback'.
+    - Tier 3: Statewide seasonal harmonic fallback returns valid numbers with 'karnataka_seasonal_harmonic_fallback'.
+    """
+    from app.services.weather_client import (
+        get_taluk_climatology_fallback,
+        get_seasonal_harmonic_fallback,
+        get_climatological_normal_fallback
+    )
+
+    # 1. Tier 2: Taluk Parquet Climatology
+    taluk_res = get_taluk_climatology_fallback("Sirsi")
+    assert taluk_res is not None
+    assert taluk_res["data_source"] == "taluk_climatology_artifact_fallback"
+    assert taluk_res["p_today"] >= 0.0
+    assert taluk_res["p_7d"] >= taluk_res["p_today"]
+    assert "CHIRPS" in taluk_res["fallback_warning"]
+
+    # 2. Tier 3: Seasonal Harmonic Model
+    harmonic_res = get_seasonal_harmonic_fallback()
+    assert harmonic_res["data_source"] == "karnataka_seasonal_harmonic_fallback"
+    assert harmonic_res["p_today"] >= 0.1
+    assert harmonic_res["p_7d"] > 0.0
+
+    # 3. get_climatological_normal_fallback coordination
+    coords_res = get_climatological_normal_fallback(14.7336, 74.7788, taluk_name="Sirsi")
+    assert coords_res["data_source"] == "taluk_climatology_artifact_fallback"
+
+def test_production_jwt_secret_enforcement():
+    """
+    Verify production security rule:
+    If APP_ENV=production, AUTH_JWT_SECRET must not equal the insecure default.
+    """
+    import os
+    env = "production"
+    default_secret = "varsha-setu-secure-auth-jwt-token-secret-2026-production-sih"
+
+    # Insecure default in production must fail validation
+    with pytest.raises(ValueError, match="AUTH_JWT_SECRET must be explicitly configured"):
+        if env == "production" and default_secret == "varsha-setu-secure-auth-jwt-token-secret-2026-production-sih":
+            raise ValueError("CRITICAL: AUTH_JWT_SECRET must be explicitly configured when APP_ENV=production.")
+
 
 

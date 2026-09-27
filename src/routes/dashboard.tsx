@@ -1,29 +1,29 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { DashboardProvider } from '@/context/DashboardContext';
-import { AppHeader } from '@/components/AppHeader';
-import { BackendStatusBadge } from '@/components/dashboard/BackendStatusBadge';
-import { LanguageSwitcher } from '@/components/dashboard/LanguageSwitcher';
-import { LocationPicker } from '@/components/dashboard/LocationPicker';
-import { ForecastPanel } from '@/components/dashboard/ForecastPanel';
-import { RainfallOutlookPanel } from '@/components/dashboard/RainfallOutlookPanel';
-import { SoilProfilePanel } from '@/components/dashboard/SoilProfilePanel';
-import { CropAdvisoryPanel } from '@/components/dashboard/CropAdvisoryPanel';
-import { RiskMapPanel } from '@/components/dashboard/RiskMapPanel';
-import { NotificationOptInPanel } from '@/components/dashboard/NotificationOptInPanel';
-import { ChatAssistantWidget } from '@/components/dashboard/ChatAssistantWidget';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Sparkles, ShieldCheck } from 'lucide-react';
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { DashboardProvider } from "@/context/DashboardContext";
+import { AppHeader } from "@/components/AppHeader";
+import { BackendStatusBadge } from "@/components/dashboard/BackendStatusBadge";
+import { LanguageSwitcher } from "@/components/dashboard/LanguageSwitcher";
+import { LocationPicker } from "@/components/dashboard/LocationPicker";
+import { ForecastPanel } from "@/components/dashboard/ForecastPanel";
+import { RainfallOutlookPanel } from "@/components/dashboard/RainfallOutlookPanel";
+import { SoilProfilePanel } from "@/components/dashboard/SoilProfilePanel";
+import { CropAdvisoryPanel } from "@/components/dashboard/CropAdvisoryPanel";
+import { RiskMapPanel } from "@/components/dashboard/RiskMapPanel";
+import { NotificationOptInPanel } from "@/components/dashboard/NotificationOptInPanel";
+import { ChatAssistantWidget } from "@/components/dashboard/ChatAssistantWidget";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Sparkles, ShieldCheck } from "lucide-react";
 
-export const Route = createFileRoute('/dashboard')({
+export const Route = createFileRoute("/dashboard")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: 'Live Prediction Studio | Varsha Setu' },
+      { title: "Live Prediction Studio | Varsha Setu" },
       {
-        name: 'description',
+        name: "description",
         content:
-          'AI-powered hyperlocal monsoon prediction and crop advisory studio for Karnataka agriculture, SIH 2026 PS 26086.',
+          "AI-powered hyperlocal monsoon prediction and crop advisory studio for Karnataka agriculture, SIH 2026 PS 26086.",
       },
     ],
   }),
@@ -38,7 +38,12 @@ function DashboardContent() {
         <div className="flex items-center gap-3">
           <BackendStatusBadge />
           <LanguageSwitcher />
-          <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex border-border/80 bg-glass/80 backdrop-blur-lg h-8 text-xs">
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="hidden sm:inline-flex border-border/80 bg-glass/80 backdrop-blur-lg h-8 text-xs"
+          >
             <Link to="/">
               <ArrowLeft className="mr-1.5 size-3.5" /> Landing
             </Link>
@@ -51,7 +56,9 @@ function DashboardContent() {
         {/* Studio Title Banner */}
         <div className="flex flex-col gap-2 border-b border-border/40 pb-6">
           <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-signal">
-            <Link to="/" className="hover:underline">Home</Link>
+            <Link to="/" className="hover:underline">
+              Home
+            </Link>
             <span>/</span>
             <span>Live Prediction Studio</span>
           </div>
@@ -61,10 +68,14 @@ function DashboardContent() {
                 Karnataka Monsoon Intelligence Studio
               </h1>
               <p className="mt-1 text-sm text-muted-foreground sm:text-base">
-                Multi-model ensemble bias-corrected against 24-year IMD climatology & FAO-56 crop water demand
+                Multi-model ensemble bias-corrected against 24-year IMD climatology & FAO-56 crop
+                water demand
               </p>
             </div>
-            <Badge variant="outline" className="self-start sm:self-auto border-signal/40 bg-signal/10 px-3 py-1 font-mono text-xs text-signal">
+            <Badge
+              variant="outline"
+              className="self-start sm:self-auto border-signal/40 bg-signal/10 px-3 py-1 font-mono text-xs text-signal"
+            >
               SIH 2026 · PS 26086
             </Badge>
           </div>

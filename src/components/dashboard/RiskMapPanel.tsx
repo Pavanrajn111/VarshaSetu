@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { apiClient } from '@/lib/api-client';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Map, Loader2, Info, RefreshCw, Maximize2, ShieldAlert } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { apiClient } from "@/lib/api-client";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Map, Loader2, Info, RefreshCw, Maximize2, ShieldAlert } from "lucide-react";
 
 export function RiskMapPanel() {
   const [mapHtml, setMapHtml] = useState<string | null>(null);
@@ -19,7 +19,7 @@ export function RiskMapPanel() {
       const html = await apiClient.getRiskMapHtml();
       setMapHtml(html);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Unable to load statewide risk map.';
+      const msg = err instanceof Error ? err.message : "Unable to load statewide risk map.";
       setError(msg);
     } finally {
       setIsLoading(false);
@@ -43,12 +43,16 @@ export function RiskMapPanel() {
                 <CardTitle className="font-display text-lg font-semibold text-foreground">
                   Statewide Climatological Risk Map
                 </CardTitle>
-                <Badge variant="outline" className="border-warning/40 bg-warning/10 font-mono text-[10px] text-warning">
+                <Badge
+                  variant="outline"
+                  className="border-warning/40 bg-warning/10 font-mono text-[10px] text-warning"
+                >
                   Illustrative Baseline
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground">
-                Macro-regional choropleth illustrating baseline risk variations across Karnataka taluks
+                Macro-regional choropleth illustrating baseline risk variations across Karnataka
+                taluks
               </p>
             </div>
           </div>
@@ -61,7 +65,7 @@ export function RiskMapPanel() {
               disabled={isLoading}
               className="h-8 border-border bg-background/50 text-xs hover:bg-background"
             >
-              <RefreshCw className={`mr-1.5 size-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`} />
               Refresh
             </Button>
             <Button
@@ -71,7 +75,7 @@ export function RiskMapPanel() {
               className="h-8 border-border bg-background/50 text-xs hover:bg-background"
             >
               <Maximize2 className="mr-1.5 size-3.5" />
-              {isFullscreen ? 'Exit Full' : 'Expand'}
+              {isFullscreen ? "Exit Full" : "Expand"}
             </Button>
           </div>
         </div>
@@ -80,7 +84,10 @@ export function RiskMapPanel() {
         <div className="mt-3 flex items-start gap-2.5 rounded-lg border border-warning/30 bg-warning/5 px-3 py-2 text-xs text-muted-foreground">
           <Info className="mt-0.5 size-4 text-warning shrink-0" />
           <p>
-            <strong className="text-foreground">Baseline Visualization Note:</strong> This map displays a pre-rendered statewide geographic choropleth for regional context. For operational field decisions and live ensemble ML predictions, refer to the 4-week probability grid above.
+            <strong className="text-foreground">Baseline Visualization Note:</strong> This map
+            displays a pre-rendered statewide geographic choropleth for regional context. For
+            operational field decisions and live ensemble ML predictions, refer to the 4-week
+            probability grid above.
           </p>
         </div>
       </CardHeader>
@@ -102,10 +109,10 @@ export function RiskMapPanel() {
           </div>
         ) : (
           <iframe
-            srcDoc={mapHtml || ''}
+            srcDoc={mapHtml || ""}
             title="Karnataka Statewide Risk Map"
             className={`w-full border-0 transition-all ${
-              isFullscreen ? 'h-[75vh]' : 'h-96 sm:h-[450px]'
+              isFullscreen ? "h-[75vh]" : "h-96 sm:h-[450px]"
             }`}
             sandbox="allow-scripts allow-same-origin"
           />

@@ -12,7 +12,16 @@ APP_ENV = os.getenv("APP_ENV", "development").lower()
 HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "8000"))
 
-# Voice API Protection
+# Scheduler Multi-Worker Concurrency Guard
+ENABLE_SCHEDULER = os.getenv("ENABLE_SCHEDULER", "true").lower() in ("true", "1", "yes")
+
+# Auth JWT Secret Configuration
+AUTH_JWT_SECRET = os.getenv("AUTH_JWT_SECRET", "varsha-setu-secure-auth-jwt-token-secret-2026-production-sih")
+if APP_ENV == "production":
+    if not os.getenv("AUTH_JWT_SECRET") or os.getenv("AUTH_JWT_SECRET") == "varsha-setu-secure-auth-jwt-token-secret-2026-production-sih":
+        raise ValueError("CRITICAL: AUTH_JWT_SECRET must be explicitly configured when APP_ENV=production.")
+
+# Voice API Protection (Optional external API key for server-to-server integrators)
 ADVISORY_AUDIO_API_KEY = os.getenv("ADVISORY_AUDIO_API_KEY", "")
 
 # Config-driven CORS origins

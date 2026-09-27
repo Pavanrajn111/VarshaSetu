@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { apiClient, ApiError } from '@/lib/api-client';
-import type { SupportedLanguage } from '@/lib/types';
-import { Button } from '@/components/ui/button';
-import { Volume2, VolumeX, Loader2, Play, Pause, AlertCircle } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { apiClient, ApiError } from "@/lib/api-client";
+import type { SupportedLanguage } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { Volume2, Loader2, Pause, AlertCircle } from "lucide-react";
 
 interface VoiceAdvisoryButtonProps {
   text: string;
@@ -16,7 +16,7 @@ export function VoiceAdvisoryButton({ text, language }: VoiceAdvisoryButtonProps
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const currentKeyRef = useRef<string>('');
+  const currentKeyRef = useRef<string>("");
 
   // Clean up audio on unmount or text/language change
   useEffect(() => {
@@ -64,7 +64,7 @@ export function VoiceAdvisoryButton({ text, language }: VoiceAdvisoryButtonProps
         await audioRef.current.play();
         setIsPlaying(true);
       } catch (playErr) {
-        console.warn('Playback error:', playErr);
+        console.warn("Playback error:", playErr);
       }
       return;
     }
@@ -85,21 +85,19 @@ export function VoiceAdvisoryButton({ text, language }: VoiceAdvisoryButtonProps
       audio.onended = () => setIsPlaying(false);
       audio.onerror = () => {
         setIsPlaying(false);
-        setError('Browser could not decode the audio stream.');
+        setError("Browser could not decode the audio stream.");
       };
 
       await audio.play();
     } catch (err: unknown) {
       if (err instanceof ApiError) {
-        if (err.status === 401) {
-          setError('Missing or invalid VITE_ADVISORY_API_KEY in .env.');
-        } else if (err.status === 429) {
-          setError('Voice synthesis is rate limited. Try again shortly.');
+        if (err.status === 429) {
+          setError("Voice synthesis is rate limited. Try again shortly.");
         } else {
           setError(err.message);
         }
       } else {
-        const msg = err instanceof Error ? err.message : 'Audio synthesis failed.';
+        const msg = err instanceof Error ? err.message : "Audio synthesis failed.";
         setError(msg);
       }
     } finally {
@@ -116,8 +114,8 @@ export function VoiceAdvisoryButton({ text, language }: VoiceAdvisoryButtonProps
         disabled={isLoading || !text.trim()}
         className={`gap-2 font-mono text-xs shadow-sm transition-all ${
           isPlaying
-            ? 'bg-warning text-warning-foreground hover:bg-warning/90'
-            : 'bg-signal text-signal-foreground hover:bg-signal/90'
+            ? "bg-warning text-warning-foreground hover:bg-warning/90"
+            : "bg-signal text-signal-foreground hover:bg-signal/90"
         }`}
       >
         {isLoading ? (

@@ -171,9 +171,13 @@
     overflow-x: hidden;
   }
 
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+  }
 
-  ::selection { background: color-mix(in oklab, var(--signal) 35%, transparent); }
+  ::selection {
+    background: color-mix(in oklab, var(--signal) 35%, transparent);
+  }
 }
 
 @utility shadow-signal {
@@ -188,15 +192,33 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 76% 12%, color-mix(in oklab, var(--signal) 15%, transparent), transparent 33%),
-    radial-gradient(circle at 22% 78%, color-mix(in oklab, var(--cyan) 8%, transparent), transparent 40%),
-    linear-gradient(115deg, transparent 45%, color-mix(in oklab, var(--cyan) 5%, transparent) 52%, transparent 60%);
+    radial-gradient(
+      circle at 76% 12%,
+      color-mix(in oklab, var(--signal) 15%, transparent),
+      transparent 33%
+    ),
+    radial-gradient(
+      circle at 22% 78%,
+      color-mix(in oklab, var(--cyan) 8%, transparent),
+      transparent 40%
+    ),
+    linear-gradient(
+      115deg,
+      transparent 45%,
+      color-mix(in oklab, var(--cyan) 5%, transparent) 52%,
+      transparent 60%
+    );
 }
 
 .lightning-flash {
   position: absolute;
   inset: 0;
-  background: linear-gradient(112deg, transparent 48%, color-mix(in oklab, var(--signal) 18%, transparent) 49%, transparent 50%);
+  background: linear-gradient(
+    112deg,
+    transparent 48%,
+    color-mix(in oklab, var(--signal) 18%, transparent) 49%,
+    transparent 50%
+  );
   opacity: 0;
   animation: lightning 8s ease-in-out infinite;
 }
@@ -207,7 +229,11 @@
   width: 1.4px;
   height: 70px;
   border-radius: 999px;
-  background: linear-gradient(to bottom, transparent, color-mix(in oklab, var(--signal) 70%, transparent));
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in oklab, var(--signal) 70%, transparent)
+  );
   box-shadow: 0 0 6px color-mix(in oklab, var(--signal) 40%, transparent);
   animation: rain linear infinite;
 }
@@ -218,7 +244,11 @@
   width: 1px;
   height: 45px;
   border-radius: 999px;
-  background: linear-gradient(to bottom, transparent, color-mix(in oklab, var(--signal) 40%, transparent));
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in oklab, var(--signal) 40%, transparent)
+  );
   animation: rain-far linear infinite;
 }
 
@@ -228,7 +258,11 @@
   width: 2.2px;
   height: 110px;
   border-radius: 999px;
-  background: linear-gradient(to bottom, transparent, color-mix(in oklab, var(--cyan) 90%, transparent));
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in oklab, var(--cyan) 90%, transparent)
+  );
   box-shadow: 0 0 10px color-mix(in oklab, var(--cyan) 55%, transparent);
   animation: rain-near linear infinite;
 }
@@ -239,30 +273,64 @@
   left: 0;
   right: 0;
   height: 22vh;
-  background: linear-gradient(to top, color-mix(in oklab, var(--background) 60%, transparent), transparent);
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--background) 60%, transparent),
+    transparent
+  );
   opacity: 0.4;
   animation: mist-drift 10s ease-in-out infinite;
 }
 
 .globe-halo {
-  background: radial-gradient(circle, color-mix(in oklab, var(--signal) 17%, transparent), transparent 62%);
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--signal) 17%, transparent),
+    transparent 62%
+  );
   filter: blur(8px);
 }
 
-.feature-card { transform-style: preserve-3d; }
+.feature-card {
+  transform-style: preserve-3d;
+}
 .feature-card::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, color-mix(in oklab, var(--signal) 8%, transparent), transparent 42%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--signal) 8%, transparent),
+    transparent 42%
+  );
   pointer-events: none;
 }
 
-.map-grid { stroke: color-mix(in oklab, var(--signal) 14%, transparent); stroke-width: 1; }
-.karnataka-shape { fill: color-mix(in oklab, var(--signal) 9%, var(--panel)); stroke: var(--signal); stroke-width: 2; }
-.map-node { fill: var(--signal); filter: drop-shadow(0 0 7px var(--signal)); }
-.map-node-hot { fill: var(--warning); filter: drop-shadow(0 0 12px var(--warning)); animation: map-pulse 2s ease-in-out infinite; }
-.map-path { fill: none; stroke: var(--cyan); stroke-width: 1.5; stroke-dasharray: 6 8; animation: dash 12s linear infinite; }
+.map-grid {
+  stroke: color-mix(in oklab, var(--signal) 14%, transparent);
+  stroke-width: 1;
+}
+.karnataka-shape {
+  fill: color-mix(in oklab, var(--signal) 9%, var(--panel));
+  stroke: var(--signal);
+  stroke-width: 2;
+}
+.map-node {
+  fill: var(--signal);
+  filter: drop-shadow(0 0 7px var(--signal));
+}
+.map-node-hot {
+  fill: var(--warning);
+  filter: drop-shadow(0 0 12px var(--warning));
+  animation: map-pulse 2s ease-in-out infinite;
+}
+.map-path {
+  fill: none;
+  stroke: var(--cyan);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 8;
+  animation: dash 12s linear infinite;
+}
 
 .impact-grid {
   background-image:
@@ -272,16 +340,25 @@
 }
 
 .closing-rings {
-  background:
-    radial-gradient(circle at 50% 45%, transparent 0 16%, color-mix(in oklab, var(--signal) 11%, transparent) 16.2% 16.4%, transparent 16.6% 27%, color-mix(in oklab, var(--signal) 8%, transparent) 27.2% 27.4%, transparent 27.6% 40%, color-mix(in oklab, var(--signal) 5%, transparent) 40.2% 40.4%, transparent 40.6%);
+  background: radial-gradient(
+    circle at 50% 45%,
+    transparent 0 16%,
+    color-mix(in oklab, var(--signal) 11%, transparent) 16.2% 16.4%,
+    transparent 16.6% 27%,
+    color-mix(in oklab, var(--signal) 8%, transparent) 27.2% 27.4%,
+    transparent 27.6% 40%,
+    color-mix(in oklab, var(--signal) 5%, transparent) 40.2% 40.4%,
+    transparent 40.6%
+  );
 }
 
 /* ── Block hover effects (pointer devices only) ── */
 @media (hover: hover) {
   .problem-item {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .problem-item:hover {
     transform: translateY(-2px);
@@ -290,9 +367,10 @@
   }
 
   .workflow-card {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-top: 2px solid transparent;
   }
   .workflow-card:hover {
@@ -303,8 +381,9 @@
   }
 
   .science-badge {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .science-badge:hover {
     transform: scale(1.05);
@@ -312,9 +391,10 @@
   }
 
   .impact-metric {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .impact-metric:hover {
     transform: translateY(-2px);
@@ -323,8 +403,9 @@
   }
 
   .audit-banner {
-    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .audit-banner:hover {
     border-color: color-mix(in oklab, var(--success) 55%, transparent);
@@ -332,18 +413,81 @@
   }
 }
 
-@keyframes rain { to { transform: translate3d(12vw, 120vh, 0) rotate(10deg); } }
-@keyframes rain-far { to { transform: translate3d(8vw, 115vh, 0) rotate(8deg); } }
-@keyframes rain-near { to { transform: translate3d(16vw, 125vh, 0) rotate(13deg); } }
-@keyframes lightning { 0%, 42%, 44%, 45.5%, 100% { opacity: 0; } 43% { opacity: 0.7; } 44.5% { opacity: 0.1; } 45% { opacity: 0.9; } }
-@keyframes mist-drift { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.55; } }
-@keyframes map-pulse { 50% { transform: scale(1.35); transform-origin: center; opacity: 0.65; } }
-@keyframes dash { to { stroke-dashoffset: -140; } }
-@keyframes scroll-line { from { transform: translateY(0); } to { transform: translateY(100%); } }
+@keyframes rain {
+  to {
+    transform: translate3d(12vw, 120vh, 0) rotate(10deg);
+  }
+}
+@keyframes rain-far {
+  to {
+    transform: translate3d(8vw, 115vh, 0) rotate(8deg);
+  }
+}
+@keyframes rain-near {
+  to {
+    transform: translate3d(16vw, 125vh, 0) rotate(13deg);
+  }
+}
+@keyframes lightning {
+  0%,
+  42%,
+  44%,
+  45.5%,
+  100% {
+    opacity: 0;
+  }
+  43% {
+    opacity: 0.7;
+  }
+  44.5% {
+    opacity: 0.1;
+  }
+  45% {
+    opacity: 0.9;
+  }
+}
+@keyframes mist-drift {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+@keyframes map-pulse {
+  50% {
+    transform: scale(1.35);
+    transform-origin: center;
+    opacity: 0.65;
+  }
+}
+@keyframes dash {
+  to {
+    stroke-dashoffset: -140;
+  }
+}
+@keyframes scroll-line {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
 
-@utility animate-scroll-line { animation: scroll-line 1.5s ease-in-out infinite; }
+@utility animate-scroll-line {
+  animation: scroll-line 1.5s ease-in-out infinite;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

@@ -12,12 +12,16 @@ FastAPI serving layer for Karnataka Hyperlocal Monsoon Onset & Break Prediction.
 - **Health Verification**: `GET /health` -> `{"status":"ok","artifacts_loaded":true,"verified_taluks_count":236,"model_targets_count":13}`
 
 ### Required Production Environment Variables:
+
 ```env
 APP_ENV=production
 PORT=8000
+AUTH_JWT_SECRET=<generate_a_secure_random_string>
+ENABLE_SCHEDULER=true
 CORS_ORIGINS=["https://<your-frontend-domain>.lovable.app","https://varsha-setu.pages.dev"]
-ADVISORY_AUDIO_API_KEY=vs_live_sec_8f92a34b9d012e87c654ab23f
 ```
+
+> **Security Note**: Audio synthesis (`POST /advisory/audio`) is rate-limited on the backend (10/min) and does not require client-side keys.
 
 ---
 
@@ -34,7 +38,7 @@ ADVISORY_AUDIO_API_KEY=vs_live_sec_8f92a34b9d012e87c654ab23f
   - Live NOAA ONI (ENSO Index)
   - Live NOAA PSL DMI (Indian Ocean Dipole)
   - Live Australia BOM RMM MJO (Madden-Julian Oscillation)
-  - Live Open-Meteo rolling 21-day precipitation history
+  - 3-tier precipitation retrieval (Live Open-Meteo $\rightarrow$ Taluk DOY Parquet Climatology $\rightarrow$ Seasonal Harmonic Model)
 - **Soil & Agronomy**:
   - 31-district regional soil database (Vertisols, Alfisols, Lateritic, Coastal Alluvium).
   - Trilingual rule-based advisory generation (English `en`, Kannada `kn`, and Hindi `hi`).
@@ -45,10 +49,12 @@ ADVISORY_AUDIO_API_KEY=vs_live_sec_8f92a34b9d012e87c654ab23f
 ## Local Setup & Execution
 
 ### 1. Requirements
+
 - Python 3.11+
 - Virtual environment (recommended)
 
 ### 2. Install Dependencies
+
 ```bash
 cd backend
 python -m venv .venv
@@ -61,21 +67,30 @@ pip install -r requirements.txt
 ```
 
 ### 3. Ensure Artifacts Are Present
+
 Confirm `backend/artifacts/` contains:
+
 ```
 artifacts/
-├── karnataka_multitarget_models.pkl
+├── climatology_by_taluk_doy.parquet
 ├── feature_columns.pkl
-├── optimal_thresholds.pkl
-├── karnataka_taluks_verified.csv
+├── karnataka_final_risk_map.html
+├── karnataka_multitarget_models.pkl
 ├── karnataka_offline_villages_master.csv
-└── karnataka_final_risk_map.html
+├── karnataka_taluks_verified.csv
+├── optimal_thresholds.pkl
+├── outlook_log.db
+└── users.db
 ```
 
+> **Persistent Storage Note**: SQLite files (`outlook_log.db`, `users.db`) operate with Write-Ahead Logging (`WAL` mode). On ephemeral cloud containers (e.g. Render Free Tier), mount a persistent disk volume to `/app/artifacts/` if state must survive container redeploys.
+
 ### 4. Run the Server
+
 ```bash
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
+
 - Interactive Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
 - ReDoc Documentation: [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
@@ -84,11 +99,13 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ## Docker Deployment
 
 ### 1. Build Docker Image
+
 ```bash
 docker build -t varsha-setu-backend:latest .
 ```
 
 ### 2. Run Container
+
 ```bash
 docker run -p 8000:8000 --name varsha-setu varsha-setu-backend:latest
 ```
@@ -98,9 +115,11 @@ docker run -p 8000:8000 --name varsha-setu varsha-setu-backend:latest
 ## REST Endpoints Specification
 
 ### 1. Health Check
+
 - **Route**: `GET /health`
 - **Description**: Verifies service status, artifact loading, and documented taluk coverage count.
 - **Response**:
+
 ```json
 {
   "status": "ok",
@@ -116,9 +135,11 @@ docker run -p 8000:8000 --name varsha-setu varsha-setu-backend:latest
 ---
 
 ### 2. Administrative Taluks Hierarchy
+
 - **Route**: `GET /location/taluks`
 - **Description**: Returns all 31 districts and their respective taluks for UI dropdown menus.
 - **Response**:
+
 ```json
 {
   "total_taluks": 236,
@@ -126,8 +147,8 @@ docker run -p 8000:8000 --name varsha-setu varsha-setu-backend:latest
     {
       "district": "Bagalkote",
       "taluks": [
-        {"taluk_name": "Badami", "lat": 15.9189, "lon": 75.6797},
-        {"taluk_name": "Bagalkote", "lat": 16.1817, "lon": 75.6958}
+        { "taluk_name": "Badami", "lat": 15.9189, "lon": 75.6797 },
+        { "taluk_name": "Bagalkote", "lat": 16.1817, "lon": 75.6958 }
       ]
     }
   ]
@@ -137,9 +158,11 @@ docker run -p 8000:8000 --name varsha-setu varsha-setu-backend:latest
 ---
 
 ### 3. Location Resolution
+
 - **Route**: `GET /location/resolve?query={query}`
 - **Description**: Resolves village, GP, or taluk by name with multi-tier lookup (offline villages $\rightarrow$ taluks $\rightarrow$ OSM Nominatim fallback with Karnataka bounding box check).
 - **Example Response (Exact Match)**:
+
 ```json
 {
   "status": "success",
@@ -161,9 +184,11 @@ docker run -p 8000:8000 --name varsha-setu varsha-setu-backend:latest
 ---
 
 ### 4. Hyperlocal Forecast & Multi-Horizon Outlook
+
 - **Route**: `POST /forecast`
 - **Description**: Runs live weather fetch, builds the verified 18-feature vector, and executes the dual-model ensemble across all 13 targets.
 - **Request Body**:
+
 ```json
 {
   "lat": 14.7336,
@@ -176,9 +201,11 @@ docker run -p 8000:8000 --name varsha-setu varsha-setu-backend:latest
   "language": "hi"
 }
 ```
+
 > Supported `language` values: `"en"` / `"English"`, `"kn"` / `"ಕನ್ನಡ (Kannada)"`, `"hi"` / `"हिन्दी (Hindi)"`.
 
 - **Response (Truncated)**:
+
 ```json
 {
   "location": {
@@ -221,9 +248,11 @@ docker run -p 8000:8000 --name varsha-setu varsha-setu-backend:latest
 ---
 
 ### 5. Agronomic Soil Advisory
+
 - **Route**: `POST /advisory`
 - **Description**: Generates standalone trilingual crop and soil-aware advisory text.
 - **Request Body (Kannada Example)**:
+
 ```json
 {
   "district": "Tumakuru",
@@ -234,10 +263,12 @@ docker run -p 8000:8000 --name varsha-setu varsha-setu-backend:latest
   "t1_break_prob": 0.72,
   "t1_heavy_triggered": false,
   "t1_heavy_prob": 0.05,
-  "t1_active_prob": 0.10
+  "t1_active_prob": 0.1
 }
 ```
+
 - **Request Body (Hindi Example)**:
+
 ```json
 {
   "district": "Bagalkote",
@@ -245,25 +276,28 @@ docker run -p 8000:8000 --name varsha-setu varsha-setu-backend:latest
   "crop_stage": "Vegetative Growth",
   "language": "hi",
   "t1_break_triggered": false,
-  "t1_break_prob": 0.10,
+  "t1_break_prob": 0.1,
   "t1_heavy_triggered": true,
   "t1_heavy_prob": 0.35,
-  "t1_active_prob": 0.40
+  "t1_active_prob": 0.4
 }
 ```
 
 ---
 
 ### 6. Advisory Audio Stream (TTS)
+
 - **Route**: `POST /advisory/audio`
 - **Description**: Generates an in-memory MP3 audio stream using Google TTS (`gTTS`).
 - **Request Body**:
+
 ```json
 {
   "text": "अनुकूल सक्रिय मानसून परिस्थितियां: मिट्टी में नमी का संतुलन फसल के लिए सर्वोत्तम है।",
   "language": "hi"
 }
 ```
+
 - **Response**: Binary stream with headers:
   - `Content-Type: audio/mpeg`
   - `Content-Disposition: inline; filename=varsha_setu_advisory.mp3`
@@ -271,6 +305,7 @@ docker run -p 8000:8000 --name varsha-setu varsha-setu-backend:latest
 ---
 
 ### 7. Regional Risk Map
+
 - **Route**: `GET /risk-map`
 - **Description**: Serves the interactive 236-Taluk Folium risk gradient HTML map.
 - **Response**: `text/html; charset=utf-8`
@@ -278,6 +313,7 @@ docker run -p 8000:8000 --name varsha-setu varsha-setu-backend:latest
 ---
 
 ## Known Limitations & Design Rationale
+
 1. **Spatial Coverage**: The model was trained on real daily CHIRPS rainfall observations (2015-2024) across the 236 official taluks documented in `karnataka_taluks_verified.csv`.
 2. **Heavy-Rain Threshold**: The calibrated cutoff for heavy rainfall targets (`0.20`–`0.23`) reflects a deliberate precision/recall trade-off designed to detect extreme events ($\ge 64.5$ mm/day) rather than an error in model training.
 3. **Feature Ordering**: Feature vector assembly explicitly verifies against `feature_columns.pkl` with assertion checks to eliminate silent prediction degradation.

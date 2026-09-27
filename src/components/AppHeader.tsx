@@ -67,7 +67,9 @@ export function AppHeader({ children, showProgress = true }: AppHeaderProps) {
                     className="h-8 border-border/80 bg-glass/80 backdrop-blur-lg gap-1.5 text-xs font-medium px-2.5"
                   >
                     <User className="size-3.5 text-signal" />
-                    <span className="max-w-[100px] truncate hidden sm:inline">{user.full_name}</span>
+                    <span className="max-w-[100px] truncate hidden sm:inline">
+                      {user.full_name}
+                    </span>
                     <Badge
                       variant="outline"
                       className="text-[9px] uppercase px-1 py-0 h-4 border-signal/40 bg-signal/10 text-signal"
@@ -89,7 +91,9 @@ export function AppHeader({ children, showProgress = true }: AppHeaderProps) {
                     {user.default_taluk && (
                       <div className="flex items-center gap-1 text-[10px] text-signal mt-1 font-mono">
                         <MapPin className="size-3 shrink-0" />
-                        <span>{user.default_taluk}, {user.default_district}</span>
+                        <span>
+                          {user.default_taluk}, {user.default_district}
+                        </span>
                       </div>
                     )}
                   </div>

@@ -1,7 +1,7 @@
 import datetime
 import logging
 import time
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, Tuple, Optional
 import numpy as np
 import pandas as pd
 import requests
@@ -12,16 +12,14 @@ logger = logging.getLogger("varsha_setu.weather_client")
 # In-memory TTL cache: key -> (data_dict, expiry_timestamp)
 _weather_cache: Dict[str, Tuple[Dict[str, Any], float]] = {}
 
-def get_climatological_normal_fallback(lat: float, lon: float, target_date: datetime.date | None = None) -> Dict[str, Any]:
+def get_seasonal_harmonic_fallback(target_date: Optional[datetime.date] = None) -> Dict[str, Any]:
     """
-    Computes documented climatological normal precipitation baseline for Karnataka
-    when live Open-Meteo API is unreachable or times out.
-    Uses day-of-year seasonal harmonics derived from 10-year CHIRPS historical distribution.
+    Tier 3 Fallback: Computes documented statewide seasonal harmonic precipitation baseline
+    for Karnataka when both live Open-Meteo and taluk parquet artifacts are unavailable.
     """
     d = target_date or datetime.date.today()
     doy = d.timetuple().tm_yday
 
-    # Daily normal precipitation approximation (mm/day) across Karnataka
     if 150 <= doy <= 260:
         # Peak Southwest Monsoon (June - mid-September): ~6 - 15 mm/day
         norm_daily = 7.5 + 4.5 * float(np.sin(np.pi * (doy - 150) / 110.0))
@@ -47,7 +45,7 @@ def get_climatological_normal_fallback(lat: float, lon: float, target_date: date
     p_l3 = norm_daily
 
     logger.info(
-        "Applying climatological precipitation baseline for DOY %d: today=%.1fmm, 7d=%.1fmm",
+        "Applying statewide seasonal harmonic fallback for DOY %d: today=%.1fmm, 7d=%.1fmm",
         doy, p_today, p_7d
     )
 
@@ -60,19 +58,113 @@ def get_climatological_normal_fallback(lat: float, lon: float, target_date: date
         "p_l1": p_l1,
         "p_l2": p_l2,
         "p_l3": p_l3,
-        "data_source": "climatological_normal_fallback",
+        "data_source": "karnataka_seasonal_harmonic_fallback",
         "fallback_warning": (
             "Live Open-Meteo precipitation API was unreachable. "
-            "Model inferred from documented 10-year CHIRPS climatological baseline."
+            "Model inferred from statewide seasonal harmonic approximation."
         )
     }
 
-def fetch_recent_precipitation(lat: float, lon: float, force_refresh: bool = False) -> Dict[str, Any]:
+def get_taluk_climatology_fallback(taluk_name: str, target_date: Optional[datetime.date] = None) -> Optional[Dict[str, Any]]:
     """
-    Fetches real-time rolling 21-day precipitation history from Open-Meteo aggregation API.
-    Caches responses in-memory with a 10-minute TTL to respect public rate limits during demos.
-    If Open-Meteo fails or times out, falls back to documented climatological normals and
-    transparently notes it in the returned metadata.
+    Tier 2 Fallback: Queries verified taluk-level Day-of-Year climatological rainfall
+    from the bundled 86,376-row climatology_by_taluk_doy.parquet artifact (10-year CHIRPS distribution).
+    """
+    try:
+        from app.services.artifact_loader import get_bundle
+        bundle = get_bundle()
+    except Exception:
+        return None
+
+    if not bundle or not bundle.climatology_map:
+        return None
+
+    clean_name = taluk_name.strip().lower()
+    d = target_date or datetime.date.today()
+    doy = d.timetuple().tm_yday
+
+    # Verify if taluk has entries in climatology map
+    if (clean_name, doy) not in bundle.climatology_map:
+        return None
+
+    def _doy_for_offset(offset: int) -> int:
+        offset_date = d - datetime.timedelta(days=offset)
+        return offset_date.timetuple().tm_yday
+
+    p_today = bundle.get_climatology(taluk_name, doy)
+    p_3d = sum(bundle.get_climatology(taluk_name, _doy_for_offset(i)) for i in range(3))
+    p_7d = sum(bundle.get_climatology(taluk_name, _doy_for_offset(i)) for i in range(7))
+    p_14d = sum(bundle.get_climatology(taluk_name, _doy_for_offset(i)) for i in range(14))
+    p_21d = sum(bundle.get_climatology(taluk_name, _doy_for_offset(i)) for i in range(21))
+    p_l1 = bundle.get_climatology(taluk_name, _doy_for_offset(1))
+    p_l2 = bundle.get_climatology(taluk_name, _doy_for_offset(2))
+    p_l3 = bundle.get_climatology(taluk_name, _doy_for_offset(3))
+
+    logger.info(
+        "Applying verified taluk climatology parquet artifact for '%s' DOY %d: today=%.2fmm, 7d=%.2fmm",
+        taluk_name, doy, p_today, p_7d
+    )
+
+    return {
+        "p_today": float(p_today),
+        "p_3d": float(p_3d),
+        "p_7d": float(p_7d),
+        "p_14d": float(p_14d),
+        "p_21d": float(p_21d),
+        "p_l1": float(p_l1),
+        "p_l2": float(p_l2),
+        "p_l3": float(p_l3),
+        "data_source": "taluk_climatology_artifact_fallback",
+        "fallback_warning": (
+            f"Live Open-Meteo precipitation API was unreachable. "
+            f"Model inferred from verified {taluk_name} DOY climatological baseline (10-year CHIRPS artifact)."
+        )
+    }
+
+def get_climatological_normal_fallback(
+    lat: float,
+    lon: float,
+    target_date: Optional[datetime.date] = None,
+    taluk_name: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Coordinates fallback resolution between Tier 2 (Taluk Parquet Artifact)
+    and Tier 3 (Statewide Seasonal Harmonic Model).
+    """
+    # 1. Try taluk name if directly available
+    if taluk_name:
+        taluk_result = get_taluk_climatology_fallback(taluk_name, target_date)
+        if taluk_result:
+            return taluk_result
+
+    # 2. Try resolving nearest taluk from coordinates
+    try:
+        from app.services.artifact_loader import get_bundle
+        from app.services.location_resolver import find_nearest_taluk
+        bundle = get_bundle()
+        nearest_taluk, _, _ = find_nearest_taluk(lat, lon, bundle.taluks_df)
+        if nearest_taluk:
+            taluk_result = get_taluk_climatology_fallback(nearest_taluk, target_date)
+            if taluk_result:
+                return taluk_result
+    except Exception as e:
+        logger.debug("Could not resolve nearest taluk for fallback: %s", e)
+
+    # 3. Final resort: Seasonal Harmonic Fallback
+    return get_seasonal_harmonic_fallback(target_date)
+
+def fetch_recent_precipitation(
+    lat: float,
+    lon: float,
+    taluk_name: Optional[str] = None,
+    force_refresh: bool = False
+) -> Dict[str, Any]:
+    """
+    Fetches real-time rolling 21-day precipitation history with a 3-tier cascade:
+      Tier 1: Live Open-Meteo daily aggregation API.
+      Tier 2: Verified Taluk-level Parquet Climatology (86,376 rows, 10-year CHIRPS baseline).
+      Tier 3: Karnataka Statewide Seasonal Harmonic Model.
+    Caches responses in-memory with a 10-minute TTL to respect public rate limits.
     """
     now = time.time()
     today_str = datetime.date.today().isoformat()
@@ -107,7 +199,7 @@ def fetch_recent_precipitation(lat: float, lon: float, force_refresh: bool = Fal
         is_fallback = True
 
     if is_fallback:
-        result = get_climatological_normal_fallback(lat, lon)
+        result = get_climatological_normal_fallback(lat, lon, taluk_name=taluk_name)
     else:
         p_today = float(p_s.iloc[-1])
         p_3d = float(p_s.tail(3).sum())

@@ -133,10 +133,7 @@ function Globe({ colors, reduceMotion }: { colors: SceneColors; reduceMotion: bo
     [],
   );
   const arcs = useMemo(
-    () =>
-      networkPoints
-        .slice(1)
-        .map((point) => arcBetween(networkPoints[0]!, point)),
+    () => networkPoints.slice(1).map((point) => arcBetween(networkPoints[0]!, point)),
     [networkPoints],
   );
 
@@ -213,7 +210,13 @@ function Globe({ colors, reduceMotion }: { colors: SceneColors; reduceMotion: bo
           opacity={0.5}
         />
       ))}
-      <Line points={networkPoints} color={colors.signal} lineWidth={1.4} transparent opacity={0.7} />
+      <Line
+        points={networkPoints}
+        color={colors.signal}
+        lineWidth={1.4}
+        transparent
+        opacity={0.7}
+      />
 
       {networkPoints.map((point, index) => (
         <mesh key={index} position={point}>
@@ -228,7 +231,12 @@ function Globe({ colors, reduceMotion }: { colors: SceneColors; reduceMotion: bo
       </mesh>
       <mesh ref={pulse} position={marker}>
         <ringGeometry args={[0.1, 0.125, 32]} />
-        <meshBasicMaterial color={colors.warning} side={THREE.DoubleSide} transparent opacity={0.6} />
+        <meshBasicMaterial
+          color={colors.warning}
+          side={THREE.DoubleSide}
+          transparent
+          opacity={0.6}
+        />
       </mesh>
     </group>
   );

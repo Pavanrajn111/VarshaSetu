@@ -1,28 +1,36 @@
-import React, { useState } from 'react';
-import { useDashboard } from '@/context/DashboardContext';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { VoiceAdvisoryButton } from './VoiceAdvisoryButton';
-import { Sprout, Sparkles, RefreshCw, Loader2, CheckCircle2, AlertTriangle, BookOpen } from 'lucide-react';
+import React, { useState } from "react";
+import { useDashboard } from "@/context/DashboardContext";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { VoiceAdvisoryButton } from "./VoiceAdvisoryButton";
+import {
+  Sprout,
+  Sparkles,
+  RefreshCw,
+  Loader2,
+  CheckCircle2,
+  AlertTriangle,
+  BookOpen,
+} from "lucide-react";
 
 const CROP_OPTIONS = [
-  'Finger Millet (Ragi)',
-  'Maize',
-  'Groundnut',
-  'Sugarcane',
-  'Paddy',
-  'Cotton',
-  'Red Gram (Tur)',
-  'Soybean',
+  "Finger Millet (Ragi)",
+  "Maize",
+  "Groundnut",
+  "Sugarcane",
+  "Paddy",
+  "Cotton",
+  "Red Gram (Tur)",
+  "Soybean",
 ];
 
 const STAGE_OPTIONS = [
-  'Pre-Sowing / Land Preparation',
-  'Sowing & Germination',
-  'Vegetative Growth',
-  'Flowering / Grain Formation',
-  'Harvesting & Post-Harvest',
+  "Pre-Sowing / Land Preparation",
+  "Sowing & Germination",
+  "Vegetative Growth",
+  "Flowering / Grain Formation",
+  "Harvesting & Post-Harvest",
 ];
 
 export function CropAdvisoryPanel() {
@@ -53,7 +61,7 @@ export function CropAdvisoryPanel() {
     loadAdvisory();
   };
 
-  const isKannada = language === 'kn';
+  const isKannada = language === "kn";
 
   return (
     <Card className="overflow-hidden border border-border/70 bg-card/75 shadow-lg backdrop-blur-xl">
@@ -74,7 +82,10 @@ export function CropAdvisoryPanel() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="border-success/40 bg-success/10 font-mono text-[10px] text-success">
+            <Badge
+              variant="outline"
+              className="border-success/40 bg-success/10 font-mono text-[10px] text-success"
+            >
               Language: {language.toUpperCase()}
             </Badge>
           </div>
@@ -83,7 +94,10 @@ export function CropAdvisoryPanel() {
 
       <CardContent className="pt-5 space-y-6">
         {/* Selector Controls */}
-        <form onSubmit={handleRefreshAdvisory} className="grid gap-4 sm:grid-cols-[1fr_1fr_auto] items-end">
+        <form
+          onSubmit={handleRefreshAdvisory}
+          className="grid gap-4 sm:grid-cols-[1fr_1fr_auto] items-end"
+        >
           <div>
             <label className="mb-1.5 block font-mono text-xs uppercase tracking-wider text-muted-foreground">
               Target Crop
@@ -148,15 +162,15 @@ export function CropAdvisoryPanel() {
             </div>
 
             {/* Audio Synthesis Playback Button */}
-            {advisoryText && (
-              <VoiceAdvisoryButton text={advisoryText} language={language} />
-            )}
+            {advisoryText && <VoiceAdvisoryButton text={advisoryText} language={language} />}
           </div>
 
           {isLoadingAdvisory || isLoadingForecast ? (
             <div className="flex flex-col items-center justify-center py-10 gap-3 text-muted-foreground">
               <Loader2 className="size-6 animate-spin text-signal" />
-              <span className="font-mono text-xs">Computing Penman-Monteith water balance & crop rules...</span>
+              <span className="font-mono text-xs">
+                Computing Penman-Monteith water balance & crop rules...
+              </span>
             </div>
           ) : advisoryError ? (
             <div className="flex items-center gap-3 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-destructive text-xs">
@@ -170,27 +184,37 @@ export function CropAdvisoryPanel() {
             <div className="space-y-4">
               <div
                 className={`text-sm leading-relaxed sm:text-base text-foreground/90 whitespace-pre-line ${
-                  isKannada ? 'font-kannada text-base sm:text-lg leading-relaxed' : ''
+                  isKannada ? "font-kannada text-base sm:text-lg leading-relaxed" : ""
                 }`}
               >
                 {advisoryText}
               </div>
 
               <div className="flex flex-wrap gap-2 pt-2 border-t border-border/30">
-                <Badge variant="outline" className="border-signal/30 bg-signal/5 text-[10px] font-mono text-signal">
+                <Badge
+                  variant="outline"
+                  className="border-signal/30 bg-signal/5 text-[10px] font-mono text-signal"
+                >
                   📍 {location.locationName || `${location.taluk}, ${location.district}`}
                 </Badge>
-                <Badge variant="outline" className="border-border text-[10px] font-mono text-muted-foreground">
+                <Badge
+                  variant="outline"
+                  className="border-border text-[10px] font-mono text-muted-foreground"
+                >
                   Crop: {cropType}
                 </Badge>
-                <Badge variant="outline" className="border-border text-[10px] font-mono text-muted-foreground">
+                <Badge
+                  variant="outline"
+                  className="border-border text-[10px] font-mono text-muted-foreground"
+                >
                   Stage: {cropStage}
                 </Badge>
               </div>
             </div>
           ) : (
             <div className="py-8 text-center text-xs text-muted-foreground">
-              Select a location and click "Update Advisory" to generate stage-specific farm advisories.
+              Select a location and click "Update Advisory" to generate stage-specific farm
+              advisories.
             </div>
           )}
         </div>

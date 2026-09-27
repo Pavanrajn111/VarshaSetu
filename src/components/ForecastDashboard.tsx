@@ -1,15 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  api,
-  type ForecastResponse,
-  type DistrictTaluks,
-  type CandidateLocation,
-  ApiError,
-} from '@/lib/api';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import React, { useState, useEffect, useRef } from "react";
+import { apiClient as api, ApiError } from "@/lib/api-client";
+import type {
+  ForecastResponse,
+  DistrictTaluks,
+  CandidateLocation,
+  SupportedLanguage,
+  TargetPrediction,
+} from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+
+function normalizeLang(l: string): SupportedLanguage {
+  if (l.toLowerCase().includes("kannada") || l === "kn") return "kn";
+  if (l.toLowerCase().includes("hindi") || l === "hi") return "hi";
+  return "en";
+}
 import {
   CloudRain,
   MapPin,
@@ -24,49 +31,45 @@ import {
   RefreshCw,
   Layers,
   Sprout,
-} from 'lucide-react';
+} from "lucide-react";
 
-const CROP_OPTIONS = [
-  'Finger Millet (Ragi)',
-  'Maize',
-  'Groundnut',
-  'Sugarcane',
-  'Paddy',
-  'Cotton',
-];
+const CROP_OPTIONS = ["Finger Millet (Ragi)", "Maize", "Groundnut", "Sugarcane", "Paddy", "Cotton"];
 
 const STAGE_OPTIONS = [
-  'Pre-Sowing / Land Preparation',
-  'Sowing & Germination',
-  'Vegetative Growth',
-  'Flowering / Grain Formation',
-  'Harvesting',
+  "Pre-Sowing / Land Preparation",
+  "Sowing & Germination",
+  "Vegetative Growth",
+  "Flowering / Grain Formation",
+  "Harvesting",
 ];
 
 const LANGUAGES = [
-  { code: 'English', label: 'English (EN)' },
-  { code: 'kn', label: 'ಕನ್ನಡ (Kannada)' },
-  { code: 'hi', label: 'हिन्दी (Hindi)' },
+  { code: "English", label: "English (EN)" },
+  { code: "kn", label: "ಕನ್ನಡ (Kannada)" },
+  { code: "hi", label: "हिन्दी (Hindi)" },
 ];
 
 export function ForecastDashboard() {
   // Administrative state
   const [districts, setDistricts] = useState<DistrictTaluks[]>([]);
-  const [selectedDistrict, setSelectedDistrict] = useState<string>('Uttara Kannada');
-  const [selectedTaluk, setSelectedTaluk] = useState<string>('Sirsi');
-  const [coords, setCoords] = useState<{ lat: number; lon: number }>({ lat: 14.7336, lon: 74.7788 });
-  const [locationTitle, setLocationTitle] = useState<string>('Sirsi Taluk HQ');
-  const [scaleTag, setScaleTag] = useState<string>('Administrative Taluk Node');
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("Uttara Kannada");
+  const [selectedTaluk, setSelectedTaluk] = useState<string>("Sirsi");
+  const [coords, setCoords] = useState<{ lat: number; lon: number }>({
+    lat: 14.7336,
+    lon: 74.7788,
+  });
+  const [locationTitle, setLocationTitle] = useState<string>("Sirsi Taluk HQ");
+  const [scaleTag, setScaleTag] = useState<string>("Administrative Taluk Node");
 
   // Search state
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [disambiguationList, setDisambiguationList] = useState<CandidateLocation[]>([]);
 
   // Agronomic parameters
-  const [cropType, setCropType] = useState<string>('Finger Millet (Ragi)');
-  const [cropStage, setCropStage] = useState<string>('Sowing & Germination');
-  const [language, setLanguage] = useState<string>('English');
+  const [cropType, setCropType] = useState<string>("Finger Millet (Ragi)");
+  const [cropStage, setCropStage] = useState<string>("Sowing & Germination");
+  const [language, setLanguage] = useState<string>("English");
 
   // Forecast results & loading
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
@@ -86,8 +89,8 @@ export function ForecastDashboard() {
       try {
         const data = await api.getTaluks();
         setDistricts(data.districts);
-      } catch (err: any) {
-        console.warn('Failed to load taluk hierarchy:', err);
+      } catch (err: unknown) {
+        console.warn("Failed to load taluk hierarchy:", err);
       }
     }
     loadHierarchy();
@@ -112,11 +115,12 @@ export function ForecastDashboard() {
       } else {
         setGeneralError(`Location '${searchQuery}' could not be resolved inside Karnataka.`);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err instanceof ApiError && err.status === 429) {
         setRateLimitWarning(err.message);
       } else {
-        setGeneralError(err.message || 'Location resolution failed.');
+        const msg = err instanceof Error ? err.message : "Location resolution failed.";
+        setGeneralError(msg);
       }
     } finally {
       setIsSearching(false);
@@ -128,9 +132,9 @@ export function ForecastDashboard() {
     setSelectedTaluk(cand.taluk);
     setCoords({ lat: cand.lat, lon: cand.lon });
     setLocationTitle(cand.label || cand.name);
-    setScaleTag(tag || 'Hyperlocal Resolved Location');
+    setScaleTag(tag || "Hyperlocal Resolved Location");
     setDisambiguationList([]);
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   // Run Forecast
@@ -151,14 +155,15 @@ export function ForecastDashboard() {
         scale_tag: scaleTag,
         crop_type: cropType,
         crop_stage: cropStage,
-        language: language,
+        language: normalizeLang(language),
       });
       setForecast(res);
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err instanceof ApiError && err.status === 429) {
         setRateLimitWarning(err.message);
       } else {
-        setGeneralError(err.message || 'Forecast calculation failed.');
+        const msg = err instanceof Error ? err.message : "Forecast calculation failed.";
+        setGeneralError(msg);
       }
     } finally {
       setIsLoadingForecast(false);
@@ -168,6 +173,7 @@ export function ForecastDashboard() {
   // Run on initial load with Sirsi
   useEffect(() => {
     handleRunForecast();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Synthesize Voice Advisory
@@ -185,20 +191,19 @@ export function ForecastDashboard() {
     setAudioError(null);
 
     try {
-      const blob = await api.streamAdvisoryAudio(forecast.advisory_text, language);
+      const blob = await api.streamAdvisoryAudio(forecast.advisory_text, normalizeLang(language));
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);
       if (audioRef.current) {
         audioRef.current.src = url;
         audioRef.current.play();
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err instanceof ApiError && err.status === 429) {
-        setAudioError('Voice synthesizer is rate limited. Please wait a moment.');
-      } else if (err instanceof ApiError && err.status === 401) {
-        setAudioError('Audio API key required for voice synthesis.');
+        setAudioError("Voice synthesizer is rate limited. Please wait a moment.");
       } else {
-        setAudioError(err.message || 'Audio generation failed.');
+        const msg = err instanceof Error ? err.message : "Audio generation failed.";
+        setAudioError(msg);
       }
     } finally {
       setIsPlayingAudio(false);
@@ -286,7 +291,11 @@ export function ForecastDashboard() {
                 className="flex-1 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-cyan-400"
               />
               <Button type="submit" size="sm" variant="secondary" disabled={isSearching}>
-                {isSearching ? <Loader2 className="h-3 w-3 animate-spin" /> : <Search className="h-3 w-3" />}
+                {isSearching ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Search className="h-3 w-3" />
+                )}
               </Button>
             </form>
 
@@ -300,7 +309,7 @@ export function ForecastDashboard() {
                   {disambiguationList.map((cand, idx) => (
                     <button
                       key={idx}
-                      onClick={() => applyCandidate(cand, 'Village Cluster (Disambiguated)')}
+                      onClick={() => applyCandidate(cand, "Village Cluster (Disambiguated)")}
                       className="w-full text-left p-1.5 hover:bg-amber-500/20 rounded text-xs text-slate-200"
                     >
                       {cand.name} ({cand.taluk}, {cand.district})
@@ -323,7 +332,7 @@ export function ForecastDashboard() {
                       setSelectedTaluk(d.taluks[0].taluk_name);
                       setCoords({ lat: d.taluks[0].lat, lon: d.taluks[0].lon });
                       setLocationTitle(`${d.taluks[0].taluk_name} Taluk HQ`);
-                      setScaleTag('Administrative Taluk Node');
+                      setScaleTag("Administrative Taluk Node");
                     }
                   }}
                   className="w-full mt-1 bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-slate-200"
@@ -347,7 +356,7 @@ export function ForecastDashboard() {
                     if (t) {
                       setCoords({ lat: t.lat, lon: t.lon });
                       setLocationTitle(`${t.taluk_name} Taluk HQ`);
-                      setScaleTag('Administrative Taluk Node');
+                      setScaleTag("Administrative Taluk Node");
                     }
                   }}
                   className="w-full mt-1 bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-slate-200"
@@ -377,7 +386,10 @@ export function ForecastDashboard() {
               </div>
               <div className="flex justify-between text-muted-foreground">
                 <span>Resolution Tag:</span>
-                <Badge variant="outline" className="text-[10px] py-0 border-cyan-500/30 text-cyan-400">
+                <Badge
+                  variant="outline"
+                  className="text-[10px] py-0 border-cyan-500/30 text-cyan-400"
+                >
                   {scaleTag}
                 </Badge>
               </div>
@@ -459,7 +471,9 @@ export function ForecastDashboard() {
                   </div>
                   <div className="flex justify-between">
                     <span>Moisture Buffer:</span>
-                    <span className="font-mono text-cyan-300">~{forecast.soil.buffer_days} Days</span>
+                    <span className="font-mono text-cyan-300">
+                      ~{forecast.soil.buffer_days} Days
+                    </span>
                   </div>
                 </div>
 
@@ -467,26 +481,39 @@ export function ForecastDashboard() {
                   <div className="font-semibold text-slate-300">Planetary Climate Indices</div>
                   <div className="flex justify-between">
                     <span>ENSO (ONI):</span>
-                    <span className={forecast.teleconnections.is_el_nino ? 'text-amber-400' : 'text-slate-300'}>
-                      {forecast.teleconnections.oni} ({forecast.teleconnections.is_el_nino ? 'El Niño' : 'Neutral/La Niña'})
+                    <span
+                      className={
+                        forecast.teleconnections.is_el_nino ? "text-amber-400" : "text-slate-300"
+                      }
+                    >
+                      {forecast.teleconnections.oni} (
+                      {forecast.teleconnections.is_el_nino ? "El Niño" : "Neutral/La Niña"})
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>IOD (DMI):</span>
-                    <span className={forecast.teleconnections.is_pos_iod ? 'text-emerald-400' : 'text-slate-300'}>
-                      {forecast.teleconnections.dmi} ({forecast.teleconnections.is_pos_iod ? 'Positive' : 'Neutral/Neg'})
+                    <span
+                      className={
+                        forecast.teleconnections.is_pos_iod ? "text-emerald-400" : "text-slate-300"
+                      }
+                    >
+                      {forecast.teleconnections.dmi} (
+                      {forecast.teleconnections.is_pos_iod ? "Positive" : "Neutral/Neg"})
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>MJO State:</span>
                     <span className="text-slate-300">
-                      Phase {forecast.teleconnections.mjo_phase} (Amp: {forecast.teleconnections.mjo_amp})
+                      Phase {forecast.teleconnections.mjo_phase} (Amp:{" "}
+                      {forecast.teleconnections.mjo_amp})
                     </span>
                   </div>
                 </div>
               </>
             ) : (
-              <div className="text-center py-6 text-muted-foreground">Run forecast to load soil and teleconnections</div>
+              <div className="text-center py-6 text-muted-foreground">
+                Run forecast to load soil and teleconnections
+              </div>
             )}
           </CardContent>
         </Card>
@@ -497,22 +524,29 @@ export function ForecastDashboard() {
         <Card className="bg-slate-900/90 border-cyan-500/30">
           <CardContent className="p-4 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1">
-              <div className="font-mono text-xs uppercase tracking-wider text-cyan-400">14-Day Monsoon Arrival Probability</div>
+              <div className="font-mono text-xs uppercase tracking-wider text-cyan-400">
+                14-Day Monsoon Arrival Probability
+              </div>
               <div className="text-2xl font-display font-semibold flex items-center gap-3">
                 <span>{forecast.onset.status_tag}</span>
                 {forecast.onset.probability !== null && (
-                  <Badge variant="outline" className="text-base px-2.5 border-cyan-400/40 text-cyan-300">
+                  <Badge
+                    variant="outline"
+                    className="text-base px-2.5 border-cyan-400/40 text-cyan-300"
+                  >
                     {(forecast.onset.probability * 100).toFixed(1)}%
                   </Badge>
                 )}
               </div>
               <div className="text-xs text-muted-foreground">
-                Normal Historical Window: <span className="text-slate-200">{forecast.onset.normal_date_window}</span> · {forecast.onset.driver_outlook}
+                Normal Historical Window:{" "}
+                <span className="text-slate-200">{forecast.onset.normal_date_window}</span> ·{" "}
+                {forecast.onset.driver_outlook}
               </div>
             </div>
 
             <div className="text-xs font-mono text-muted-foreground">
-              Weather Data Feed:{' '}
+              Weather Data Feed:{" "}
               <Badge variant="secondary" className="text-[10px]">
                 {forecast.weather_data_source}
               </Badge>
@@ -576,7 +610,8 @@ export function ForecastDashboard() {
           <CardHeader className="pb-3 border-b border-slate-800">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <CardTitle className="text-lg font-display font-semibold flex items-center gap-2 text-emerald-400">
-                <Sparkles className="h-5 w-5" /> Agronomic Soil & Field Advisory ({forecast.language})
+                <Sparkles className="h-5 w-5" /> Agronomic Soil & Field Advisory (
+                {forecast.language})
               </CardTitle>
 
               <div className="flex items-center gap-3">
@@ -614,11 +649,17 @@ export function ForecastDashboard() {
             )}
 
             <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-800/80 text-xs text-muted-foreground font-mono">
-              <span>Target Crop: <span className="text-slate-300">{forecast.crop_type}</span></span>
+              <span>
+                Target Crop: <span className="text-slate-300">{forecast.crop_type}</span>
+              </span>
               <span>·</span>
-              <span>Growth Stage: <span className="text-slate-300">{forecast.crop_stage}</span></span>
+              <span>
+                Growth Stage: <span className="text-slate-300">{forecast.crop_stage}</span>
+              </span>
               <span>·</span>
-              <span>Soil Texture: <span className="text-slate-300">{forecast.soil.type}</span></span>
+              <span>
+                Soil Texture: <span className="text-slate-300">{forecast.soil.type}</span>
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -634,11 +675,11 @@ function TargetCardRow({
   colorClass,
 }: {
   label: string;
-  pred: any;
+  pred?: TargetPrediction | null;
   colorClass: string;
 }) {
   // Graceful handling for single target failure
-  if (!pred || pred.error === 'model_unavailable' || pred.probability === null) {
+  if (!pred || pred.error === "model_unavailable" || pred.probability === null) {
     return (
       <div className="p-2 rounded bg-slate-900/60 border border-slate-800 space-y-1">
         <div className="flex justify-between text-muted-foreground">
@@ -653,7 +694,7 @@ function TargetCardRow({
   }
 
   const pct = (pred.probability * 100).toFixed(1);
-  const cutoffPct = pred.cutoff ? (pred.cutoff * 100).toFixed(0) : '45';
+  const cutoffPct = pred.cutoff ? (pred.cutoff * 100).toFixed(0) : "45";
 
   return (
     <div className="p-2 rounded bg-slate-900/60 border border-slate-800/90 space-y-1.5">
@@ -664,7 +705,7 @@ function TargetCardRow({
 
       <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
         <div
-          className={`h-full ${pred.triggered ? 'bg-amber-400' : 'bg-cyan-500'}`}
+          className={`h-full ${pred.triggered ? "bg-amber-400" : "bg-cyan-500"}`}
           style={{ width: `${Math.min(100, Math.max(0, pred.probability * 100))}%` }}
         />
       </div>

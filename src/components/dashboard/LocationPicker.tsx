@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useDashboard, type LocationState } from '@/context/DashboardContext';
-import { apiClient } from '@/lib/api-client';
-import type { CandidateLocation, DistrictTaluks } from '@/lib/types';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import React, { useState, useEffect } from "react";
+import { useDashboard, type LocationState } from "@/context/DashboardContext";
+import { apiClient } from "@/lib/api-client";
+import type { CandidateLocation, DistrictTaluks } from "@/lib/types";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   MapPin,
   Search,
@@ -17,9 +17,9 @@ import {
   Navigation,
   Compass,
   Bookmark,
-} from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
-import { toast } from 'sonner';
+} from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
 
 let cachedDistricts: DistrictTaluks[] | null = null;
 
@@ -29,16 +29,18 @@ export function LocationPicker() {
   const [isSavingDefault, setIsSavingDefault] = useState(false);
 
   // Mode selection: 'admin' vs 'search'
-  const [mode, setMode] = useState<'admin' | 'search'>('admin');
+  const [mode, setMode] = useState<"admin" | "search">("admin");
 
   // Admin Mode state
   const [districts, setDistricts] = useState<DistrictTaluks[]>(cachedDistricts || []);
-  const [selectedDistrict, setSelectedDistrict] = useState<string>(location.district || 'Uttara Kannada');
-  const [selectedTaluk, setSelectedTaluk] = useState<string>(location.taluk || 'Sirsi');
+  const [selectedDistrict, setSelectedDistrict] = useState<string>(
+    location.district || "Uttara Kannada",
+  );
+  const [selectedTaluk, setSelectedTaluk] = useState<string>(location.taluk || "Sirsi");
   const [isLoadingTaluks, setIsLoadingTaluks] = useState<boolean>(!cachedDistricts);
 
   // Search Village Mode state
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [candidates, setCandidates] = useState<CandidateLocation[]>([]);
@@ -61,7 +63,7 @@ export function LocationPicker() {
           setDistricts(data.districts);
         }
       } catch (err) {
-        console.warn('Could not load administrative hierarchy from backend:', err);
+        console.warn("Could not load administrative hierarchy from backend:", err);
       } finally {
         if (isMounted) setIsLoadingTaluks(false);
       }
@@ -85,7 +87,7 @@ export function LocationPicker() {
       });
       toast.success(`Saved ${location.taluk} as your default location.`);
     } catch {
-      toast.error('Failed to save default location.');
+      toast.error("Failed to save default location.");
     } finally {
       setIsSavingDefault(false);
     }
@@ -107,7 +109,7 @@ export function LocationPicker() {
         district: distName,
         taluk: firstTaluk.taluk_name,
         locationName: `${firstTaluk.taluk_name} Taluk HQ`,
-        scaleTag: 'Administrative Taluk Node',
+        scaleTag: "Administrative Taluk Node",
       });
     }
   };
@@ -122,7 +124,7 @@ export function LocationPicker() {
         district: selectedDistrict,
         taluk: talukItem.taluk_name,
         locationName: `${talukItem.taluk_name} Taluk HQ`,
-        scaleTag: 'Administrative Taluk Node',
+        scaleTag: "Administrative Taluk Node",
       });
     }
   };
@@ -142,7 +144,7 @@ export function LocationPicker() {
       const res = await apiClient.resolveLocation(query);
 
       // Case A: Single match
-      if (res.status === 'success' && res.selected) {
+      if (res.status === "success" && res.selected) {
         const item = res.selected;
         setLocation({
           lat: item.lat,
@@ -150,26 +152,28 @@ export function LocationPicker() {
           district: item.district,
           taluk: item.taluk,
           locationName: item.label || item.name,
-          scaleTag: res.scale_tag || 'Resolved Spatial Point',
+          scaleTag: res.scale_tag || "Resolved Spatial Point",
         });
         setCandidates([]);
       }
       // Case B: Disambiguation required
-      else if (res.disambiguation_required || res.status === 'disambiguation_required') {
+      else if (res.disambiguation_required || res.status === "disambiguation_required") {
         if (res.candidates && res.candidates.length > 0) {
           setCandidates(res.candidates);
         } else {
-          setSearchError(`Multiple potential matches found for "${query}", but no candidates could be parsed.`);
+          setSearchError(
+            `Multiple potential matches found for "${query}", but no candidates could be parsed.`,
+          );
         }
       }
       // Case C: 404 / Not found
       else {
         setSearchError(
-          `Could not locate "${query}". Please check the spelling or switch to Administrative mode to choose by district.`
+          `Could not locate "${query}". Please check the spelling or switch to Administrative mode to choose by district.`,
         );
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error resolving village coordinates.';
+      const msg = err instanceof Error ? err.message : "Error resolving village coordinates.";
       setSearchError(msg);
     } finally {
       setIsSearching(false);
@@ -184,7 +188,7 @@ export function LocationPicker() {
       district: candidate.district,
       taluk: candidate.taluk,
       locationName: candidate.label || candidate.name,
-      scaleTag: 'Disambiguated Village Node',
+      scaleTag: "Disambiguated Village Node",
     });
   };
 
@@ -210,11 +214,11 @@ export function LocationPicker() {
           <div className="flex items-center rounded-lg border border-border/80 bg-background/50 p-1">
             <button
               type="button"
-              onClick={() => setMode('admin')}
+              onClick={() => setMode("admin")}
               className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-xs transition-colors ${
-                mode === 'admin'
-                  ? 'bg-signal text-signal-foreground font-medium shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                mode === "admin"
+                  ? "bg-signal text-signal-foreground font-medium shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Building2 className="size-3.5" />
@@ -222,11 +226,11 @@ export function LocationPicker() {
             </button>
             <button
               type="button"
-              onClick={() => setMode('search')}
+              onClick={() => setMode("search")}
               className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-xs transition-colors ${
-                mode === 'search'
-                  ? 'bg-signal text-signal-foreground font-medium shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                mode === "search"
+                  ? "bg-signal text-signal-foreground font-medium shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Search className="size-3.5" />
@@ -237,7 +241,7 @@ export function LocationPicker() {
       </CardHeader>
 
       <CardContent className="pt-5">
-        {mode === 'admin' ? (
+        {mode === "admin" ? (
           /* Mode 1: Administrative Dropdowns */
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
@@ -256,7 +260,11 @@ export function LocationPicker() {
                   className="w-full rounded-md border border-border/80 bg-background/80 px-3 py-2 text-sm text-foreground focus:border-signal focus:outline-none focus:ring-1 focus:ring-signal"
                 >
                   {districts.map((d) => (
-                    <option key={d.district} value={d.district} className="bg-popover text-foreground">
+                    <option
+                      key={d.district}
+                      value={d.district}
+                      className="bg-popover text-foreground"
+                    >
                       {d.district} ({d.taluks.length} taluks)
                     </option>
                   ))}
@@ -275,7 +283,11 @@ export function LocationPicker() {
                 className="w-full rounded-md border border-border/80 bg-background/80 px-3 py-2 text-sm text-foreground focus:border-signal focus:outline-none focus:ring-1 focus:ring-signal disabled:opacity-50"
               >
                 {availableTaluks.map((t) => (
-                  <option key={t.taluk_name} value={t.taluk_name} className="bg-popover text-foreground">
+                  <option
+                    key={t.taluk_name}
+                    value={t.taluk_name}
+                    className="bg-popover text-foreground"
+                  >
                     {t.taluk_name} ({t.lat.toFixed(3)}°N, {t.lon.toFixed(3)}°E)
                   </option>
                 ))}
@@ -307,7 +319,7 @@ export function LocationPicker() {
                     Resolving
                   </>
                 ) : (
-                  'Resolve'
+                  "Resolve"
                 )}
               </Button>
             </form>
@@ -330,7 +342,8 @@ export function LocationPicker() {
                   </span>
                 </div>
                 <p className="mb-3 text-xs text-muted-foreground">
-                  Multiple revenue villages or taluks match your query. Select the exact location below:
+                  Multiple revenue villages or taluks match your query. Select the exact location
+                  below:
                 </p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {candidates.map((c, idx) => {
@@ -344,21 +357,23 @@ export function LocationPicker() {
                         onClick={() => handleSelectCandidate(c)}
                         className={`flex items-start justify-between rounded-md border p-2.5 text-left text-xs transition-all ${
                           isSelected
-                            ? 'border-signal bg-signal/15 text-foreground'
-                            : 'border-border/60 bg-background/60 hover:border-signal/50 text-muted-foreground hover:text-foreground'
+                            ? "border-signal bg-signal/15 text-foreground"
+                            : "border-border/60 bg-background/60 hover:border-signal/50 text-muted-foreground hover:text-foreground"
                         }`}
                       >
                         <div>
                           <div className="font-semibold text-foreground">{c.label || c.name}</div>
                           <div className="mt-0.5 text-[11px] text-muted-foreground">
-                            Taluk: <span className="text-foreground">{c.taluk}</span> · District:{' '}
+                            Taluk: <span className="text-foreground">{c.taluk}</span> · District:{" "}
                             <span className="text-foreground">{c.district}</span>
                           </div>
                           <div className="mt-1 font-mono text-[10px] text-signal">
                             {c.lat.toFixed(4)}°N, {c.lon.toFixed(4)}°E
                           </div>
                         </div>
-                        {isSelected && <CheckCircle2 className="size-4 text-signal shrink-0 mt-0.5" />}
+                        {isSelected && (
+                          <CheckCircle2 className="size-4 text-signal shrink-0 mt-0.5" />
+                        )}
                       </button>
                     );
                   })}
@@ -382,7 +397,10 @@ export function LocationPicker() {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="outline" className="border-signal/40 bg-signal/10 font-mono text-[10px] text-signal">
+            <Badge
+              variant="outline"
+              className="border-signal/40 bg-signal/10 font-mono text-[10px] text-signal"
+            >
               {location.lat.toFixed(4)}°N, {location.lon.toFixed(4)}°E
             </Badge>
             <Badge variant="secondary" className="font-mono text-[10px]">
@@ -396,8 +414,8 @@ export function LocationPicker() {
                 disabled={isSavingDefault || isCurrentDefaultLocation}
                 className={`h-7 px-2.5 font-mono text-[10px] ${
                   isCurrentDefaultLocation
-                    ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400 cursor-default'
-                    : 'border-signal/40 bg-signal/10 text-signal hover:bg-signal/20'
+                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 cursor-default"
+                    : "border-signal/40 bg-signal/10 text-signal hover:bg-signal/20"
                 }`}
               >
                 {isCurrentDefaultLocation ? (

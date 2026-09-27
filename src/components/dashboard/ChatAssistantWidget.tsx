@@ -1,31 +1,22 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useDashboard } from '@/context/DashboardContext';
-import { sendChatMessage } from '@/lib/chat-service';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import {
-  MessageCircleMore,
-  X,
-  Send,
-  Bot,
-  User,
-  Loader2,
-  Sparkles,
-  HelpCircle,
-} from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { useDashboard } from "@/context/DashboardContext";
+import { sendChatMessage } from "@/lib/chat-service";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { MessageCircleMore, X, Send, Bot, User, Loader2, Sparkles, HelpCircle } from "lucide-react";
 
 interface ChatMessage {
   id: string;
-  sender: 'user' | 'assistant';
+  sender: "user" | "assistant";
   text: string;
   timestamp: string;
 }
 
 const SUGGESTED_PROMPTS = [
-  'Will it rain in the next 7 days?',
-  'Is it safe to apply fertilizer today?',
-  'How do soil buffer days affect my irrigation?',
+  "Will it rain in the next 7 days?",
+  "Is it safe to apply fertilizer today?",
+  "How do soil buffer days affect my irrigation?",
 ];
 
 export function ChatAssistantWidget() {
@@ -34,20 +25,20 @@ export function ChatAssistantWidget() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
-      id: 'welcome',
-      sender: 'assistant',
-      text: 'Namaskara! I am your Varsha Setu agricultural intelligence assistant. Ask me anything about rainfall outlook, sowing windows, or soil moisture for your taluk.',
-      timestamp: 'Just now',
+      id: "welcome",
+      sender: "assistant",
+      text: "Namaskara! I am your Varsha Setu agricultural intelligence assistant. Ask me anything about rainfall outlook, sowing windows, or soil moisture for your taluk.",
+      timestamp: "Just now",
     },
   ]);
-  const [inputText, setInputText] = useState<string>('');
+  const [inputText, setInputText] = useState<string>("");
   const [isTyping, setIsTyping] = useState<boolean>(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isOpen]);
 
@@ -57,13 +48,13 @@ export function ChatAssistantWidget() {
 
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
-      sender: 'user',
+      sender: "user",
       text: query,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
-    setInputText('');
+    setInputText("");
     setIsTyping(true);
 
     try {
@@ -76,9 +67,9 @@ export function ChatAssistantWidget() {
 
       const assistantMsg: ChatMessage = {
         id: `assistant-${Date.now()}`,
-        sender: 'assistant',
+        sender: "assistant",
         text: response,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
@@ -87,9 +78,9 @@ export function ChatAssistantWidget() {
         ...prev,
         {
           id: `err-${Date.now()}`,
-          sender: 'assistant',
-          text: 'Sorry, I encountered an error connecting to the advisory assistant.',
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          sender: "assistant",
+          text: "Sorry, I encountered an error connecting to the advisory assistant.",
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
       ]);
     } finally {
@@ -130,12 +121,15 @@ export function ChatAssistantWidget() {
               <div>
                 <div className="flex items-center gap-1.5 font-display text-sm font-semibold text-foreground">
                   <span>Agro-Assistant</span>
-                  <Badge variant="outline" className="border-signal/30 bg-signal/10 px-1.5 py-0 text-[9px] font-mono text-signal">
+                  <Badge
+                    variant="outline"
+                    className="border-signal/30 bg-signal/10 px-1.5 py-0 text-[9px] font-mono text-signal"
+                  >
                     Scaffold
                   </Badge>
                 </div>
                 <div className="text-[10px] text-muted-foreground">
-                  Context: {location.taluk || 'Karnataka'} · {cropType}
+                  Context: {location.taluk || "Karnataka"} · {cropType}
                 </div>
               </div>
             </div>
@@ -154,15 +148,15 @@ export function ChatAssistantWidget() {
           {/* Messages Body */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.map((m) => {
-              const isUser = m.sender === 'user';
+              const isUser = m.sender === "user";
               return (
                 <div
                   key={m.id}
-                  className={`flex items-start gap-2 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
+                  className={`flex items-start gap-2 ${isUser ? "flex-row-reverse" : "flex-row"}`}
                 >
                   <div
                     className={`grid size-6 shrink-0 place-items-center rounded-full text-[10px] ${
-                      isUser ? 'bg-signal text-signal-foreground' : 'bg-muted text-muted-foreground'
+                      isUser ? "bg-signal text-signal-foreground" : "bg-muted text-muted-foreground"
                     }`}
                   >
                     {isUser ? <User className="size-3.5" /> : <Bot className="size-3.5" />}
@@ -170,14 +164,14 @@ export function ChatAssistantWidget() {
                   <div
                     className={`max-w-[78%] rounded-xl px-3.5 py-2.5 text-xs leading-relaxed ${
                       isUser
-                        ? 'bg-signal text-signal-foreground rounded-tr-none shadow-sm'
-                        : 'border border-border/60 bg-background/80 text-foreground rounded-tl-none shadow-sm'
+                        ? "bg-signal text-signal-foreground rounded-tr-none shadow-sm"
+                        : "border border-border/60 bg-background/80 text-foreground rounded-tl-none shadow-sm"
                     }`}
                   >
                     <div>{m.text}</div>
                     <div
                       className={`mt-1 text-[9px] font-mono ${
-                        isUser ? 'text-signal-foreground/75 text-right' : 'text-muted-foreground'
+                        isUser ? "text-signal-foreground/75 text-right" : "text-muted-foreground"
                       }`}
                     >
                       {m.timestamp}

@@ -129,18 +129,44 @@ def load_artifacts_once(artifacts_dir: Path | None = None) -> ArtifactBundle:
         logger.error(err_msg)
         raise RuntimeError(err_msg)
 
-    # 2. Load Models Bundle
+    # 2. Load Models Bundle & Assert Estimator Contract
     models_path = target_path / "karnataka_multitarget_models.pkl"
     logger.info("Loading multi-target dual-model bundle from %s...", models_path.name)
     models = joblib.load(str(models_path))
 
-    # 3. Load Feature Columns (18 hydrological and teleconnection features)
+    EXPECTED_TARGETS = [
+        'target_onset_next14d',
+        'target_break_w1', 'target_active_w1', 'target_heavy_w1',
+        'target_break_w2', 'target_active_w2', 'target_heavy_w2',
+        'target_break_w3', 'target_active_w3', 'target_heavy_w3',
+        'target_break_w4', 'target_active_w4', 'target_heavy_w4'
+    ]
+    missing_targets = set(EXPECTED_TARGETS) - set(models.keys())
+    if missing_targets:
+        raise RuntimeError(f"Model targets contract violation! Missing targets: {missing_targets}")
+
+    for tgt in EXPECTED_TARGETS:
+        est_dict = models[tgt]
+        if not isinstance(est_dict, dict) or "xgb" not in est_dict or "rf" not in est_dict:
+            raise RuntimeError(
+                f"Estimator contract violation for target '{tgt}': both 'xgb' and 'rf' submodels are strictly required."
+            )
+
+    # 3. Load Feature Columns & Assert 18-Feature Vector Contract
     features_path = target_path / "feature_columns.pkl"
     feature_cols = joblib.load(str(features_path))
-    if not isinstance(feature_cols, list) or len(feature_cols) == 0:
-        raise ValueError(f"Invalid feature_columns.pkl structure in {features_path}")
+    EXPECTED_FEATURES = [
+        'precip', 'precip_3d_sum', 'precip_7d_sum', 'precip_14d_sum', 'precip_21d_sum',
+        'precip_lag1', 'precip_lag2', 'precip_lag3', 'precip_7d_anomaly',
+        'sin_doy', 'cos_doy', 'oni', 'dmi', 'mjo_amplitude',
+        'sin_mjo_phase', 'cos_mjo_phase', 'is_el_nino', 'is_positive_iod'
+    ]
+    if feature_cols != EXPECTED_FEATURES:
+        raise RuntimeError(
+            f"Feature column contract violation! Expected exact 18 features: {EXPECTED_FEATURES}, got: {feature_cols}"
+        )
 
-    # 4. Load Optimal Thresholds with Defensive Parsing
+    # 4. Load Optimal Thresholds with Defensive Parsing & Contract Validation
     thresholds_path = target_path / "optimal_thresholds.pkl"
     raw_thresholds = joblib.load(str(thresholds_path))
     clean_thresholds: Dict[str, float] = {}
@@ -154,6 +180,13 @@ def load_artifacts_once(artifacts_dir: Path | None = None) -> ArtifactBundle:
         else:
             formats_detected.add("unknown")
         clean_thresholds[tgt] = parse_threshold(tgt, val)
+
+    missing_thresh = set(EXPECTED_TARGETS) - set(clean_thresholds.keys())
+    if missing_thresh:
+        raise RuntimeError(f"Thresholds contract violation! Missing thresholds for: {missing_thresh}")
+    for tgt, tval in clean_thresholds.items():
+        if not (0.0 <= tval <= 1.0):
+            raise RuntimeError(f"Threshold contract violation for '{tgt}': value {tval} is outside [0.0, 1.0].")
 
     threshold_format_str = ", ".join(sorted(formats_detected)) or "flat_float"
 

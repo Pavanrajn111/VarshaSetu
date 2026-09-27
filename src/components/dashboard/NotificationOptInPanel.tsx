@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { useDashboard } from '@/context/DashboardContext';
-import { subscribeToAdvisories } from '@/lib/notification-service';
-import type { SupportedLanguage } from '@/lib/types';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import React, { useState } from "react";
+import { useDashboard } from "@/context/DashboardContext";
+import { subscribeToAdvisories } from "@/lib/notification-service";
+import type { SupportedLanguage } from "@/lib/types";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   BellRing,
   Smartphone,
@@ -14,26 +14,32 @@ import {
   Loader2,
   Send,
   Radio,
-} from 'lucide-react';
+} from "lucide-react";
 
 export function NotificationOptInPanel() {
   const { location, cropType, language: globalLanguage, advisoryText } = useDashboard();
 
-  const [phone, setPhone] = useState<string>('');
+  const [phone, setPhone] = useState<string>("");
   const [receiveSms, setReceiveSms] = useState<boolean>(true);
   const [receiveWhatsapp, setReceiveWhatsapp] = useState<boolean>(true);
   const [langPreference, setLangPreference] = useState<SupportedLanguage>(globalLanguage);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [submitted, setSubmitted] = useState<boolean>(false);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanPhone = phone.replace(/\D/g, '');
-    if (cleanPhone.length < 10) return;
+    const cleanPhone = phone.replace(/\D/g, "");
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      setPhoneError(
+        "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.",
+      );
+      return;
+    }
+    setPhoneError(null);
 
-    const channels: ('sms' | 'whatsapp')[] = [];
-    if (receiveSms) channels.push('sms');
-    if (receiveWhatsapp) channels.push('whatsapp');
+    const channels: ("sms" | "whatsapp")[] = [];
+    if (receiveSms) channels.push("sms");
+    if (receiveWhatsapp) channels.push("whatsapp");
     if (channels.length === 0) return;
 
     setIsSubmitting(true);
@@ -42,7 +48,7 @@ export function NotificationOptInPanel() {
         phone: cleanPhone,
         channels,
         language: langPreference,
-        location: location.taluk || location.district || 'Karnataka',
+        location: location.taluk || location.district || "Karnataka",
         crop: cropType,
       });
       setSubmitted(true);
@@ -53,7 +59,7 @@ export function NotificationOptInPanel() {
 
   // Plain-text SMS message preview
   const plainSmsPreview = advisoryText
-    ? `[Varsha Setu Alert: ${location.taluk}] For ${cropType}: ${advisoryText.slice(0, 160)}${advisoryText.length > 160 ? '...' : ''} Call 1800-VS-AGRO for audio.`
+    ? `[Varsha Setu Alert: ${location.taluk}] For ${cropType}: ${advisoryText.slice(0, 160)}${advisoryText.length > 160 ? "..." : ""} Call 1800-VS-AGRO for audio.`
     : `[Varsha Setu Alert: ${location.taluk}] Monsoon Advisory for ${cropType}: Sowing windows open based on soil moisture buffer.`;
 
   return (
@@ -69,12 +75,15 @@ export function NotificationOptInPanel() {
                 Last-Mile SMS & WhatsApp Alert Gateway
               </CardTitle>
               <p className="text-xs text-muted-foreground">
-                Automated multi-channel push delivery directly to farmers' feature phones
+                Interactive simulation for automated push notifications to farmers' feature phones
               </p>
             </div>
           </div>
-          <Badge variant="outline" className="border-signal/40 bg-signal/10 font-mono text-[10px] text-signal">
-            Twilio / WhatsApp Scaffold
+          <Badge
+            variant="outline"
+            className="border-amber-500/40 bg-amber-500/10 font-mono text-[10px] text-amber-300"
+          >
+            Simulated Alert Gateway (Demo Mode)
           </Badge>
         </div>
       </CardHeader>
@@ -95,11 +104,17 @@ export function NotificationOptInPanel() {
                   type="tel"
                   placeholder="98765 43210"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    if (phoneError) setPhoneError(null);
+                  }}
                   maxLength={10}
                   className="border-border/80 bg-background/80 font-mono text-sm text-foreground focus-visible:ring-signal"
                 />
               </div>
+              {phoneError && (
+                <p className="mt-1 font-mono text-[11px] text-destructive">{phoneError}</p>
+              )}
             </div>
 
             {/* Channels */}
@@ -138,9 +153,9 @@ export function NotificationOptInPanel() {
               </label>
               <div className="flex gap-2">
                 {[
-                  { code: 'kn' as const, label: 'ಕನ್ನಡ (Kannada)' },
-                  { code: 'en' as const, label: 'English' },
-                  { code: 'hi' as const, label: 'हिन्दी (Hindi)' },
+                  { code: "kn" as const, label: "ಕನ್ನಡ (Kannada)" },
+                  { code: "en" as const, label: "English" },
+                  { code: "hi" as const, label: "हिन्दी (Hindi)" },
                 ].map((l) => (
                   <button
                     key={l.code}
@@ -148,8 +163,8 @@ export function NotificationOptInPanel() {
                     onClick={() => setLangPreference(l.code)}
                     className={`rounded-md border px-3 py-1.5 font-mono text-xs transition-colors ${
                       langPreference === l.code
-                        ? 'border-signal bg-signal/15 text-signal font-semibold'
-                        : 'border-border/70 bg-background/50 text-muted-foreground hover:text-foreground'
+                        ? "border-signal bg-signal/15 text-signal font-semibold"
+                        : "border-border/70 bg-background/50 text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     {l.label}
@@ -160,7 +175,11 @@ export function NotificationOptInPanel() {
 
             <Button
               type="submit"
-              disabled={isSubmitting || phone.replace(/\D/g, '').length < 10 || (!receiveSms && !receiveWhatsapp)}
+              disabled={
+                isSubmitting ||
+                phone.replace(/\D/g, "").length < 10 ||
+                (!receiveSms && !receiveWhatsapp)
+              }
               className="w-full bg-signal text-signal-foreground hover:bg-signal/90 font-mono text-xs font-semibold h-10"
             >
               {isSubmitting ? (

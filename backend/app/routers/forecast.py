@@ -49,7 +49,7 @@ async def compute_forecast(request: Request, req: ForecastRequest) -> ForecastRe
     loc_title = req.location_name or taluk_name
 
     # 1. Real Weather & Teleconnections (async non-blocking threads)
-    weather_data = await asyncio.to_thread(fetch_recent_precipitation, req.lat, req.lon)
+    weather_data = await asyncio.to_thread(fetch_recent_precipitation, req.lat, req.lon, taluk_name)
     tele_data = await asyncio.to_thread(get_teleconnections)
 
     # 2. Build 18-Feature Vector (with strict order assertion)

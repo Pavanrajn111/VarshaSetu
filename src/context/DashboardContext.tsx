@@ -1,10 +1,14 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import type {
-  ForecastResponse,
-  SupportedLanguage,
-} from '@/lib/types';
-import { apiClient, ApiError } from '@/lib/api-client';
-import { useAuth } from '@/context/AuthContext';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  type ReactNode,
+} from "react";
+import type { ForecastResponse, SupportedLanguage } from "@/lib/types";
+import { apiClient, ApiError } from "@/lib/api-client";
+import { useAuth } from "@/context/AuthContext";
 
 export interface LocationState {
   lat: number;
@@ -48,26 +52,26 @@ interface DashboardContextType {
 const DEFAULT_LOCATION: LocationState = {
   lat: 14.7336,
   lon: 74.7788,
-  district: 'Uttara Kannada',
-  taluk: 'Sirsi',
-  locationName: 'Sirsi Taluk HQ',
-  scaleTag: 'Administrative Taluk Node',
+  district: "Uttara Kannada",
+  taluk: "Sirsi",
+  locationName: "Sirsi Taluk HQ",
+  scaleTag: "Administrative Taluk Node",
 };
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
   const [location, setLocationState] = useState<LocationState>(DEFAULT_LOCATION);
-  const [language, setLanguageState] = useState<SupportedLanguage>('en');
-  const [cropType, setCropType] = useState<string>('Finger Millet (Ragi)');
-  const [cropStage, setCropStage] = useState<string>('Sowing & Germination');
+  const [language, setLanguageState] = useState<SupportedLanguage>("en");
+  const [cropType, setCropType] = useState<string>("Finger Millet (Ragi)");
+  const [cropStage, setCropStage] = useState<string>("Sowing & Germination");
 
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
   const [isLoadingForecast, setIsLoadingForecast] = useState<boolean>(false);
   const [forecastError, setForecastError] = useState<string | null>(null);
   const [rateLimitCountdown, setRateLimitCountdown] = useState<number | null>(null);
 
-  const [advisoryText, setAdvisoryText] = useState<string>('');
+  const [advisoryText, setAdvisoryText] = useState<string>("");
   const [isLoadingAdvisory, setIsLoadingAdvisory] = useState<boolean>(false);
   const [advisoryError, setAdvisoryError] = useState<string | null>(null);
 
@@ -105,6 +109,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
           }));
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // Rate-limit countdown effect
@@ -168,20 +173,26 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
                 setAdvisoryText(retryData.advisory_text);
               }
             } catch (retryErr: unknown) {
-              const msg = retryErr instanceof Error ? retryErr.message : 'Forecast request failed after retry.';
+              const msg =
+                retryErr instanceof Error
+                  ? retryErr.message
+                  : "Forecast request failed after retry.";
               setForecastError(msg);
               setRateLimitCountdown(null);
             }
           }, waitSec * 1000);
         } else {
-          const msg = err instanceof Error ? err.message : 'Unable to compute forecast for the selected location.';
+          const msg =
+            err instanceof Error
+              ? err.message
+              : "Unable to compute forecast for the selected location.";
           setForecastError(msg);
         }
       } finally {
         setIsLoadingForecast(false);
       }
     },
-    [location, language, cropType, cropStage]
+    [location, language, cropType, cropStage],
   );
 
   // Load agronomic advisory
@@ -195,8 +206,8 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       const w1Active = forecast?.targets?.target_active_w1;
 
       const res = await apiClient.getAdvisory({
-        district: location.district || 'Uttara Kannada',
-        taluk: location.taluk || 'Sirsi',
+        district: location.district || "Uttara Kannada",
+        taluk: location.taluk || "Sirsi",
         crop_type: cropType,
         crop_stage: cropStage,
         language,
@@ -210,7 +221,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         setAdvisoryText(res.advisory_text);
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to retrieve crop advisory.';
+      const msg = err instanceof Error ? err.message : "Failed to retrieve crop advisory.";
       setAdvisoryError(msg);
     } finally {
       setIsLoadingAdvisory(false);
@@ -222,7 +233,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       setLocationState(newLoc);
       loadForecast(newLoc, language);
     },
-    [language, loadForecast]
+    [language, loadForecast],
   );
 
   const setLanguage = useCallback(
@@ -230,7 +241,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       setLanguageState(newLang);
       loadForecast(location, newLang);
     },
-    [location, loadForecast]
+    [location, loadForecast],
   );
 
   // Initial fetch on mount
@@ -269,7 +280,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 export function useDashboard() {
   const context = useContext(DashboardContext);
   if (!context) {
-    throw new Error('useDashboard must be used within a DashboardProvider');
+    throw new Error("useDashboard must be used within a DashboardProvider");
   }
   return context;
 }

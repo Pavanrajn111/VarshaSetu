@@ -1,6 +1,13 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import type { SupportedLanguage, UserProfile } from '@/lib/types';
-import { apiClient, TOKEN_STORAGE_KEY, ApiError } from '@/lib/api-client';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  type ReactNode,
+} from "react";
+import type { SupportedLanguage, UserProfile } from "@/lib/types";
+import { apiClient, TOKEN_STORAGE_KEY, ApiError } from "@/lib/api-client";
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -15,7 +22,7 @@ interface AuthContextType {
     phone_number: string;
     password: string;
     preferred_language: SupportedLanguage;
-    role?: 'farmer' | 'officer';
+    role?: "farmer" | "officer";
     default_taluk?: string;
     default_district?: string;
   }) => Promise<void>;
@@ -24,7 +31,7 @@ interface AuthContextType {
     preferred_language?: SupportedLanguage;
     default_taluk?: string;
     default_district?: string;
-    notification_prefs?: Record<string, any>;
+    notification_prefs?: Record<string, unknown>;
   }) => Promise<void>;
 }
 
@@ -43,7 +50,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let isMounted = true;
 
     async function restoreSession() {
-      const storedToken = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_STORAGE_KEY) : null;
+      const storedToken =
+        typeof window !== "undefined" ? localStorage.getItem(TOKEN_STORAGE_KEY) : null;
       if (!storedToken) {
         if (isMounted) {
           setIsLoading(false);
@@ -58,8 +66,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setToken(storedToken);
         }
       } catch (err) {
-        console.warn('[Varsha Setu] Stored token invalid or expired. Clearing session.');
-        if (typeof window !== 'undefined') {
+        console.warn("[Varsha Setu] Stored token invalid or expired. Clearing session.");
+        if (typeof window !== "undefined") {
           localStorage.removeItem(TOKEN_STORAGE_KEY);
         }
         if (isMounted) {
@@ -84,13 +92,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthError(null);
     try {
       const res = await apiClient.login({ phone_number: phone, password });
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         localStorage.setItem(TOKEN_STORAGE_KEY, res.token);
       }
       setToken(res.token);
       setUser(res.user);
     } catch (err) {
-      const msg = err instanceof ApiError ? err.message : 'Invalid phone number or password.';
+      const msg = err instanceof ApiError ? err.message : "Invalid phone number or password.";
       setAuthError(msg);
       throw err;
     }
@@ -102,29 +110,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       phone_number: string;
       password: string;
       preferred_language: SupportedLanguage;
-      role?: 'farmer' | 'officer';
+      role?: "farmer" | "officer";
       default_taluk?: string;
       default_district?: string;
     }) => {
       setAuthError(null);
       try {
         const res = await apiClient.register(payload);
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
           localStorage.setItem(TOKEN_STORAGE_KEY, res.token);
         }
         setToken(res.token);
         setUser(res.user);
       } catch (err) {
-        const msg = err instanceof ApiError ? err.message : 'Failed to register account.';
+        const msg = err instanceof ApiError ? err.message : "Failed to register account.";
         setAuthError(msg);
         throw err;
       }
     },
-    []
+    [],
   );
 
   const logout = useCallback(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       localStorage.removeItem(TOKEN_STORAGE_KEY);
     }
     setUser(null);
@@ -137,7 +145,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       preferred_language?: SupportedLanguage;
       default_taluk?: string;
       default_district?: string;
-      notification_prefs?: Record<string, any>;
+      notification_prefs?: Record<string, unknown>;
     }) => {
       try {
         const res = await apiClient.updateMe(updates);
@@ -145,11 +153,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(res.user);
         }
       } catch (err) {
-        console.error('[Varsha Setu] Failed to update preferences:', err);
+        console.error("[Varsha Setu] Failed to update preferences:", err);
         throw err;
       }
     },
-    []
+    [],
   );
 
   return (
@@ -175,7 +183,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

@@ -1,20 +1,27 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
-import { useState, type FormEvent } from 'react';
-import { useAuth } from '@/context/AuthContext';
-import type { SupportedLanguage } from '@/lib/types';
-import { AppHeader } from '@/components/AppHeader';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState, type FormEvent } from "react";
+import { useAuth } from "@/context/AuthContext";
+import type { SupportedLanguage } from "@/lib/types";
+import { AppHeader } from "@/components/AppHeader";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   CloudRain,
   User,
@@ -28,16 +35,17 @@ import {
   EyeOff,
   Sliders,
   CheckCircle2,
-} from 'lucide-react';
+} from "lucide-react";
 
-export const Route = createFileRoute('/signup')({
+export const Route = createFileRoute("/signup")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: 'Create Account | Varsha Setu' },
+      { title: "Create Account | Varsha Setu" },
       {
-        name: 'description',
-        content: 'Register for Varsha Setu agricultural intelligence for personalized crop water and monsoon advisories.',
+        name: "description",
+        content:
+          "Register for Varsha Setu agricultural intelligence for personalized crop water and monsoon advisories.",
       },
     ],
   }),
@@ -45,21 +53,21 @@ export const Route = createFileRoute('/signup')({
 });
 
 const LANGUAGE_OPTIONS: { code: SupportedLanguage; label: string; local: string }[] = [
-  { code: 'en', label: 'English', local: 'English' },
-  { code: 'kn', label: 'Kannada', local: 'ಕನ್ನಡ' },
-  { code: 'hi', label: 'Hindi', local: 'हिन्दी' },
+  { code: "en", label: "English", local: "English" },
+  { code: "kn", label: "Kannada", local: "ಕನ್ನಡ" },
+  { code: "hi", label: "Hindi", local: "हिन्दी" },
 ];
 
 function SignupPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const [fullName, setFullName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [language, setLanguage] = useState<SupportedLanguage>('en');
-  const [role, setRole] = useState<'farmer' | 'officer'>('farmer');
+  const [fullName, setFullName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [language, setLanguage] = useState<SupportedLanguage>("en");
+  const [role, setRole] = useState<"farmer" | "officer">("farmer");
 
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -71,23 +79,25 @@ function SignupPage() {
 
     // Client-side validations
     if (fullName.trim().length < 2) {
-      setErrorMsg('Please enter your full name (minimum 2 characters).');
+      setErrorMsg("Please enter your full name (minimum 2 characters).");
       return;
     }
 
-    const cleanPhone = phoneNumber.replace(/[^\d]/g, '');
-    if (cleanPhone.length !== 10 || !['6', '7', '8', '9'].includes(cleanPhone[0])) {
-      setErrorMsg('Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.');
+    const cleanPhone = phoneNumber.replace(/[^\d]/g, "");
+    if (cleanPhone.length !== 10 || !["6", "7", "8", "9"].includes(cleanPhone[0])) {
+      setErrorMsg(
+        "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.",
+      );
       return;
     }
 
     if (password.length < 6) {
-      setErrorMsg('Password must be at least 6 characters long.');
+      setErrorMsg("Password must be at least 6 characters long.");
       return;
     }
 
     if (password !== confirmPassword) {
-      setErrorMsg('Passwords do not match. Please verify both fields.');
+      setErrorMsg("Passwords do not match. Please verify both fields.");
       return;
     }
 
@@ -100,9 +110,10 @@ function SignupPage() {
         preferred_language: language,
         role,
       });
-      navigate({ to: '/dashboard' });
+      navigate({ to: "/dashboard" });
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Registration failed. Please check your details.';
+      const msg =
+        err instanceof Error ? err.message : "Registration failed. Please check your details.";
       setErrorMsg(msg);
     } finally {
       setIsSubmitting(false);
@@ -113,7 +124,12 @@ function SignupPage() {
     <div className="relative min-h-screen text-foreground flex flex-col justify-between">
       {/* Shared Unified Header */}
       <AppHeader showProgress={false}>
-        <Button asChild variant="outline" size="sm" className="h-8 border-border/80 bg-glass/80 text-xs">
+        <Button
+          asChild
+          variant="outline"
+          size="sm"
+          className="h-8 border-border/80 bg-glass/80 text-xs"
+        >
           <Link to="/dashboard">
             <Sliders className="mr-1.5 size-3.5 text-signal" /> Studio
           </Link>
@@ -132,14 +148,18 @@ function SignupPage() {
                 Join Varsha Setu
               </CardTitle>
               <CardDescription className="text-xs text-muted-foreground sm:text-sm">
-                Unlock personalized monsoon onset forecasts, customized soil moisture budgets, and trilingual voice advisories.
+                Unlock personalized monsoon onset forecasts, customized soil moisture budgets, and
+                trilingual voice advisories.
               </CardDescription>
             </CardHeader>
 
             <form onSubmit={handleSignup}>
               <CardContent className="space-y-4">
                 {errorMsg && (
-                  <Alert variant="destructive" className="border-rose-500/30 bg-rose-500/10 text-rose-300 py-2.5">
+                  <Alert
+                    variant="destructive"
+                    className="border-rose-500/30 bg-rose-500/10 text-rose-300 py-2.5"
+                  >
                     <AlertCircle className="size-4 shrink-0 text-rose-400" />
                     <AlertDescription className="text-xs">{errorMsg}</AlertDescription>
                   </Alert>
@@ -196,7 +216,7 @@ function SignupPage() {
                     <div className="relative flex items-center rounded-md border border-border/80 bg-background/50 focus-within:border-signal focus-within:ring-1 focus-within:ring-signal">
                       <Input
                         id="password"
-                        type={showPassword ? 'text' : 'password'}
+                        type={showPassword ? "text" : "password"}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
@@ -208,19 +228,26 @@ function SignupPage() {
                         onClick={() => setShowPassword(!showPassword)}
                         className="mr-3 text-muted-foreground hover:text-foreground"
                       >
-                        {showPassword ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
+                        {showPassword ? (
+                          <EyeOff className="size-3.5" />
+                        ) : (
+                          <Eye className="size-3.5" />
+                        )}
                       </button>
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="confirm-password" className="text-xs font-medium text-foreground">
+                    <Label
+                      htmlFor="confirm-password"
+                      className="text-xs font-medium text-foreground"
+                    >
                       Confirm Password
                     </Label>
                     <div className="relative flex items-center rounded-md border border-border/80 bg-background/50 focus-within:border-signal focus-within:ring-1 focus-within:ring-signal">
                       <Input
                         id="confirm-password"
-                        type={showPassword ? 'text' : 'password'}
+                        type={showPassword ? "text" : "password"}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="••••••••"
@@ -238,7 +265,10 @@ function SignupPage() {
                     <Label className="text-xs font-medium text-foreground">
                       Preferred Language
                     </Label>
-                    <Select value={language} onValueChange={(val) => setLanguage(val as SupportedLanguage)}>
+                    <Select
+                      value={language}
+                      onValueChange={(val) => setLanguage(val as SupportedLanguage)}
+                    >
                       <SelectTrigger className="border-border/80 bg-background/50 text-xs h-9">
                         <Globe className="mr-1.5 size-3.5 text-signal" />
                         <SelectValue placeholder="Select language" />
@@ -254,10 +284,11 @@ function SignupPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium text-foreground">
-                      Primary Role
-                    </Label>
-                    <Select value={role} onValueChange={(val) => setRole(val as 'farmer' | 'officer')}>
+                    <Label className="text-xs font-medium text-foreground">Primary Role</Label>
+                    <Select
+                      value={role}
+                      onValueChange={(val) => setRole(val as "farmer" | "officer")}
+                    >
                       <SelectTrigger className="border-border/80 bg-background/50 text-xs h-9">
                         <Briefcase className="mr-1.5 size-3.5 text-signal" />
                         <SelectValue placeholder="Select role" />
@@ -282,7 +313,7 @@ function SignupPage() {
                   className="w-full bg-signal text-signal-foreground hover:bg-signal/90 font-medium text-sm h-10 shadow-lg shadow-signal/20"
                 >
                   {isSubmitting ? (
-                    'Creating Account...'
+                    "Creating Account..."
                   ) : (
                     <>
                       Create Free Account <ArrowRight className="ml-1.5 size-4" />
@@ -291,7 +322,7 @@ function SignupPage() {
                 </Button>
 
                 <div className="text-center text-xs text-muted-foreground">
-                  Already registered?{' '}
+                  Already registered?{" "}
                   <Link to="/login" className="font-semibold text-signal hover:underline">
                     Sign in here
                   </Link>
@@ -305,7 +336,8 @@ function SignupPage() {
       {/* Footer */}
       <footer className="border-t border-border/40 bg-background/50 py-4 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 text-center font-mono text-[11px] text-muted-foreground">
-          Varsha Setu · Smart India Hackathon 2026 · Ministry of Earth Sciences & Karnataka Agriculture
+          Varsha Setu · Smart India Hackathon 2026 · Ministry of Earth Sciences & Karnataka
+          Agriculture
         </div>
       </footer>
     </div>

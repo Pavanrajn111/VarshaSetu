@@ -17,22 +17,20 @@ import type {
   OutlookResponse,
   SupportedLanguage,
   UserProfile,
-} from './types';
+} from "./types";
 
-export const TOKEN_STORAGE_KEY = 'varsha_setu_token';
+export const TOKEN_STORAGE_KEY = "varsha_setu_token";
 
 const API_BASE_URL = (
   import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.VITE_BACKEND_URL ||
-  'http://localhost:8000'
-).replace(/\/+$/, '');
+  "http://localhost:8000"
+).replace(/\/+$/, "");
 
-console.log('[Varsha Setu] Active API Base URL:', API_BASE_URL);
+console.log("[Varsha Setu] Active API Base URL:", API_BASE_URL);
 
 const ADVISORY_API_KEY =
-  import.meta.env.VITE_ADVISORY_API_KEY ||
-  import.meta.env.VITE_ADVISORY_AUDIO_API_KEY ||
-  '';
+  import.meta.env.VITE_ADVISORY_API_KEY || import.meta.env.VITE_ADVISORY_AUDIO_API_KEY || "";
 
 export class ApiError extends Error {
   status: number;
@@ -41,7 +39,7 @@ export class ApiError extends Error {
 
   constructor(message: string, status: number, details?: unknown, retryAfterSeconds?: number) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
     this.status = status;
     this.details = details;
     this.retryAfterSeconds = retryAfterSeconds;
@@ -68,26 +66,28 @@ interface RequestOptions extends RequestInit {
 async function handleFetchResponse<T>(res: Response): Promise<T> {
   // 429: Rate Limit handling with Retry-After header
   if (res.status === 429) {
-    const retryHeader = res.headers.get('Retry-After');
+    const retryHeader = res.headers.get("Retry-After");
     const retrySec = retryHeader ? Math.max(1, parseInt(retryHeader, 10) || 5) : 5;
     throw new ApiError(
       `Rate limit exceeded. System is processing requests. Please retry in ${retrySec} seconds.`,
       429,
       null,
-      retrySec
+      retrySec,
     );
   }
 
   // 422: Validation error from FastAPI / Pydantic
   if (res.status === 422) {
-    let detailMsg = 'Request failed validation.';
+    let detailMsg = "Request failed validation.";
     let detailData: unknown = null;
     try {
       const data = await res.json();
       detailData = data;
       if (Array.isArray(data.detail)) {
-        detailMsg = data.detail.map((err: { loc?: string[]; msg?: string }) => err.msg || 'Invalid field').join('; ');
-      } else if (typeof data.detail === 'string') {
+        detailMsg = data.detail
+          .map((err: { loc?: string[]; msg?: string }) => err.msg || "Invalid field")
+          .join("; ");
+      } else if (typeof data.detail === "string") {
         detailMsg = data.detail;
       }
     } catch {
@@ -98,7 +98,7 @@ async function handleFetchResponse<T>(res: Response): Promise<T> {
 
   // 500+: Internal server error
   if (res.status >= 500) {
-    let detailMsg = 'Internal server error processing meteorological models.';
+    let detailMsg = "Internal server error processing meteorological models.";
     try {
       const data = await res.json();
       detailMsg = data.detail || data.error || detailMsg;
@@ -124,7 +124,7 @@ async function handleFetchResponse<T>(res: Response): Promise<T> {
 }
 
 function getStoredToken(): string | null {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     return localStorage.getItem(TOKEN_STORAGE_KEY);
   }
   return null;
@@ -135,8 +135,11 @@ export const apiClient = {
     return API_BASE_URL;
   },
 
-  async get<T>(path: string, params?: Record<string, string | number | boolean | undefined | null>): Promise<T> {
-    const url = new URL(`${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`);
+  async get<T>(
+    path: string,
+    params?: Record<string, string | number | boolean | undefined | null>,
+  ): Promise<T> {
+    const url = new URL(`${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`);
     if (params) {
       Object.entries(params).forEach(([key, val]) => {
         if (val !== undefined && val !== null) {
@@ -147,12 +150,12 @@ export const apiClient = {
 
     const token = getStoredToken();
     const headers: Record<string, string> = {
-      Accept: 'application/json',
+      Accept: "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
 
     const res = await fetch(url.toString(), {
-      method: 'GET',
+      method: "GET",
       headers,
     });
 
@@ -160,7 +163,7 @@ export const apiClient = {
   },
 
   async post<T>(path: string, body?: unknown, opts?: RequestOptions): Promise<T> {
-    const url = new URL(`${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`);
+    const url = new URL(`${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`);
     if (opts?.params) {
       Object.entries(opts.params).forEach(([key, val]) => {
         if (val !== undefined && val !== null) {
@@ -171,20 +174,20 @@ export const apiClient = {
 
     const token = getStoredToken();
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+      "Content-Type": "application/json",
+      Accept: "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(opts?.headers as Record<string, string>),
     };
 
-    if (path.includes('/advisory/audio') || opts?.injectApiKey) {
+    if (path.includes("/advisory/audio") || opts?.injectApiKey) {
       if (ADVISORY_API_KEY) {
-        headers['X-API-Key'] = ADVISORY_API_KEY;
+        headers["X-API-Key"] = ADVISORY_API_KEY;
       }
     }
 
     const res = await fetch(url.toString(), {
-      method: 'POST',
+      method: "POST",
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
       ...opts,
@@ -194,7 +197,7 @@ export const apiClient = {
   },
 
   async patch<T>(path: string, body?: unknown, opts?: RequestOptions): Promise<T> {
-    const url = new URL(`${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`);
+    const url = new URL(`${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`);
     if (opts?.params) {
       Object.entries(opts.params).forEach(([key, val]) => {
         if (val !== undefined && val !== null) {
@@ -205,14 +208,14 @@ export const apiClient = {
 
     const token = getStoredToken();
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+      "Content-Type": "application/json",
+      Accept: "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(opts?.headers as Record<string, string>),
     };
 
     const res = await fetch(url.toString(), {
-      method: 'PATCH',
+      method: "PATCH",
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
       ...opts,
@@ -224,20 +227,20 @@ export const apiClient = {
   // --- Specialized Endpoints ---
 
   async getHealth(): Promise<HealthResponse> {
-    return this.get<HealthResponse>('/health');
+    return this.get<HealthResponse>("/health");
   },
 
   async getTaluks(): Promise<DistrictHierarchyResponse> {
-    return this.get<DistrictHierarchyResponse>('/location/taluks');
+    return this.get<DistrictHierarchyResponse>("/location/taluks");
   },
 
   async resolveLocation(query: string): Promise<LocationResolveResponse> {
-    return this.get<LocationResolveResponse>('/location/resolve', { query });
+    return this.get<LocationResolveResponse>("/location/resolve", { query });
   },
 
   async computeForecast(payload: ForecastRequest): Promise<ForecastResponse> {
-    console.log('[apiClient.computeForecast] Outgoing payload:', payload);
-    return this.post<ForecastResponse>('/forecast', payload);
+    console.log("[apiClient.computeForecast] Outgoing payload:", payload);
+    return this.post<ForecastResponse>("/forecast", payload);
   },
 
   /**
@@ -257,32 +260,37 @@ export const apiClient = {
   },
 
   async getAdvisory(payload: AdvisoryRequest): Promise<AdvisoryResponse> {
-    console.log('[apiClient.getAdvisory] Outgoing payload:', payload);
-    return this.post<AdvisoryResponse>('/advisory', payload);
+    console.log("[apiClient.getAdvisory] Outgoing payload:", payload);
+    return this.post<AdvisoryResponse>("/advisory", payload);
   },
 
   async streamAdvisoryAudio(text: string, language: SupportedLanguage): Promise<Blob> {
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
     if (ADVISORY_API_KEY) {
-      headers['X-API-Key'] = ADVISORY_API_KEY;
+      headers["X-API-Key"] = ADVISORY_API_KEY;
     }
 
     const res = await fetch(`${API_BASE_URL}/advisory/audio`, {
-      method: 'POST',
+      method: "POST",
       headers,
       body: JSON.stringify({ text, language }),
     });
 
     if (res.status === 401) {
-      throw new ApiError('Authentication required: Missing or invalid VITE_ADVISORY_API_KEY.', 401);
+      throw new ApiError("Authentication required: Missing or invalid VITE_ADVISORY_API_KEY.", 401);
     }
 
     if (res.status === 429) {
-      const retryHeader = res.headers.get('Retry-After');
+      const retryHeader = res.headers.get("Retry-After");
       const retrySec = retryHeader ? Math.max(1, parseInt(retryHeader, 10) || 5) : 5;
-      throw new ApiError(`Voice synthesis rate limited. Please retry in ${retrySec} seconds.`, 429, null, retrySec);
+      throw new ApiError(
+        `Voice synthesis rate limited. Please retry in ${retrySec} seconds.`,
+        429,
+        null,
+        retrySec,
+      );
     }
 
     if (!res.ok) {
@@ -310,24 +318,23 @@ export const apiClient = {
     default_taluk?: string;
     default_district?: string;
   }): Promise<AuthResponse> {
-    return this.post<AuthResponse>('/auth/register', payload);
+    return this.post<AuthResponse>("/auth/register", payload);
   },
 
   async login(payload: { phone_number: string; password: string }): Promise<AuthResponse> {
-    return this.post<AuthResponse>('/auth/login', payload);
+    return this.post<AuthResponse>("/auth/login", payload);
   },
 
   async getMe(): Promise<AuthMeResponse> {
-    return this.get<AuthMeResponse>('/auth/me');
+    return this.get<AuthMeResponse>("/auth/me");
   },
 
   async updateMe(payload: {
     preferred_language?: SupportedLanguage;
     default_taluk?: string;
     default_district?: string;
-    notification_prefs?: Record<string, any>;
+    notification_prefs?: Record<string, unknown>;
   }): Promise<AuthMeResponse> {
-    return this.patch<AuthMeResponse>('/auth/me', payload);
+    return this.patch<AuthMeResponse>("/auth/me", payload);
   },
 };
-

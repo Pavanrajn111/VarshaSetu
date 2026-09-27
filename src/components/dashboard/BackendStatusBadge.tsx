@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { apiClient } from '@/lib/api-client';
-import type { HealthResponse } from '@/lib/types';
-import { Activity, ShieldCheck, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { apiClient } from "@/lib/api-client";
+import type { HealthResponse } from "@/lib/types";
+import { Activity, ShieldCheck, AlertCircle } from "lucide-react";
 
 export function BackendStatusBadge() {
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
-  const [lastChecked, setLastChecked] = useState<string>('');
+  const [lastChecked, setLastChecked] = useState<string>("");
 
   const checkHealth = async () => {
     try {
       const data = await apiClient.getHealth();
       setHealth(data);
       setIsOnline(true);
-      setLastChecked(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      setLastChecked(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
     } catch {
       setIsOnline(false);
-      setLastChecked(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      setLastChecked(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
     }
   };
 
@@ -48,7 +48,7 @@ export function BackendStatusBadge() {
   }
 
   // CORRECTION 4: Do not hardcode "v1.0.0". Only show version if returned by /health.
-  const versionString = health?.version ? ` (v${health.version})` : '';
+  const versionString = health?.version ? ` (v${health.version})` : "";
 
   return (
     <div

@@ -2,7 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.config import CORS_ORIGINS
+from app.config import CORS_ORIGINS, ENABLE_SCHEDULER
 from app.services.artifact_loader import load_artifacts_once
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -42,13 +42,18 @@ async def lifespan(app: FastAPI):
             len(bundle.taluks_df),
             len(bundle.models)
         )
-        start_scheduler()
+        if ENABLE_SCHEDULER:
+            start_scheduler()
+            logger.info("APScheduler initialized (ENABLE_SCHEDULER=True).")
+        else:
+            logger.info("APScheduler disabled (ENABLE_SCHEDULER=False). Dedicated worker or cron should trigger pipeline.")
     except Exception as e:
         logger.critical("Fatal error loading artifacts at startup: %s", e, exc_info=True)
         raise e
 
     yield
-    shutdown_scheduler()
+    if ENABLE_SCHEDULER:
+        shutdown_scheduler()
     logger.info("Shutting down Varsha Setu Serving Layer.")
 
 app = FastAPI(

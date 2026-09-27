@@ -9,10 +9,17 @@ logger = logging.getLogger("varsha_setu.outlook_store")
 
 DB_PATH = Path(ARTIFACTS_DIR) / "outlook_log.db"
 
+def get_db_connection(db_path: Path = DB_PATH) -> sqlite3.Connection:
+    """Creates SQLite connection configured with WAL mode and busy timeout for concurrent access."""
+    conn = sqlite3.connect(str(db_path), timeout=15.0)
+    conn.execute("PRAGMA journal_mode=WAL;")
+    conn.execute("PRAGMA busy_timeout=5000;")
+    return conn
+
 def init_db(db_path: Path = DB_PATH):
     """Initializes the SQLite schema for logging outlook predictions over time."""
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    with sqlite3.connect(str(db_path)) as conn:
+    with get_db_connection(db_path) as conn:
         cursor = conn.cursor()
         cursor.execute(
             """
@@ -88,7 +95,7 @@ def save_outlook_records(
         for r in records
     ]
 
-    with sqlite3.connect(str(db_path)) as conn:
+    with get_db_connection(db_path) as conn:
         cursor = conn.cursor()
         cursor.executemany(
             """
@@ -118,7 +125,7 @@ def get_latest_outlook(
 
     clean_name = taluk_name.strip()
 
-    with sqlite3.connect(str(db_path)) as conn:
+    with get_db_connection(db_path) as conn:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
@@ -164,7 +171,7 @@ def update_actual_precip(
     if not db_path.exists():
         return 0
 
-    with sqlite3.connect(str(db_path)) as conn:
+    with get_db_connection(db_path) as conn:
         cursor = conn.cursor()
         cursor.execute(
             """
@@ -187,7 +194,7 @@ def get_unbackfilled_records(
     if not db_path.exists():
         return []
 
-    with sqlite3.connect(str(db_path)) as conn:
+    with get_db_connection(db_path) as conn:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute(
@@ -228,7 +235,7 @@ def compute_outlook_accuracy(
 
     clean_name = taluk_name.strip()
 
-    with sqlite3.connect(str(db_path)) as conn:
+    with get_db_connection(db_path) as conn:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute(

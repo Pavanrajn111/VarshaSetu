@@ -4,14 +4,14 @@ import os
 from typing import Dict, Any, Optional
 
 import jwt
-from fastapi import HTTPException, Header, Depends, status
+from fastapi import HTTPException, Header, status
 
+from app.config import AUTH_JWT_SECRET
 from app.services.user_store import get_user_by_id
 
 logger = logging.getLogger("varsha_setu.auth_token")
 
-# Secret key from environment with secure fallback
-JWT_SECRET = os.getenv("AUTH_JWT_SECRET", "varsha-setu-secure-auth-jwt-token-secret-2026-production-sih")
+JWT_SECRET = AUTH_JWT_SECRET
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRY_DAYS = int(os.getenv("AUTH_JWT_EXPIRY_DAYS", "30"))
 

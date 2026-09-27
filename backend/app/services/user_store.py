@@ -49,11 +49,19 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     except Exception:
         return False
 
+def get_user_db_connection(db_path: Optional[Path] = None) -> sqlite3.Connection:
+    """Creates SQLite connection for users configured with WAL mode and busy timeout."""
+    target_db = db_path or USERS_DB_PATH
+    conn = sqlite3.connect(str(target_db), timeout=15.0)
+    conn.execute("PRAGMA journal_mode=WAL;")
+    conn.execute("PRAGMA busy_timeout=5000;")
+    return conn
+
 def init_user_db(db_path: Optional[Path] = None):
     """Initializes SQLite user storage schema."""
     target_db = db_path or USERS_DB_PATH
     target_db.parent.mkdir(parents=True, exist_ok=True)
-    with sqlite3.connect(str(target_db)) as conn:
+    with get_user_db_connection(target_db) as conn:
         cursor = conn.cursor()
         cursor.execute(
             """
@@ -97,7 +105,7 @@ def get_user_by_phone(phone: str, db_path: Optional[Path] = None) -> Optional[Di
     target_db = db_path or USERS_DB_PATH
     init_user_db(target_db)
     clean_phone = normalize_phone_number(phone)
-    with sqlite3.connect(str(target_db)) as conn:
+    with get_user_db_connection(target_db) as conn:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE phone_number = ?", (clean_phone,))
@@ -108,7 +116,7 @@ def get_user_by_id(user_id: int, db_path: Optional[Path] = None) -> Optional[Dic
     """Retrieves public user profile by user_id."""
     target_db = db_path or USERS_DB_PATH
     init_user_db(target_db)
-    with sqlite3.connect(str(target_db)) as conn:
+    with get_user_db_connection(target_db) as conn:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
@@ -147,7 +155,7 @@ def create_user(
     if clean_lang not in ("en", "kn", "hi"):
         clean_lang = "en"
 
-    with sqlite3.connect(str(target_db)) as conn:
+    with get_user_db_connection(target_db) as conn:
         cursor = conn.cursor()
         cursor.execute(
             """
@@ -210,7 +218,7 @@ def update_user_profile(
     values.append(user_id)
     query = f"UPDATE users SET {', '.join(fields)} WHERE id = ?"
 
-    with sqlite3.connect(str(target_db)) as conn:
+    with get_user_db_connection(target_db) as conn:
         cursor = conn.cursor()
         cursor.execute(query, values)
         conn.commit()
