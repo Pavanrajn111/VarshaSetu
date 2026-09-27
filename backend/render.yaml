@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: varsha-setu-backend
+    runtime: docker
+    dockerfilePath: Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: PORT
+        value: 8000
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ADVISORY_AUDIO_API_KEY
+        generateValue: true
+      - key: OPEN_METEO_TIMEOUT_SECONDS
+        value: "8.0"
+      - key: NOMINATIM_TIMEOUT_SECONDS
+        value: "6.0"
+      - key: NOMINATIM_MAX_DISTANCE_KM
+        value: "60.0"

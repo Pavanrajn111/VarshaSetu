@@ -1,0 +1,957 @@
+name,label,taluk,district,lat,lon
+sonda,Sonda (Swadi) GP,Sirsi,Uttara Kannada,14.7336,74.7788
+banavasi,Banavasi Hobli,Sirsi,Uttara Kannada,14.534,75.012
+kumsi,Kumsi Hobli,Nyamathi,Davanagere,14.0547,75.4001
+saligrama,Saligrama Town Hub,Saligrama,Mysuru,12.5602,76.2629
+bilikere,Bilikere Hobli,Hunsur,Mysuru,12.332,76.432
+sadalga,Sadalga GP,Chikkodi,Belagavi,16.57,74.55
+examba,Examba Village,Chikkodi,Belagavi,16.532,74.512
+garag,Garag GP,Dharwad,Dharwad,15.542,74.931
+santhebennur,Santhebennur Hobli,Channagiri,Davanagere,14.15,75.99
+kamalapura,Kamalapura (Near Hampi),Hosapete,Vijayanagara,15.3045,76.4756
+kamalapura,Kamalapura (Taluk Hub),Kamalapura,Kalaburagi,17.5833,76.9833
+belluru,Belluru Hobli,Nagamangala,Mandya,12.942,76.732
+bagalkote kasaba / central hobli,Bagalkote Kasaba / Central Hobli,Bagalkote,Bagalkote,16.1817,75.6958
+bagalkote rural gp cluster,Bagalkote Rural GP Cluster,Bagalkote,Bagalkote,16.2167,75.6708
+bagalkote north hobli,Bagalkote North Hobli,Bagalkote,Bagalkote,16.2267,75.7108
+bagalkote south agricultural belt,Bagalkote South Agricultural Belt,Bagalkote,Bagalkote,16.1417,75.6858
+badami kasaba / central hobli,Badami Kasaba / Central Hobli,Badami,Bagalkote,15.9167,75.6833
+badami rural gp cluster,Badami Rural GP Cluster,Badami,Bagalkote,15.9517,75.6583
+badami north hobli,Badami North Hobli,Badami,Bagalkote,15.9617,75.6983
+badami south agricultural belt,Badami South Agricultural Belt,Badami,Bagalkote,15.8767,75.6733
+bilagi kasaba / central hobli,Bilagi Kasaba / Central Hobli,Bilagi,Bagalkote,16.35,75.6167
+bilagi rural gp cluster,Bilagi Rural GP Cluster,Bilagi,Bagalkote,16.385,75.5917
+bilagi north hobli,Bilagi North Hobli,Bilagi,Bagalkote,16.395,75.6317
+bilagi south agricultural belt,Bilagi South Agricultural Belt,Bilagi,Bagalkote,16.31,75.6067
+hunagunda kasaba / central hobli,Hunagunda Kasaba / Central Hobli,Hunagunda,Bagalkote,16.0667,76.05
+hunagunda rural gp cluster,Hunagunda Rural GP Cluster,Hunagunda,Bagalkote,16.1017,76.025
+hunagunda north hobli,Hunagunda North Hobli,Hunagunda,Bagalkote,16.1117,76.065
+hunagunda south agricultural belt,Hunagunda South Agricultural Belt,Hunagunda,Bagalkote,16.0267,76.04
+ilkal kasaba / central hobli,Ilkal Kasaba / Central Hobli,Ilkal,Bagalkote,15.96,76.13
+ilkal rural gp cluster,Ilkal Rural GP Cluster,Ilkal,Bagalkote,15.995,76.105
+ilkal north hobli,Ilkal North Hobli,Ilkal,Bagalkote,16.005,76.145
+ilkal south agricultural belt,Ilkal South Agricultural Belt,Ilkal,Bagalkote,15.92,76.12
+jamkhandi kasaba / central hobli,Jamkhandi Kasaba / Central Hobli,Jamkhandi,Bagalkote,16.5167,75.3
+jamkhandi rural gp cluster,Jamkhandi Rural GP Cluster,Jamkhandi,Bagalkote,16.5517,75.275
+jamkhandi north hobli,Jamkhandi North Hobli,Jamkhandi,Bagalkote,16.5617,75.315
+jamkhandi south agricultural belt,Jamkhandi South Agricultural Belt,Jamkhandi,Bagalkote,16.4767,75.29
+mudhola kasaba / central hobli,Mudhola Kasaba / Central Hobli,Mudhola,Bagalkote,16.35,75.2833
+mudhola rural gp cluster,Mudhola Rural GP Cluster,Mudhola,Bagalkote,16.385,75.2583
+mudhola north hobli,Mudhola North Hobli,Mudhola,Bagalkote,16.395,75.2983
+mudhola south agricultural belt,Mudhola South Agricultural Belt,Mudhola,Bagalkote,16.31,75.2733
+rabkavi banhatti kasaba / central hobli,Rabkavi Banhatti Kasaba / Central Hobli,Rabkavi Banhatti,Bagalkote,16.48,75.12
+rabkavi banhatti rural gp cluster,Rabkavi Banhatti Rural GP Cluster,Rabkavi Banhatti,Bagalkote,16.515,75.095
+rabkavi banhatti north hobli,Rabkavi Banhatti North Hobli,Rabkavi Banhatti,Bagalkote,16.525,75.135
+rabkavi banhatti south agricultural belt,Rabkavi Banhatti South Agricultural Belt,Rabkavi Banhatti,Bagalkote,16.44,75.11
+guledgudda kasaba / central hobli,Guledgudda Kasaba / Central Hobli,Guledgudda,Bagalkote,16.05,75.7833
+guledgudda rural gp cluster,Guledgudda Rural GP Cluster,Guledgudda,Bagalkote,16.085,75.7583
+guledgudda north hobli,Guledgudda North Hobli,Guledgudda,Bagalkote,16.095,75.7983
+guledgudda south agricultural belt,Guledgudda South Agricultural Belt,Guledgudda,Bagalkote,16.01,75.7733
+ballari kasaba / central hobli,Ballari Kasaba / Central Hobli,Ballari,Ballari,15.1394,76.9214
+ballari rural gp cluster,Ballari Rural GP Cluster,Ballari,Ballari,15.1744,76.8964
+ballari north hobli,Ballari North Hobli,Ballari,Ballari,15.1844,76.9364
+ballari south agricultural belt,Ballari South Agricultural Belt,Ballari,Ballari,15.0994,76.9114
+kurugodu kasaba / central hobli,Kurugodu Kasaba / Central Hobli,Kurugodu,Ballari,15.35,76.82
+kurugodu rural gp cluster,Kurugodu Rural GP Cluster,Kurugodu,Ballari,15.385,76.795
+kurugodu north hobli,Kurugodu North Hobli,Kurugodu,Ballari,15.395,76.835
+kurugodu south agricultural belt,Kurugodu South Agricultural Belt,Kurugodu,Ballari,15.31,76.81
+kampli kasaba / central hobli,Kampli Kasaba / Central Hobli,Kampli,Ballari,15.4,76.6
+kampli rural gp cluster,Kampli Rural GP Cluster,Kampli,Ballari,15.435,76.575
+kampli north hobli,Kampli North Hobli,Kampli,Ballari,15.445,76.615
+kampli south agricultural belt,Kampli South Agricultural Belt,Kampli,Ballari,15.36,76.59
+sanduru kasaba / central hobli,Sanduru Kasaba / Central Hobli,Sanduru,Ballari,15.0833,76.55
+sanduru rural gp cluster,Sanduru Rural GP Cluster,Sanduru,Ballari,15.1183,76.525
+sanduru north hobli,Sanduru North Hobli,Sanduru,Ballari,15.1283,76.565
+sanduru south agricultural belt,Sanduru South Agricultural Belt,Sanduru,Ballari,15.0433,76.54
+siraguppa kasaba / central hobli,Siraguppa Kasaba / Central Hobli,Siraguppa,Ballari,15.63,76.89
+siraguppa rural gp cluster,Siraguppa Rural GP Cluster,Siraguppa,Ballari,15.665,76.865
+siraguppa north hobli,Siraguppa North Hobli,Siraguppa,Ballari,15.675,76.905
+siraguppa south agricultural belt,Siraguppa South Agricultural Belt,Siraguppa,Ballari,15.59,76.88
+belagavi kasaba / central hobli,Belagavi Kasaba / Central Hobli,Belagavi,Belagavi,15.8497,74.4977
+belagavi rural gp cluster,Belagavi Rural GP Cluster,Belagavi,Belagavi,15.8847,74.4727
+belagavi north hobli,Belagavi North Hobli,Belagavi,Belagavi,15.8947,74.5127
+belagavi south agricultural belt,Belagavi South Agricultural Belt,Belagavi,Belagavi,15.8097,74.4877
+athani kasaba / central hobli,Athani Kasaba / Central Hobli,Athani,Belagavi,16.7333,75.0667
+athani rural gp cluster,Athani Rural GP Cluster,Athani,Belagavi,16.7683,75.0417
+athani north hobli,Athani North Hobli,Athani,Belagavi,16.7783,75.0817
+athani south agricultural belt,Athani South Agricultural Belt,Athani,Belagavi,16.6933,75.0567
+bailhongal kasaba / central hobli,Bailhongal Kasaba / Central Hobli,Bailhongal,Belagavi,15.8167,74.8667
+bailhongal rural gp cluster,Bailhongal Rural GP Cluster,Bailhongal,Belagavi,15.8517,74.8417
+bailhongal north hobli,Bailhongal North Hobli,Bailhongal,Belagavi,15.8617,74.8817
+bailhongal south agricultural belt,Bailhongal South Agricultural Belt,Bailhongal,Belagavi,15.7767,74.8567
+chikkodi kasaba / central hobli,Chikkodi Kasaba / Central Hobli,Chikkodi,Belagavi,16.43,74.59
+chikkodi rural gp cluster,Chikkodi Rural GP Cluster,Chikkodi,Belagavi,16.465,74.565
+chikkodi north hobli,Chikkodi North Hobli,Chikkodi,Belagavi,16.475,74.605
+chikkodi south agricultural belt,Chikkodi South Agricultural Belt,Chikkodi,Belagavi,16.39,74.58
+gokak kasaba / central hobli,Gokak Kasaba / Central Hobli,Gokak,Belagavi,16.1667,74.8333
+gokak rural gp cluster,Gokak Rural GP Cluster,Gokak,Belagavi,16.2017,74.8083
+gokak north hobli,Gokak North Hobli,Gokak,Belagavi,16.2117,74.8483
+gokak south agricultural belt,Gokak South Agricultural Belt,Gokak,Belagavi,16.1267,74.8233
+hukkeri kasaba / central hobli,Hukkeri Kasaba / Central Hobli,Hukkeri,Belagavi,16.2167,74.6
+hukkeri rural gp cluster,Hukkeri Rural GP Cluster,Hukkeri,Belagavi,16.2517,74.575
+hukkeri north hobli,Hukkeri North Hobli,Hukkeri,Belagavi,16.2617,74.615
+hukkeri south agricultural belt,Hukkeri South Agricultural Belt,Hukkeri,Belagavi,16.1767,74.59
+khanapura kasaba / central hobli,Khanapura Kasaba / Central Hobli,Khanapura,Belagavi,15.6333,74.5167
+khanapura rural gp cluster,Khanapura Rural GP Cluster,Khanapura,Belagavi,15.6683,74.4917
+khanapura north hobli,Khanapura North Hobli,Khanapura,Belagavi,15.6783,74.5317
+khanapura south agricultural belt,Khanapura South Agricultural Belt,Khanapura,Belagavi,15.5933,74.5067
+kitturu kasaba / central hobli,Kitturu Kasaba / Central Hobli,Kitturu,Belagavi,15.6,74.7833
+kitturu rural gp cluster,Kitturu Rural GP Cluster,Kitturu,Belagavi,15.635,74.7583
+kitturu north hobli,Kitturu North Hobli,Kitturu,Belagavi,15.645,74.7983
+kitturu south agricultural belt,Kitturu South Agricultural Belt,Kitturu,Belagavi,15.56,74.7733
+mudalgi kasaba / central hobli,Mudalgi Kasaba / Central Hobli,Mudalgi,Belagavi,16.3167,74.9833
+mudalgi rural gp cluster,Mudalgi Rural GP Cluster,Mudalgi,Belagavi,16.3517,74.9583
+mudalgi north hobli,Mudalgi North Hobli,Mudalgi,Belagavi,16.3617,74.9983
+mudalgi south agricultural belt,Mudalgi South Agricultural Belt,Mudalgi,Belagavi,16.2767,74.9733
+nippani kasaba / central hobli,Nippani Kasaba / Central Hobli,Nippani,Belagavi,16.4,74.3833
+nippani rural gp cluster,Nippani Rural GP Cluster,Nippani,Belagavi,16.435,74.3583
+nippani north hobli,Nippani North Hobli,Nippani,Belagavi,16.445,74.3983
+nippani south agricultural belt,Nippani South Agricultural Belt,Nippani,Belagavi,16.36,74.3733
+rayabaga kasaba / central hobli,Rayabaga Kasaba / Central Hobli,Rayabaga,Belagavi,16.5,74.7833
+rayabaga rural gp cluster,Rayabaga Rural GP Cluster,Rayabaga,Belagavi,16.535,74.7583
+rayabaga north hobli,Rayabaga North Hobli,Rayabaga,Belagavi,16.545,74.7983
+rayabaga south agricultural belt,Rayabaga South Agricultural Belt,Rayabaga,Belagavi,16.46,74.7733
+savadatti kasaba / central hobli,Savadatti Kasaba / Central Hobli,Savadatti,Belagavi,15.7667,75.1167
+savadatti rural gp cluster,Savadatti Rural GP Cluster,Savadatti,Belagavi,15.8017,75.0917
+savadatti north hobli,Savadatti North Hobli,Savadatti,Belagavi,15.8117,75.1317
+savadatti south agricultural belt,Savadatti South Agricultural Belt,Savadatti,Belagavi,15.7267,75.1067
+ramadurga kasaba / central hobli,Ramadurga Kasaba / Central Hobli,Ramadurga,Belagavi,15.95,75.3
+ramadurga rural gp cluster,Ramadurga Rural GP Cluster,Ramadurga,Belagavi,15.985,75.275
+ramadurga north hobli,Ramadurga North Hobli,Ramadurga,Belagavi,15.995,75.315
+ramadurga south agricultural belt,Ramadurga South Agricultural Belt,Ramadurga,Belagavi,15.91,75.29
+kagawada kasaba / central hobli,Kagawada Kasaba / Central Hobli,Kagawada,Belagavi,16.7,74.91
+kagawada rural gp cluster,Kagawada Rural GP Cluster,Kagawada,Belagavi,16.735,74.885
+kagawada north hobli,Kagawada North Hobli,Kagawada,Belagavi,16.745,74.925
+kagawada south agricultural belt,Kagawada South Agricultural Belt,Kagawada,Belagavi,16.66,74.9
+yargatti kasaba / central hobli,Yargatti Kasaba / Central Hobli,Yargatti,Belagavi,15.9333,75.0167
+yargatti rural gp cluster,Yargatti Rural GP Cluster,Yargatti,Belagavi,15.9683,74.9917
+yargatti north hobli,Yargatti North Hobli,Yargatti,Belagavi,15.9783,75.0317
+yargatti south agricultural belt,Yargatti South Agricultural Belt,Yargatti,Belagavi,15.8933,75.0067
+bengaluru north kasaba / central hobli,Bengaluru North Kasaba / Central Hobli,Bengaluru North,Bengaluru Urban,13.0358,77.597
+bengaluru north rural gp cluster,Bengaluru North Rural GP Cluster,Bengaluru North,Bengaluru Urban,13.0708,77.572
+bengaluru north north hobli,Bengaluru North North Hobli,Bengaluru North,Bengaluru Urban,13.0808,77.612
+bengaluru north south agricultural belt,Bengaluru North South Agricultural Belt,Bengaluru North,Bengaluru Urban,12.9958,77.587
+bengaluru south kasaba / central hobli,Bengaluru South Kasaba / Central Hobli,Bengaluru South,Bengaluru Urban,12.92,77.58
+bengaluru south rural gp cluster,Bengaluru South Rural GP Cluster,Bengaluru South,Bengaluru Urban,12.955,77.555
+bengaluru south north hobli,Bengaluru South North Hobli,Bengaluru South,Bengaluru Urban,12.965,77.595
+bengaluru south south agricultural belt,Bengaluru South South Agricultural Belt,Bengaluru South,Bengaluru Urban,12.88,77.57
+bengaluru east kasaba / central hobli,Bengaluru East Kasaba / Central Hobli,Bengaluru East,Bengaluru Urban,12.9716,77.6412
+bengaluru east rural gp cluster,Bengaluru East Rural GP Cluster,Bengaluru East,Bengaluru Urban,13.0066,77.6162
+bengaluru east north hobli,Bengaluru East North Hobli,Bengaluru East,Bengaluru Urban,13.0166,77.6562
+bengaluru east south agricultural belt,Bengaluru East South Agricultural Belt,Bengaluru East,Bengaluru Urban,12.9316,77.6312
+anekal kasaba / central hobli,Anekal Kasaba / Central Hobli,Anekal,Bengaluru Urban,12.71,77.7
+anekal rural gp cluster,Anekal Rural GP Cluster,Anekal,Bengaluru Urban,12.745,77.675
+anekal north hobli,Anekal North Hobli,Anekal,Bengaluru Urban,12.755,77.715
+anekal south agricultural belt,Anekal South Agricultural Belt,Anekal,Bengaluru Urban,12.67,77.69
+yelahanka kasaba / central hobli,Yelahanka Kasaba / Central Hobli,Yelahanka,Bengaluru Urban,13.1007,77.5963
+yelahanka rural gp cluster,Yelahanka Rural GP Cluster,Yelahanka,Bengaluru Urban,13.1357,77.5713
+yelahanka north hobli,Yelahanka North Hobli,Yelahanka,Bengaluru Urban,13.1457,77.6113
+yelahanka south agricultural belt,Yelahanka South Agricultural Belt,Yelahanka,Bengaluru Urban,13.0607,77.5863
+nelamangala kasaba / central hobli,Nelamangala Kasaba / Central Hobli,Nelamangala,Bengaluru Rural,13.0988,77.3888
+nelamangala rural gp cluster,Nelamangala Rural GP Cluster,Nelamangala,Bengaluru Rural,13.1338,77.3638
+nelamangala north hobli,Nelamangala North Hobli,Nelamangala,Bengaluru Rural,13.1438,77.4038
+nelamangala south agricultural belt,Nelamangala South Agricultural Belt,Nelamangala,Bengaluru Rural,13.0588,77.3788
+doddaballapura kasaba / central hobli,Doddaballapura Kasaba / Central Hobli,Doddaballapura,Bengaluru Rural,13.2925,77.5428
+doddaballapura rural gp cluster,Doddaballapura Rural GP Cluster,Doddaballapura,Bengaluru Rural,13.3275,77.5178
+doddaballapura north hobli,Doddaballapura North Hobli,Doddaballapura,Bengaluru Rural,13.3375,77.5578
+doddaballapura south agricultural belt,Doddaballapura South Agricultural Belt,Doddaballapura,Bengaluru Rural,13.2525,77.5328
+devanahalli kasaba / central hobli,Devanahalli Kasaba / Central Hobli,Devanahalli,Bengaluru Rural,13.2483,77.7126
+devanahalli rural gp cluster,Devanahalli Rural GP Cluster,Devanahalli,Bengaluru Rural,13.2833,77.6876
+devanahalli north hobli,Devanahalli North Hobli,Devanahalli,Bengaluru Rural,13.2933,77.7276
+devanahalli south agricultural belt,Devanahalli South Agricultural Belt,Devanahalli,Bengaluru Rural,13.2083,77.7026
+hosakote kasaba / central hobli,Hosakote Kasaba / Central Hobli,Hosakote,Bengaluru Rural,13.0697,77.7983
+hosakote rural gp cluster,Hosakote Rural GP Cluster,Hosakote,Bengaluru Rural,13.1047,77.7733
+hosakote north hobli,Hosakote North Hobli,Hosakote,Bengaluru Rural,13.1147,77.8133
+hosakote south agricultural belt,Hosakote South Agricultural Belt,Hosakote,Bengaluru Rural,13.0297,77.7883
+aurad kasaba / central hobli,Aurad Kasaba / Central Hobli,Aurad,Bidar,18.25,77.4333
+aurad rural gp cluster,Aurad Rural GP Cluster,Aurad,Bidar,18.285,77.4083
+aurad north hobli,Aurad North Hobli,Aurad,Bidar,18.295,77.4483
+aurad south agricultural belt,Aurad South Agricultural Belt,Aurad,Bidar,18.21,77.4233
+basavakalyana kasaba / central hobli,Basavakalyana Kasaba / Central Hobli,Basavakalyana,Bidar,17.8667,76.95
+basavakalyana rural gp cluster,Basavakalyana Rural GP Cluster,Basavakalyana,Bidar,17.9017,76.925
+basavakalyana north hobli,Basavakalyana North Hobli,Basavakalyana,Bidar,17.9117,76.965
+basavakalyana south agricultural belt,Basavakalyana South Agricultural Belt,Basavakalyana,Bidar,17.8267,76.94
+bhalki kasaba / central hobli,Bhalki Kasaba / Central Hobli,Bhalki,Bidar,18.0333,77.2167
+bhalki rural gp cluster,Bhalki Rural GP Cluster,Bhalki,Bidar,18.0683,77.1917
+bhalki north hobli,Bhalki North Hobli,Bhalki,Bidar,18.0783,77.2317
+bhalki south agricultural belt,Bhalki South Agricultural Belt,Bhalki,Bidar,17.9933,77.2067
+bidar kasaba / central hobli,Bidar Kasaba / Central Hobli,Bidar,Bidar,17.9104,77.5199
+bidar rural gp cluster,Bidar Rural GP Cluster,Bidar,Bidar,17.9454,77.4949
+bidar north hobli,Bidar North Hobli,Bidar,Bidar,17.9554,77.5349
+bidar south agricultural belt,Bidar South Agricultural Belt,Bidar,Bidar,17.8704,77.5099
+chitgoppa kasaba / central hobli,Chitgoppa Kasaba / Central Hobli,Chitgoppa,Bidar,17.6833,77.2
+chitgoppa rural gp cluster,Chitgoppa Rural GP Cluster,Chitgoppa,Bidar,17.7183,77.175
+chitgoppa north hobli,Chitgoppa North Hobli,Chitgoppa,Bidar,17.7283,77.215
+chitgoppa south agricultural belt,Chitgoppa South Agricultural Belt,Chitgoppa,Bidar,17.6433,77.19
+hulsuru kasaba / central hobli,Hulsuru Kasaba / Central Hobli,Hulsuru,Bidar,18.0167,77.0167
+hulsuru rural gp cluster,Hulsuru Rural GP Cluster,Hulsuru,Bidar,18.0517,76.9917
+hulsuru north hobli,Hulsuru North Hobli,Hulsuru,Bidar,18.0617,77.0317
+hulsuru south agricultural belt,Hulsuru South Agricultural Belt,Hulsuru,Bidar,17.9767,77.0067
+humnabad kasaba / central hobli,Humnabad Kasaba / Central Hobli,Humnabad,Bidar,17.7667,77.1333
+humnabad rural gp cluster,Humnabad Rural GP Cluster,Humnabad,Bidar,17.8017,77.1083
+humnabad north hobli,Humnabad North Hobli,Humnabad,Bidar,17.8117,77.1483
+humnabad south agricultural belt,Humnabad South Agricultural Belt,Humnabad,Bidar,17.7267,77.1233
+kamalanagara kasaba / central hobli,Kamalanagara Kasaba / Central Hobli,Kamalanagara,Bidar,18.2333,77.25
+kamalanagara rural gp cluster,Kamalanagara Rural GP Cluster,Kamalanagara,Bidar,18.2683,77.225
+kamalanagara north hobli,Kamalanagara North Hobli,Kamalanagara,Bidar,18.2783,77.265
+kamalanagara south agricultural belt,Kamalanagara South Agricultural Belt,Kamalanagara,Bidar,18.1933,77.24
+chamarajanagara kasaba / central hobli,Chamarajanagara Kasaba / Central Hobli,Chamarajanagara,Chamarajanagara,11.9261,76.9437
+chamarajanagara rural gp cluster,Chamarajanagara Rural GP Cluster,Chamarajanagara,Chamarajanagara,11.9611,76.9187
+chamarajanagara north hobli,Chamarajanagara North Hobli,Chamarajanagara,Chamarajanagara,11.9711,76.9587
+chamarajanagara south agricultural belt,Chamarajanagara South Agricultural Belt,Chamarajanagara,Chamarajanagara,11.8861,76.9337
+gundlupete kasaba / central hobli,Gundlupete Kasaba / Central Hobli,Gundlupete,Chamarajanagara,11.8,76.6833
+gundlupete rural gp cluster,Gundlupete Rural GP Cluster,Gundlupete,Chamarajanagara,11.835,76.6583
+gundlupete north hobli,Gundlupete North Hobli,Gundlupete,Chamarajanagara,11.845,76.6983
+gundlupete south agricultural belt,Gundlupete South Agricultural Belt,Gundlupete,Chamarajanagara,11.76,76.6733
+kollegala kasaba / central hobli,Kollegala Kasaba / Central Hobli,Kollegala,Chamarajanagara,12.15,77.1167
+kollegala rural gp cluster,Kollegala Rural GP Cluster,Kollegala,Chamarajanagara,12.185,77.0917
+kollegala north hobli,Kollegala North Hobli,Kollegala,Chamarajanagara,12.195,77.1317
+kollegala south agricultural belt,Kollegala South Agricultural Belt,Kollegala,Chamarajanagara,12.11,77.1067
+yelanduru kasaba / central hobli,Yelanduru Kasaba / Central Hobli,Yelanduru,Chamarajanagara,12.0667,77.0333
+yelanduru rural gp cluster,Yelanduru Rural GP Cluster,Yelanduru,Chamarajanagara,12.1017,77.0083
+yelanduru north hobli,Yelanduru North Hobli,Yelanduru,Chamarajanagara,12.1117,77.0483
+yelanduru south agricultural belt,Yelanduru South Agricultural Belt,Yelanduru,Chamarajanagara,12.0267,77.0233
+hanuru kasaba / central hobli,Hanuru Kasaba / Central Hobli,Hanuru,Chamarajanagara,12.0833,77.3
+hanuru rural gp cluster,Hanuru Rural GP Cluster,Hanuru,Chamarajanagara,12.1183,77.275
+hanuru north hobli,Hanuru North Hobli,Hanuru,Chamarajanagara,12.1283,77.315
+hanuru south agricultural belt,Hanuru South Agricultural Belt,Hanuru,Chamarajanagara,12.0433,77.29
+chikkaballapura kasaba / central hobli,Chikkaballapura Kasaba / Central Hobli,Chikkaballapura,Chikkaballapura,13.4355,77.7315
+chikkaballapura rural gp cluster,Chikkaballapura Rural GP Cluster,Chikkaballapura,Chikkaballapura,13.4705,77.7065
+chikkaballapura north hobli,Chikkaballapura North Hobli,Chikkaballapura,Chikkaballapura,13.4805,77.7465
+chikkaballapura south agricultural belt,Chikkaballapura South Agricultural Belt,Chikkaballapura,Chikkaballapura,13.3955,77.7215
+bagepalli kasaba / central hobli,Bagepalli Kasaba / Central Hobli,Bagepalli,Chikkaballapura,13.7833,77.7833
+bagepalli rural gp cluster,Bagepalli Rural GP Cluster,Bagepalli,Chikkaballapura,13.8183,77.7583
+bagepalli north hobli,Bagepalli North Hobli,Bagepalli,Chikkaballapura,13.8283,77.7983
+bagepalli south agricultural belt,Bagepalli South Agricultural Belt,Bagepalli,Chikkaballapura,13.7433,77.7733
+chintamani kasaba / central hobli,Chintamani Kasaba / Central Hobli,Chintamani,Chikkaballapura,13.4,78.0667
+chintamani rural gp cluster,Chintamani Rural GP Cluster,Chintamani,Chikkaballapura,13.435,78.0417
+chintamani north hobli,Chintamani North Hobli,Chintamani,Chikkaballapura,13.445,78.0817
+chintamani south agricultural belt,Chintamani South Agricultural Belt,Chintamani,Chikkaballapura,13.36,78.0567
+gauribidanuru kasaba / central hobli,Gauribidanuru Kasaba / Central Hobli,Gauribidanuru,Chikkaballapura,13.6167,77.5167
+gauribidanuru rural gp cluster,Gauribidanuru Rural GP Cluster,Gauribidanuru,Chikkaballapura,13.6517,77.4917
+gauribidanuru north hobli,Gauribidanuru North Hobli,Gauribidanuru,Chikkaballapura,13.6617,77.5317
+gauribidanuru south agricultural belt,Gauribidanuru South Agricultural Belt,Gauribidanuru,Chikkaballapura,13.5767,77.5067
+gudibanda kasaba / central hobli,Gudibanda Kasaba / Central Hobli,Gudibanda,Chikkaballapura,13.6667,77.7
+gudibanda rural gp cluster,Gudibanda Rural GP Cluster,Gudibanda,Chikkaballapura,13.7017,77.675
+gudibanda north hobli,Gudibanda North Hobli,Gudibanda,Chikkaballapura,13.7117,77.715
+gudibanda south agricultural belt,Gudibanda South Agricultural Belt,Gudibanda,Chikkaballapura,13.6267,77.69
+sidlaghatta kasaba / central hobli,Sidlaghatta Kasaba / Central Hobli,Sidlaghatta,Chikkaballapura,13.3833,77.8667
+sidlaghatta rural gp cluster,Sidlaghatta Rural GP Cluster,Sidlaghatta,Chikkaballapura,13.4183,77.8417
+sidlaghatta north hobli,Sidlaghatta North Hobli,Sidlaghatta,Chikkaballapura,13.4283,77.8817
+sidlaghatta south agricultural belt,Sidlaghatta South Agricultural Belt,Sidlaghatta,Chikkaballapura,13.3433,77.8567
+cheluru kasaba / central hobli,Cheluru Kasaba / Central Hobli,Cheluru,Chikkaballapura,13.68,77.96
+cheluru rural gp cluster,Cheluru Rural GP Cluster,Cheluru,Chikkaballapura,13.715,77.935
+cheluru north hobli,Cheluru North Hobli,Cheluru,Chikkaballapura,13.725,77.975
+cheluru south agricultural belt,Cheluru South Agricultural Belt,Cheluru,Chikkaballapura,13.64,77.95
+chikkamagaluru kasaba / central hobli,Chikkamagaluru Kasaba / Central Hobli,Chikkamagaluru,Chikkamagaluru,13.3161,75.772
+chikkamagaluru rural gp cluster,Chikkamagaluru Rural GP Cluster,Chikkamagaluru,Chikkamagaluru,13.3511,75.747
+chikkamagaluru north hobli,Chikkamagaluru North Hobli,Chikkamagaluru,Chikkamagaluru,13.3611,75.787
+chikkamagaluru south agricultural belt,Chikkamagaluru South Agricultural Belt,Chikkamagaluru,Chikkamagaluru,13.2761,75.762
+kaduru kasaba / central hobli,Kaduru Kasaba / Central Hobli,Kaduru,Chikkamagaluru,13.55,76.0167
+kaduru rural gp cluster,Kaduru Rural GP Cluster,Kaduru,Chikkamagaluru,13.585,75.9917
+kaduru north hobli,Kaduru North Hobli,Kaduru,Chikkamagaluru,13.595,76.0317
+kaduru south agricultural belt,Kaduru South Agricultural Belt,Kaduru,Chikkamagaluru,13.51,76.0067
+koppa kasaba / central hobli,Koppa Kasaba / Central Hobli,Koppa,Chikkamagaluru,13.5333,75.3667
+koppa rural gp cluster,Koppa Rural GP Cluster,Koppa,Chikkamagaluru,13.5683,75.3417
+koppa north hobli,Koppa North Hobli,Koppa,Chikkamagaluru,13.5783,75.3817
+koppa south agricultural belt,Koppa South Agricultural Belt,Koppa,Chikkamagaluru,13.4933,75.3567
+mudigere kasaba / central hobli,Mudigere Kasaba / Central Hobli,Mudigere,Chikkamagaluru,13.1333,75.6333
+mudigere rural gp cluster,Mudigere Rural GP Cluster,Mudigere,Chikkamagaluru,13.1683,75.6083
+mudigere north hobli,Mudigere North Hobli,Mudigere,Chikkamagaluru,13.1783,75.6483
+mudigere south agricultural belt,Mudigere South Agricultural Belt,Mudigere,Chikkamagaluru,13.0933,75.6233
+narasimharajapura kasaba / central hobli,Narasimharajapura Kasaba / Central Hobli,Narasimharajapura,Chikkamagaluru,13.6167,75.5167
+narasimharajapura rural gp cluster,Narasimharajapura Rural GP Cluster,Narasimharajapura,Chikkamagaluru,13.6517,75.4917
+narasimharajapura north hobli,Narasimharajapura North Hobli,Narasimharajapura,Chikkamagaluru,13.6617,75.5317
+narasimharajapura south agricultural belt,Narasimharajapura South Agricultural Belt,Narasimharajapura,Chikkamagaluru,13.5767,75.5067
+sringeri kasaba / central hobli,Sringeri Kasaba / Central Hobli,Sringeri,Chikkamagaluru,13.4167,75.25
+sringeri rural gp cluster,Sringeri Rural GP Cluster,Sringeri,Chikkamagaluru,13.4517,75.225
+sringeri north hobli,Sringeri North Hobli,Sringeri,Chikkamagaluru,13.4617,75.265
+sringeri south agricultural belt,Sringeri South Agricultural Belt,Sringeri,Chikkamagaluru,13.3767,75.24
+tarikere kasaba / central hobli,Tarikere Kasaba / Central Hobli,Tarikere,Chikkamagaluru,13.7167,75.8167
+tarikere rural gp cluster,Tarikere Rural GP Cluster,Tarikere,Chikkamagaluru,13.7517,75.7917
+tarikere north hobli,Tarikere North Hobli,Tarikere,Chikkamagaluru,13.7617,75.8317
+tarikere south agricultural belt,Tarikere South Agricultural Belt,Tarikere,Chikkamagaluru,13.6767,75.8067
+ajjampura kasaba / central hobli,Ajjampura Kasaba / Central Hobli,Ajjampura,Chikkamagaluru,13.7333,76.0333
+ajjampura rural gp cluster,Ajjampura Rural GP Cluster,Ajjampura,Chikkamagaluru,13.7683,76.0083
+ajjampura north hobli,Ajjampura North Hobli,Ajjampura,Chikkamagaluru,13.7783,76.0483
+ajjampura south agricultural belt,Ajjampura South Agricultural Belt,Ajjampura,Chikkamagaluru,13.6933,76.0233
+kalasa kasaba / central hobli,Kalasa Kasaba / Central Hobli,Kalasa,Chikkamagaluru,13.2333,75.3667
+kalasa rural gp cluster,Kalasa Rural GP Cluster,Kalasa,Chikkamagaluru,13.2683,75.3417
+kalasa north hobli,Kalasa North Hobli,Kalasa,Chikkamagaluru,13.2783,75.3817
+kalasa south agricultural belt,Kalasa South Agricultural Belt,Kalasa,Chikkamagaluru,13.1933,75.3567
+chitradurga kasaba / central hobli,Chitradurga Kasaba / Central Hobli,Chitradurga,Chitradurga,14.2251,76.398
+chitradurga rural gp cluster,Chitradurga Rural GP Cluster,Chitradurga,Chitradurga,14.2601,76.373
+chitradurga north hobli,Chitradurga North Hobli,Chitradurga,Chitradurga,14.2701,76.413
+chitradurga south agricultural belt,Chitradurga South Agricultural Belt,Chitradurga,Chitradurga,14.1851,76.388
+challakere kasaba / central hobli,Challakere Kasaba / Central Hobli,Challakere,Chitradurga,14.3167,76.65
+challakere rural gp cluster,Challakere Rural GP Cluster,Challakere,Chitradurga,14.3517,76.625
+challakere north hobli,Challakere North Hobli,Challakere,Chitradurga,14.3617,76.665
+challakere south agricultural belt,Challakere South Agricultural Belt,Challakere,Chitradurga,14.2767,76.64
+hiriyur kasaba / central hobli,Hiriyur Kasaba / Central Hobli,Hiriyur,Chitradurga,13.95,76.6167
+hiriyur rural gp cluster,Hiriyur Rural GP Cluster,Hiriyur,Chitradurga,13.985,76.5917
+hiriyur north hobli,Hiriyur North Hobli,Hiriyur,Chitradurga,13.995,76.6317
+hiriyur south agricultural belt,Hiriyur South Agricultural Belt,Hiriyur,Chitradurga,13.91,76.6067
+holalkere kasaba / central hobli,Holalkere Kasaba / Central Hobli,Holalkere,Chitradurga,14.0333,76.1833
+holalkere rural gp cluster,Holalkere Rural GP Cluster,Holalkere,Chitradurga,14.0683,76.1583
+holalkere north hobli,Holalkere North Hobli,Holalkere,Chitradurga,14.0783,76.1983
+holalkere south agricultural belt,Holalkere South Agricultural Belt,Holalkere,Chitradurga,13.9933,76.1733
+hosadurga kasaba / central hobli,Hosadurga Kasaba / Central Hobli,Hosadurga,Chitradurga,13.8,76.2833
+hosadurga rural gp cluster,Hosadurga Rural GP Cluster,Hosadurga,Chitradurga,13.835,76.2583
+hosadurga north hobli,Hosadurga North Hobli,Hosadurga,Chitradurga,13.845,76.2983
+hosadurga south agricultural belt,Hosadurga South Agricultural Belt,Hosadurga,Chitradurga,13.76,76.2733
+molakalmuru kasaba / central hobli,Molakalmuru Kasaba / Central Hobli,Molakalmuru,Chitradurga,14.7333,76.75
+molakalmuru rural gp cluster,Molakalmuru Rural GP Cluster,Molakalmuru,Chitradurga,14.7683,76.725
+molakalmuru north hobli,Molakalmuru North Hobli,Molakalmuru,Chitradurga,14.7783,76.765
+molakalmuru south agricultural belt,Molakalmuru South Agricultural Belt,Molakalmuru,Chitradurga,14.6933,76.74
+mangaluru kasaba / central hobli,Mangaluru Kasaba / Central Hobli,Mangaluru,Dakshina Kannada,12.8703,75.2429
+mangaluru rural gp cluster,Mangaluru Rural GP Cluster,Mangaluru,Dakshina Kannada,12.9053,75.2179
+mangaluru north hobli,Mangaluru North Hobli,Mangaluru,Dakshina Kannada,12.9153,75.2579
+mangaluru south agricultural belt,Mangaluru South Agricultural Belt,Mangaluru,Dakshina Kannada,12.8303,75.2329
+ullal kasaba / central hobli,Ullal Kasaba / Central Hobli,Ullal,Dakshina Kannada,12.8,74.85
+ullal rural gp cluster,Ullal Rural GP Cluster,Ullal,Dakshina Kannada,12.835,74.825
+ullal north hobli,Ullal North Hobli,Ullal,Dakshina Kannada,12.845,74.865
+ullal south agricultural belt,Ullal South Agricultural Belt,Ullal,Dakshina Kannada,12.76,74.84
+mulki kasaba / central hobli,Mulki Kasaba / Central Hobli,Mulki,Dakshina Kannada,13.1,74.7833
+mulki rural gp cluster,Mulki Rural GP Cluster,Mulki,Dakshina Kannada,13.135,74.7583
+mulki north hobli,Mulki North Hobli,Mulki,Dakshina Kannada,13.145,74.7983
+mulki south agricultural belt,Mulki South Agricultural Belt,Mulki,Dakshina Kannada,13.06,74.7733
+moodbidri kasaba / central hobli,Moodbidri Kasaba / Central Hobli,Moodbidri,Dakshina Kannada,13.0667,74.9833
+moodbidri rural gp cluster,Moodbidri Rural GP Cluster,Moodbidri,Dakshina Kannada,13.1017,74.9583
+moodbidri north hobli,Moodbidri North Hobli,Moodbidri,Dakshina Kannada,13.1117,74.9983
+moodbidri south agricultural belt,Moodbidri South Agricultural Belt,Moodbidri,Dakshina Kannada,13.0267,74.9733
+bantwala kasaba / central hobli,Bantwala Kasaba / Central Hobli,Bantwala,Dakshina Kannada,12.8833,75.0333
+bantwala rural gp cluster,Bantwala Rural GP Cluster,Bantwala,Dakshina Kannada,12.9183,75.0083
+bantwala north hobli,Bantwala North Hobli,Bantwala,Dakshina Kannada,12.9283,75.0483
+bantwala south agricultural belt,Bantwala South Agricultural Belt,Bantwala,Dakshina Kannada,12.8433,75.0233
+belathangadi kasaba / central hobli,Belathangadi Kasaba / Central Hobli,Belathangadi,Dakshina Kannada,13.0,75.2667
+belathangadi rural gp cluster,Belathangadi Rural GP Cluster,Belathangadi,Dakshina Kannada,13.035,75.2417
+belathangadi north hobli,Belathangadi North Hobli,Belathangadi,Dakshina Kannada,13.045,75.2817
+belathangadi south agricultural belt,Belathangadi South Agricultural Belt,Belathangadi,Dakshina Kannada,12.96,75.2567
+putturu kasaba / central hobli,Putturu Kasaba / Central Hobli,Putturu,Dakshina Kannada,12.7667,75.2
+putturu rural gp cluster,Putturu Rural GP Cluster,Putturu,Dakshina Kannada,12.8017,75.175
+putturu north hobli,Putturu North Hobli,Putturu,Dakshina Kannada,12.8117,75.215
+putturu south agricultural belt,Putturu South Agricultural Belt,Putturu,Dakshina Kannada,12.7267,75.19
+sulya kasaba / central hobli,Sulya Kasaba / Central Hobli,Sulya,Dakshina Kannada,12.5667,75.3833
+sulya rural gp cluster,Sulya Rural GP Cluster,Sulya,Dakshina Kannada,12.6017,75.3583
+sulya north hobli,Sulya North Hobli,Sulya,Dakshina Kannada,12.6117,75.3983
+sulya south agricultural belt,Sulya South Agricultural Belt,Sulya,Dakshina Kannada,12.5267,75.3733
+kadaba kasaba / central hobli,Kadaba Kasaba / Central Hobli,Kadaba,Dakshina Kannada,12.75,75.4667
+kadaba rural gp cluster,Kadaba Rural GP Cluster,Kadaba,Dakshina Kannada,12.785,75.4417
+kadaba north hobli,Kadaba North Hobli,Kadaba,Dakshina Kannada,12.795,75.4817
+kadaba south agricultural belt,Kadaba South Agricultural Belt,Kadaba,Dakshina Kannada,12.71,75.4567
+davanagere kasaba / central hobli,Davanagere Kasaba / Central Hobli,Davanagere,Davanagere,14.4644,75.9218
+davanagere rural gp cluster,Davanagere Rural GP Cluster,Davanagere,Davanagere,14.4994,75.8968
+davanagere north hobli,Davanagere North Hobli,Davanagere,Davanagere,14.5094,75.9368
+davanagere south agricultural belt,Davanagere South Agricultural Belt,Davanagere,Davanagere,14.4244,75.9118
+harihara kasaba / central hobli,Harihara Kasaba / Central Hobli,Harihara,Davanagere,14.5126,75.8037
+harihara rural gp cluster,Harihara Rural GP Cluster,Harihara,Davanagere,14.5476,75.7787
+harihara north hobli,Harihara North Hobli,Harihara,Davanagere,14.5576,75.8187
+harihara south agricultural belt,Harihara South Agricultural Belt,Harihara,Davanagere,14.4726,75.7937
+channagiri kasaba / central hobli,Channagiri Kasaba / Central Hobli,Channagiri,Davanagere,14.0264,75.9272
+channagiri rural gp cluster,Channagiri Rural GP Cluster,Channagiri,Davanagere,14.0614,75.9022
+channagiri north hobli,Channagiri North Hobli,Channagiri,Davanagere,14.0714,75.9422
+channagiri south agricultural belt,Channagiri South Agricultural Belt,Channagiri,Davanagere,13.9864,75.9172
+honnali kasaba / central hobli,Honnali Kasaba / Central Hobli,Honnali,Davanagere,14.2464,75.6429
+honnali rural gp cluster,Honnali Rural GP Cluster,Honnali,Davanagere,14.2814,75.6179
+honnali north hobli,Honnali North Hobli,Honnali,Davanagere,14.2914,75.6579
+honnali south agricultural belt,Honnali South Agricultural Belt,Honnali,Davanagere,14.2064,75.6329
+nyamathi kasaba / central hobli,Nyamathi Kasaba / Central Hobli,Nyamathi,Davanagere,14.15,75.5667
+nyamathi rural gp cluster,Nyamathi Rural GP Cluster,Nyamathi,Davanagere,14.185,75.5417
+nyamathi north hobli,Nyamathi North Hobli,Nyamathi,Davanagere,14.195,75.5817
+nyamathi south agricultural belt,Nyamathi South Agricultural Belt,Nyamathi,Davanagere,14.11,75.5567
+jagaluru kasaba / central hobli,Jagaluru Kasaba / Central Hobli,Jagaluru,Davanagere,14.5264,76.3472
+jagaluru rural gp cluster,Jagaluru Rural GP Cluster,Jagaluru,Davanagere,14.5614,76.3222
+jagaluru north hobli,Jagaluru North Hobli,Jagaluru,Davanagere,14.5714,76.3622
+jagaluru south agricultural belt,Jagaluru South Agricultural Belt,Jagaluru,Davanagere,14.4864,76.3372
+dharwad kasaba / central hobli,Dharwad Kasaba / Central Hobli,Dharwad,Dharwad,15.4589,75.0078
+dharwad rural gp cluster,Dharwad Rural GP Cluster,Dharwad,Dharwad,15.4939,74.9828
+dharwad north hobli,Dharwad North Hobli,Dharwad,Dharwad,15.5039,75.0228
+dharwad south agricultural belt,Dharwad South Agricultural Belt,Dharwad,Dharwad,15.4189,74.9978
+hubballi urban kasaba / central hobli,Hubballi Urban Kasaba / Central Hobli,Hubballi Urban,Dharwad,15.3647,75.124
+hubballi urban rural gp cluster,Hubballi Urban Rural GP Cluster,Hubballi Urban,Dharwad,15.3997,75.099
+hubballi urban north hobli,Hubballi Urban North Hobli,Hubballi Urban,Dharwad,15.4097,75.139
+hubballi urban south agricultural belt,Hubballi Urban South Agricultural Belt,Hubballi Urban,Dharwad,15.3247,75.114
+hubballi rural kasaba / central hobli,Hubballi Rural Kasaba / Central Hobli,Hubballi Rural,Dharwad,15.35,75.15
+hubballi rural rural gp cluster,Hubballi Rural Rural GP Cluster,Hubballi Rural,Dharwad,15.385,75.125
+hubballi rural north hobli,Hubballi Rural North Hobli,Hubballi Rural,Dharwad,15.395,75.165
+hubballi rural south agricultural belt,Hubballi Rural South Agricultural Belt,Hubballi Rural,Dharwad,15.31,75.14
+kalghatgi kasaba / central hobli,Kalghatgi Kasaba / Central Hobli,Kalghatgi,Dharwad,15.1786,74.9742
+kalghatgi rural gp cluster,Kalghatgi Rural GP Cluster,Kalghatgi,Dharwad,15.2136,74.9492
+kalghatgi north hobli,Kalghatgi North Hobli,Kalghatgi,Dharwad,15.2236,74.9892
+kalghatgi south agricultural belt,Kalghatgi South Agricultural Belt,Kalghatgi,Dharwad,15.1386,74.9642
+kundagolu kasaba / central hobli,Kundagolu Kasaba / Central Hobli,Kundagolu,Dharwad,15.25,75.25
+kundagolu rural gp cluster,Kundagolu Rural GP Cluster,Kundagolu,Dharwad,15.285,75.225
+kundagolu north hobli,Kundagolu North Hobli,Kundagolu,Dharwad,15.295,75.265
+kundagolu south agricultural belt,Kundagolu South Agricultural Belt,Kundagolu,Dharwad,15.21,75.24
+navalgunda kasaba / central hobli,Navalgunda Kasaba / Central Hobli,Navalgunda,Dharwad,15.5667,75.3667
+navalgunda rural gp cluster,Navalgunda Rural GP Cluster,Navalgunda,Dharwad,15.6017,75.3417
+navalgunda north hobli,Navalgunda North Hobli,Navalgunda,Dharwad,15.6117,75.3817
+navalgunda south agricultural belt,Navalgunda South Agricultural Belt,Navalgunda,Dharwad,15.5267,75.3567
+alnavara kasaba / central hobli,Alnavara Kasaba / Central Hobli,Alnavara,Dharwad,15.4333,74.7333
+alnavara rural gp cluster,Alnavara Rural GP Cluster,Alnavara,Dharwad,15.4683,74.7083
+alnavara north hobli,Alnavara North Hobli,Alnavara,Dharwad,15.4783,74.7483
+alnavara south agricultural belt,Alnavara South Agricultural Belt,Alnavara,Dharwad,15.3933,74.7233
+annigeri kasaba / central hobli,Annigeri Kasaba / Central Hobli,Annigeri,Dharwad,15.43,75.43
+annigeri rural gp cluster,Annigeri Rural GP Cluster,Annigeri,Dharwad,15.465,75.405
+annigeri north hobli,Annigeri North Hobli,Annigeri,Dharwad,15.475,75.445
+annigeri south agricultural belt,Annigeri South Agricultural Belt,Annigeri,Dharwad,15.39,75.42
+gadag kasaba / central hobli,Gadag Kasaba / Central Hobli,Gadag,Gadag,15.4167,75.6167
+gadag rural gp cluster,Gadag Rural GP Cluster,Gadag,Gadag,15.4517,75.5917
+gadag north hobli,Gadag North Hobli,Gadag,Gadag,15.4617,75.6317
+gadag south agricultural belt,Gadag South Agricultural Belt,Gadag,Gadag,15.3767,75.6067
+naragunda kasaba / central hobli,Naragunda Kasaba / Central Hobli,Naragunda,Gadag,15.7167,75.3833
+naragunda rural gp cluster,Naragunda Rural GP Cluster,Naragunda,Gadag,15.7517,75.3583
+naragunda north hobli,Naragunda North Hobli,Naragunda,Gadag,15.7617,75.3983
+naragunda south agricultural belt,Naragunda South Agricultural Belt,Naragunda,Gadag,15.6767,75.3733
+mundaragi kasaba / central hobli,Mundaragi Kasaba / Central Hobli,Mundaragi,Gadag,15.2,75.8833
+mundaragi rural gp cluster,Mundaragi Rural GP Cluster,Mundaragi,Gadag,15.235,75.8583
+mundaragi north hobli,Mundaragi North Hobli,Mundaragi,Gadag,15.245,75.8983
+mundaragi south agricultural belt,Mundaragi South Agricultural Belt,Mundaragi,Gadag,15.16,75.8733
+rona kasaba / central hobli,Rona Kasaba / Central Hobli,Rona,Gadag,15.7,75.7333
+rona rural gp cluster,Rona Rural GP Cluster,Rona,Gadag,15.735,75.7083
+rona north hobli,Rona North Hobli,Rona,Gadag,15.745,75.7483
+rona south agricultural belt,Rona South Agricultural Belt,Rona,Gadag,15.66,75.7233
+gajendragada kasaba / central hobli,Gajendragada Kasaba / Central Hobli,Gajendragada,Gadag,15.7333,75.9833
+gajendragada rural gp cluster,Gajendragada Rural GP Cluster,Gajendragada,Gadag,15.7683,75.9583
+gajendragada north hobli,Gajendragada North Hobli,Gajendragada,Gadag,15.7783,75.9983
+gajendragada south agricultural belt,Gajendragada South Agricultural Belt,Gajendragada,Gadag,15.6933,75.9733
+lakshmeshwara kasaba / central hobli,Lakshmeshwara Kasaba / Central Hobli,Lakshmeshwara,Gadag,15.1333,75.4667
+lakshmeshwara rural gp cluster,Lakshmeshwara Rural GP Cluster,Lakshmeshwara,Gadag,15.1683,75.4417
+lakshmeshwara north hobli,Lakshmeshwara North Hobli,Lakshmeshwara,Gadag,15.1783,75.4817
+lakshmeshwara south agricultural belt,Lakshmeshwara South Agricultural Belt,Lakshmeshwara,Gadag,15.0933,75.4567
+shirahatti kasaba / central hobli,Shirahatti Kasaba / Central Hobli,Shirahatti,Gadag,15.1833,75.5833
+shirahatti rural gp cluster,Shirahatti Rural GP Cluster,Shirahatti,Gadag,15.2183,75.5583
+shirahatti north hobli,Shirahatti North Hobli,Shirahatti,Gadag,15.2283,75.5983
+shirahatti south agricultural belt,Shirahatti South Agricultural Belt,Shirahatti,Gadag,15.1433,75.5733
+hassan kasaba / central hobli,Hassan Kasaba / Central Hobli,Hassan,Hassan,13.0033,76.1004
+hassan rural gp cluster,Hassan Rural GP Cluster,Hassan,Hassan,13.0383,76.0754
+hassan north hobli,Hassan North Hobli,Hassan,Hassan,13.0483,76.1154
+hassan south agricultural belt,Hassan South Agricultural Belt,Hassan,Hassan,12.9633,76.0904
+arasikere kasaba / central hobli,Arasikere Kasaba / Central Hobli,Arasikere,Hassan,13.3167,76.25
+arasikere rural gp cluster,Arasikere Rural GP Cluster,Arasikere,Hassan,13.3517,76.225
+arasikere north hobli,Arasikere North Hobli,Arasikere,Hassan,13.3617,76.265
+arasikere south agricultural belt,Arasikere South Agricultural Belt,Arasikere,Hassan,13.2767,76.24
+channarayapattana kasaba / central hobli,Channarayapattana Kasaba / Central Hobli,Channarayapattana,Hassan,12.9,76.3833
+channarayapattana rural gp cluster,Channarayapattana Rural GP Cluster,Channarayapattana,Hassan,12.935,76.3583
+channarayapattana north hobli,Channarayapattana North Hobli,Channarayapattana,Hassan,12.945,76.3983
+channarayapattana south agricultural belt,Channarayapattana South Agricultural Belt,Channarayapattana,Hassan,12.86,76.3733
+holenarsipura kasaba / central hobli,Holenarsipura Kasaba / Central Hobli,Holenarsipura,Hassan,12.7833,76.2333
+holenarsipura rural gp cluster,Holenarsipura Rural GP Cluster,Holenarsipura,Hassan,12.8183,76.2083
+holenarsipura north hobli,Holenarsipura North Hobli,Holenarsipura,Hassan,12.8283,76.2483
+holenarsipura south agricultural belt,Holenarsipura South Agricultural Belt,Holenarsipura,Hassan,12.7433,76.2233
+sakleshpura kasaba / central hobli,Sakleshpura Kasaba / Central Hobli,Sakleshpura,Hassan,12.9667,75.7833
+sakleshpura rural gp cluster,Sakleshpura Rural GP Cluster,Sakleshpura,Hassan,13.0017,75.7583
+sakleshpura north hobli,Sakleshpura North Hobli,Sakleshpura,Hassan,13.0117,75.7983
+sakleshpura south agricultural belt,Sakleshpura South Agricultural Belt,Sakleshpura,Hassan,12.9267,75.7733
+aluru kasaba / central hobli,Aluru Kasaba / Central Hobli,Aluru,Hassan,12.9833,75.9833
+aluru rural gp cluster,Aluru Rural GP Cluster,Aluru,Hassan,13.0183,75.9583
+aluru north hobli,Aluru North Hobli,Aluru,Hassan,13.0283,75.9983
+aluru south agricultural belt,Aluru South Agricultural Belt,Aluru,Hassan,12.9433,75.9733
+arakalagudu kasaba / central hobli,Arakalagudu Kasaba / Central Hobli,Arakalagudu,Hassan,12.7667,75.9833
+arakalagudu rural gp cluster,Arakalagudu Rural GP Cluster,Arakalagudu,Hassan,12.8017,75.9583
+arakalagudu north hobli,Arakalagudu North Hobli,Arakalagudu,Hassan,12.8117,75.9983
+arakalagudu south agricultural belt,Arakalagudu South Agricultural Belt,Arakalagudu,Hassan,12.7267,75.9733
+beluru kasaba / central hobli,Beluru Kasaba / Central Hobli,Beluru,Hassan,13.1667,75.8667
+beluru rural gp cluster,Beluru Rural GP Cluster,Beluru,Hassan,13.2017,75.8417
+beluru north hobli,Beluru North Hobli,Beluru,Hassan,13.2117,75.8817
+beluru south agricultural belt,Beluru South Agricultural Belt,Beluru,Hassan,13.1267,75.8567
+haveri kasaba / central hobli,Haveri Kasaba / Central Hobli,Haveri,Haveri,14.7954,75.3991
+haveri rural gp cluster,Haveri Rural GP Cluster,Haveri,Haveri,14.8304,75.3741
+haveri north hobli,Haveri North Hobli,Haveri,Haveri,14.8404,75.4141
+haveri south agricultural belt,Haveri South Agricultural Belt,Haveri,Haveri,14.7554,75.3891
+ranibennur kasaba / central hobli,Ranibennur Kasaba / Central Hobli,Ranibennur,Haveri,14.6167,75.6167
+ranibennur rural gp cluster,Ranibennur Rural GP Cluster,Ranibennur,Haveri,14.6517,75.5917
+ranibennur north hobli,Ranibennur North Hobli,Ranibennur,Haveri,14.6617,75.6317
+ranibennur south agricultural belt,Ranibennur South Agricultural Belt,Ranibennur,Haveri,14.5767,75.6067
+byadgi kasaba / central hobli,Byadgi Kasaba / Central Hobli,Byadgi,Haveri,14.6833,75.4833
+byadgi rural gp cluster,Byadgi Rural GP Cluster,Byadgi,Haveri,14.7183,75.4583
+byadgi north hobli,Byadgi North Hobli,Byadgi,Haveri,14.7283,75.4983
+byadgi south agricultural belt,Byadgi South Agricultural Belt,Byadgi,Haveri,14.6433,75.4733
+hangala kasaba / central hobli,Hangala Kasaba / Central Hobli,Hangala,Haveri,14.7667,75.1333
+hangala rural gp cluster,Hangala Rural GP Cluster,Hangala,Haveri,14.8017,75.1083
+hangala north hobli,Hangala North Hobli,Hangala,Haveri,14.8117,75.1483
+hangala south agricultural belt,Hangala South Agricultural Belt,Hangala,Haveri,14.7267,75.1233
+savanuru kasaba / central hobli,Savanuru Kasaba / Central Hobli,Savanuru,Haveri,14.9667,75.35
+savanuru rural gp cluster,Savanuru Rural GP Cluster,Savanuru,Haveri,15.0017,75.325
+savanuru north hobli,Savanuru North Hobli,Savanuru,Haveri,15.0117,75.365
+savanuru south agricultural belt,Savanuru South Agricultural Belt,Savanuru,Haveri,14.9267,75.34
+hirekeruru kasaba / central hobli,Hirekeruru Kasaba / Central Hobli,Hirekeruru,Haveri,14.4667,75.3833
+hirekeruru rural gp cluster,Hirekeruru Rural GP Cluster,Hirekeruru,Haveri,14.5017,75.3583
+hirekeruru north hobli,Hirekeruru North Hobli,Hirekeruru,Haveri,14.5117,75.3983
+hirekeruru south agricultural belt,Hirekeruru South Agricultural Belt,Hirekeruru,Haveri,14.4267,75.3733
+shiggavi kasaba / central hobli,Shiggavi Kasaba / Central Hobli,Shiggavi,Haveri,14.9833,75.2333
+shiggavi rural gp cluster,Shiggavi Rural GP Cluster,Shiggavi,Haveri,15.0183,75.2083
+shiggavi north hobli,Shiggavi North Hobli,Shiggavi,Haveri,15.0283,75.2483
+shiggavi south agricultural belt,Shiggavi South Agricultural Belt,Shiggavi,Haveri,14.9433,75.2233
+rattihalli kasaba / central hobli,Rattihalli Kasaba / Central Hobli,Rattihalli,Haveri,14.4167,75.5167
+rattihalli rural gp cluster,Rattihalli Rural GP Cluster,Rattihalli,Haveri,14.4517,75.4917
+rattihalli north hobli,Rattihalli North Hobli,Rattihalli,Haveri,14.4617,75.5317
+rattihalli south agricultural belt,Rattihalli South Agricultural Belt,Rattihalli,Haveri,14.3767,75.5067
+kalaburagi kasaba / central hobli,Kalaburagi Kasaba / Central Hobli,Kalaburagi,Kalaburagi,17.3297,76.8343
+kalaburagi rural gp cluster,Kalaburagi Rural GP Cluster,Kalaburagi,Kalaburagi,17.3647,76.8093
+kalaburagi north hobli,Kalaburagi North Hobli,Kalaburagi,Kalaburagi,17.3747,76.8493
+kalaburagi south agricultural belt,Kalaburagi South Agricultural Belt,Kalaburagi,Kalaburagi,17.2897,76.8243
+afzalpura kasaba / central hobli,Afzalpura Kasaba / Central Hobli,Afzalpura,Kalaburagi,17.2,76.35
+afzalpura rural gp cluster,Afzalpura Rural GP Cluster,Afzalpura,Kalaburagi,17.235,76.325
+afzalpura north hobli,Afzalpura North Hobli,Afzalpura,Kalaburagi,17.245,76.365
+afzalpura south agricultural belt,Afzalpura South Agricultural Belt,Afzalpura,Kalaburagi,17.16,76.34
+aland kasaba / central hobli,Aland Kasaba / Central Hobli,Aland,Kalaburagi,17.5667,76.5667
+aland rural gp cluster,Aland Rural GP Cluster,Aland,Kalaburagi,17.6017,76.5417
+aland north hobli,Aland North Hobli,Aland,Kalaburagi,17.6117,76.5817
+aland south agricultural belt,Aland South Agricultural Belt,Aland,Kalaburagi,17.5267,76.5567
+chincholi kasaba / central hobli,Chincholi Kasaba / Central Hobli,Chincholi,Kalaburagi,17.4667,77.4333
+chincholi rural gp cluster,Chincholi Rural GP Cluster,Chincholi,Kalaburagi,17.5017,77.4083
+chincholi north hobli,Chincholi North Hobli,Chincholi,Kalaburagi,17.5117,77.4483
+chincholi south agricultural belt,Chincholi South Agricultural Belt,Chincholi,Kalaburagi,17.4267,77.4233
+chitapura kasaba / central hobli,Chitapura Kasaba / Central Hobli,Chitapura,Kalaburagi,17.1167,77.0833
+chitapura rural gp cluster,Chitapura Rural GP Cluster,Chitapura,Kalaburagi,17.1517,77.0583
+chitapura north hobli,Chitapura North Hobli,Chitapura,Kalaburagi,17.1617,77.0983
+chitapura south agricultural belt,Chitapura South Agricultural Belt,Chitapura,Kalaburagi,17.0767,77.0733
+jevargi kasaba / central hobli,Jevargi Kasaba / Central Hobli,Jevargi,Kalaburagi,17.0167,76.7667
+jevargi rural gp cluster,Jevargi Rural GP Cluster,Jevargi,Kalaburagi,17.0517,76.7417
+jevargi north hobli,Jevargi North Hobli,Jevargi,Kalaburagi,17.0617,76.7817
+jevargi south agricultural belt,Jevargi South Agricultural Belt,Jevargi,Kalaburagi,16.9767,76.7567
+sedam kasaba / central hobli,Sedam Kasaba / Central Hobli,Sedam,Kalaburagi,17.1833,77.2833
+sedam rural gp cluster,Sedam Rural GP Cluster,Sedam,Kalaburagi,17.2183,77.2583
+sedam north hobli,Sedam North Hobli,Sedam,Kalaburagi,17.2283,77.2983
+sedam south agricultural belt,Sedam South Agricultural Belt,Sedam,Kalaburagi,17.1433,77.2733
+kamalapura kasaba / central hobli,Kamalapura Kasaba / Central Hobli,Kamalapura,Kalaburagi,17.5833,76.9833
+kamalapura rural gp cluster,Kamalapura Rural GP Cluster,Kamalapura,Kalaburagi,17.6183,76.9583
+kamalapura north hobli,Kamalapura North Hobli,Kamalapura,Kalaburagi,17.6283,76.9983
+kamalapura south agricultural belt,Kamalapura South Agricultural Belt,Kamalapura,Kalaburagi,17.5433,76.9733
+shahabad kasaba / central hobli,Shahabad Kasaba / Central Hobli,Shahabad,Kalaburagi,17.1333,76.9333
+shahabad rural gp cluster,Shahabad Rural GP Cluster,Shahabad,Kalaburagi,17.1683,76.9083
+shahabad north hobli,Shahabad North Hobli,Shahabad,Kalaburagi,17.1783,76.9483
+shahabad south agricultural belt,Shahabad South Agricultural Belt,Shahabad,Kalaburagi,17.0933,76.9233
+kalgi kasaba / central hobli,Kalgi Kasaba / Central Hobli,Kalgi,Kalaburagi,17.3667,77.15
+kalgi rural gp cluster,Kalgi Rural GP Cluster,Kalgi,Kalaburagi,17.4017,77.125
+kalgi north hobli,Kalgi North Hobli,Kalgi,Kalaburagi,17.4117,77.165
+kalgi south agricultural belt,Kalgi South Agricultural Belt,Kalgi,Kalaburagi,17.3267,77.14
+yedrami kasaba / central hobli,Yedrami Kasaba / Central Hobli,Yedrami,Kalaburagi,16.85,76.5333
+yedrami rural gp cluster,Yedrami Rural GP Cluster,Yedrami,Kalaburagi,16.885,76.5083
+yedrami north hobli,Yedrami North Hobli,Yedrami,Kalaburagi,16.895,76.5483
+yedrami south agricultural belt,Yedrami South Agricultural Belt,Yedrami,Kalaburagi,16.81,76.5233
+madikeri kasaba / central hobli,Madikeri Kasaba / Central Hobli,Madikeri,Kodagu,12.42,75.73
+madikeri rural gp cluster,Madikeri Rural GP Cluster,Madikeri,Kodagu,12.455,75.705
+madikeri north hobli,Madikeri North Hobli,Madikeri,Kodagu,12.465,75.745
+madikeri south agricultural belt,Madikeri South Agricultural Belt,Madikeri,Kodagu,12.38,75.72
+somawarapete kasaba / central hobli,Somawarapete Kasaba / Central Hobli,Somawarapete,Kodagu,12.6,75.8667
+somawarapete rural gp cluster,Somawarapete Rural GP Cluster,Somawarapete,Kodagu,12.635,75.8417
+somawarapete north hobli,Somawarapete North Hobli,Somawarapete,Kodagu,12.645,75.8817
+somawarapete south agricultural belt,Somawarapete South Agricultural Belt,Somawarapete,Kodagu,12.56,75.8567
+virajapete kasaba / central hobli,Virajapete Kasaba / Central Hobli,Virajapete,Kodagu,12.2,75.8
+virajapete rural gp cluster,Virajapete Rural GP Cluster,Virajapete,Kodagu,12.235,75.775
+virajapete north hobli,Virajapete North Hobli,Virajapete,Kodagu,12.245,75.815
+virajapete south agricultural belt,Virajapete South Agricultural Belt,Virajapete,Kodagu,12.16,75.79
+ponnammapete kasaba / central hobli,Ponnammapete Kasaba / Central Hobli,Ponnammapete,Kodagu,12.15,75.9333
+ponnammapete rural gp cluster,Ponnammapete Rural GP Cluster,Ponnammapete,Kodagu,12.185,75.9083
+ponnammapete north hobli,Ponnammapete North Hobli,Ponnammapete,Kodagu,12.195,75.9483
+ponnammapete south agricultural belt,Ponnammapete South Agricultural Belt,Ponnammapete,Kodagu,12.11,75.9233
+kushalnagara kasaba / central hobli,Kushalnagara Kasaba / Central Hobli,Kushalnagara,Kodagu,12.4667,75.9667
+kushalnagara rural gp cluster,Kushalnagara Rural GP Cluster,Kushalnagara,Kodagu,12.5017,75.9417
+kushalnagara north hobli,Kushalnagara North Hobli,Kushalnagara,Kodagu,12.5117,75.9817
+kushalnagara south agricultural belt,Kushalnagara South Agricultural Belt,Kushalnagara,Kodagu,12.4267,75.9567
+kolar kasaba / central hobli,Kolar Kasaba / Central Hobli,Kolar,Kolar,13.1362,78.1291
+kolar rural gp cluster,Kolar Rural GP Cluster,Kolar,Kolar,13.1712,78.1041
+kolar north hobli,Kolar North Hobli,Kolar,Kolar,13.1812,78.1441
+kolar south agricultural belt,Kolar South Agricultural Belt,Kolar,Kolar,13.0962,78.1191
+bangarapete kasaba / central hobli,Bangarapete Kasaba / Central Hobli,Bangarapete,Kolar,12.9833,78.2
+bangarapete rural gp cluster,Bangarapete Rural GP Cluster,Bangarapete,Kolar,13.0183,78.175
+bangarapete north hobli,Bangarapete North Hobli,Bangarapete,Kolar,13.0283,78.215
+bangarapete south agricultural belt,Bangarapete South Agricultural Belt,Bangarapete,Kolar,12.9433,78.19
+maluru kasaba / central hobli,Maluru Kasaba / Central Hobli,Maluru,Kolar,13.0,77.9333
+maluru rural gp cluster,Maluru Rural GP Cluster,Maluru,Kolar,13.035,77.9083
+maluru north hobli,Maluru North Hobli,Maluru,Kolar,13.045,77.9483
+maluru south agricultural belt,Maluru South Agricultural Belt,Maluru,Kolar,12.96,77.9233
+mulabagilu kasaba / central hobli,Mulabagilu Kasaba / Central Hobli,Mulabagilu,Kolar,13.1667,78.4
+mulabagilu rural gp cluster,Mulabagilu Rural GP Cluster,Mulabagilu,Kolar,13.2017,78.375
+mulabagilu north hobli,Mulabagilu North Hobli,Mulabagilu,Kolar,13.2117,78.415
+mulabagilu south agricultural belt,Mulabagilu South Agricultural Belt,Mulabagilu,Kolar,13.1267,78.39
+srinivasapura kasaba / central hobli,Srinivasapura Kasaba / Central Hobli,Srinivasapura,Kolar,13.3333,78.2167
+srinivasapura rural gp cluster,Srinivasapura Rural GP Cluster,Srinivasapura,Kolar,13.3683,78.1917
+srinivasapura north hobli,Srinivasapura North Hobli,Srinivasapura,Kolar,13.3783,78.2317
+srinivasapura south agricultural belt,Srinivasapura South Agricultural Belt,Srinivasapura,Kolar,13.2933,78.2067
+kgf kasaba / central hobli,KGF Kasaba / Central Hobli,KGF,Kolar,12.96,78.27
+kgf rural gp cluster,KGF Rural GP Cluster,KGF,Kolar,12.995,78.245
+kgf north hobli,KGF North Hobli,KGF,Kolar,13.005,78.285
+kgf south agricultural belt,KGF South Agricultural Belt,KGF,Kolar,12.92,78.26
+koppal kasaba / central hobli,Koppal Kasaba / Central Hobli,Koppal,Koppal,15.3456,76.1554
+koppal rural gp cluster,Koppal Rural GP Cluster,Koppal,Koppal,15.3806,76.1304
+koppal north hobli,Koppal North Hobli,Koppal,Koppal,15.3906,76.1704
+koppal south agricultural belt,Koppal South Agricultural Belt,Koppal,Koppal,15.3056,76.1454
+gangavathi kasaba / central hobli,Gangavathi Kasaba / Central Hobli,Gangavathi,Koppal,15.4333,76.5333
+gangavathi rural gp cluster,Gangavathi Rural GP Cluster,Gangavathi,Koppal,15.4683,76.5083
+gangavathi north hobli,Gangavathi North Hobli,Gangavathi,Koppal,15.4783,76.5483
+gangavathi south agricultural belt,Gangavathi South Agricultural Belt,Gangavathi,Koppal,15.3933,76.5233
+kushtagi kasaba / central hobli,Kushtagi Kasaba / Central Hobli,Kushtagi,Koppal,15.75,76.2
+kushtagi rural gp cluster,Kushtagi Rural GP Cluster,Kushtagi,Koppal,15.785,76.175
+kushtagi north hobli,Kushtagi North Hobli,Kushtagi,Koppal,15.795,76.215
+kushtagi south agricultural belt,Kushtagi South Agricultural Belt,Kushtagi,Koppal,15.71,76.19
+yelburga kasaba / central hobli,Yelburga Kasaba / Central Hobli,Yelburga,Koppal,15.6167,76.0167
+yelburga rural gp cluster,Yelburga Rural GP Cluster,Yelburga,Koppal,15.6517,75.9917
+yelburga north hobli,Yelburga North Hobli,Yelburga,Koppal,15.6617,76.0317
+yelburga south agricultural belt,Yelburga South Agricultural Belt,Yelburga,Koppal,15.5767,76.0067
+kanakagiri kasaba / central hobli,Kanakagiri Kasaba / Central Hobli,Kanakagiri,Koppal,15.5667,76.4167
+kanakagiri rural gp cluster,Kanakagiri Rural GP Cluster,Kanakagiri,Koppal,15.6017,76.3917
+kanakagiri north hobli,Kanakagiri North Hobli,Kanakagiri,Koppal,15.6117,76.4317
+kanakagiri south agricultural belt,Kanakagiri South Agricultural Belt,Kanakagiri,Koppal,15.5267,76.4067
+karatagi kasaba / central hobli,Karatagi Kasaba / Central Hobli,Karatagi,Koppal,15.5833,76.6833
+karatagi rural gp cluster,Karatagi Rural GP Cluster,Karatagi,Koppal,15.6183,76.6583
+karatagi north hobli,Karatagi North Hobli,Karatagi,Koppal,15.6283,76.6983
+karatagi south agricultural belt,Karatagi South Agricultural Belt,Karatagi,Koppal,15.5433,76.6733
+kukanuru kasaba / central hobli,Kukanuru Kasaba / Central Hobli,Kukanuru,Koppal,15.4667,75.9833
+kukanuru rural gp cluster,Kukanuru Rural GP Cluster,Kukanuru,Koppal,15.5017,75.9583
+kukanuru north hobli,Kukanuru North Hobli,Kukanuru,Koppal,15.5117,75.9983
+kukanuru south agricultural belt,Kukanuru South Agricultural Belt,Kukanuru,Koppal,15.4267,75.9733
+mandya kasaba / central hobli,Mandya Kasaba / Central Hobli,Mandya,Mandya,12.5218,76.8951
+mandya rural gp cluster,Mandya Rural GP Cluster,Mandya,Mandya,12.5568,76.8701
+mandya north hobli,Mandya North Hobli,Mandya,Mandya,12.5668,76.9101
+mandya south agricultural belt,Mandya South Agricultural Belt,Mandya,Mandya,12.4818,76.8851
+maddur kasaba / central hobli,Maddur Kasaba / Central Hobli,Maddur,Mandya,12.5833,77.05
+maddur rural gp cluster,Maddur Rural GP Cluster,Maddur,Mandya,12.6183,77.025
+maddur north hobli,Maddur North Hobli,Maddur,Mandya,12.6283,77.065
+maddur south agricultural belt,Maddur South Agricultural Belt,Maddur,Mandya,12.5433,77.04
+malavalli kasaba / central hobli,Malavalli Kasaba / Central Hobli,Malavalli,Mandya,12.3833,77.0667
+malavalli rural gp cluster,Malavalli Rural GP Cluster,Malavalli,Mandya,12.4183,77.0417
+malavalli north hobli,Malavalli North Hobli,Malavalli,Mandya,12.4283,77.0817
+malavalli south agricultural belt,Malavalli South Agricultural Belt,Malavalli,Mandya,12.3433,77.0567
+pandavapura kasaba / central hobli,Pandavapura Kasaba / Central Hobli,Pandavapura,Mandya,12.5,76.6667
+pandavapura rural gp cluster,Pandavapura Rural GP Cluster,Pandavapura,Mandya,12.535,76.6417
+pandavapura north hobli,Pandavapura North Hobli,Pandavapura,Mandya,12.545,76.6817
+pandavapura south agricultural belt,Pandavapura South Agricultural Belt,Pandavapura,Mandya,12.46,76.6567
+nagamangala kasaba / central hobli,Nagamangala Kasaba / Central Hobli,Nagamangala,Mandya,12.8167,76.75
+nagamangala rural gp cluster,Nagamangala Rural GP Cluster,Nagamangala,Mandya,12.8517,76.725
+nagamangala north hobli,Nagamangala North Hobli,Nagamangala,Mandya,12.8617,76.765
+nagamangala south agricultural belt,Nagamangala South Agricultural Belt,Nagamangala,Mandya,12.7767,76.74
+krishnarajapet kasaba / central hobli,Krishnarajapet Kasaba / Central Hobli,Krishnarajapet,Mandya,12.6667,76.4833
+krishnarajapet rural gp cluster,Krishnarajapet Rural GP Cluster,Krishnarajapet,Mandya,12.7017,76.4583
+krishnarajapet north hobli,Krishnarajapet North Hobli,Krishnarajapet,Mandya,12.7117,76.4983
+krishnarajapet south agricultural belt,Krishnarajapet South Agricultural Belt,Krishnarajapet,Mandya,12.6267,76.4733
+srirangapatna kasaba / central hobli,Srirangapatna Kasaba / Central Hobli,Srirangapatna,Mandya,12.4167,76.6833
+srirangapatna rural gp cluster,Srirangapatna Rural GP Cluster,Srirangapatna,Mandya,12.4517,76.6583
+srirangapatna north hobli,Srirangapatna North Hobli,Srirangapatna,Mandya,12.4617,76.6983
+srirangapatna south agricultural belt,Srirangapatna South Agricultural Belt,Srirangapatna,Mandya,12.3767,76.6733
+mysuru kasaba / central hobli,Mysuru Kasaba / Central Hobli,Mysuru,Mysuru,12.2958,76.6394
+mysuru rural gp cluster,Mysuru Rural GP Cluster,Mysuru,Mysuru,12.3308,76.6144
+mysuru north hobli,Mysuru North Hobli,Mysuru,Mysuru,12.3408,76.6544
+mysuru south agricultural belt,Mysuru South Agricultural Belt,Mysuru,Mysuru,12.2558,76.6294
+hunsur kasaba / central hobli,Hunsur Kasaba / Central Hobli,Hunsur,Mysuru,12.3167,76.2833
+hunsur rural gp cluster,Hunsur Rural GP Cluster,Hunsur,Mysuru,12.3517,76.2583
+hunsur north hobli,Hunsur North Hobli,Hunsur,Mysuru,12.3617,76.2983
+hunsur south agricultural belt,Hunsur South Agricultural Belt,Hunsur,Mysuru,12.2767,76.2733
+nanjangud kasaba / central hobli,Nanjangud Kasaba / Central Hobli,Nanjangud,Mysuru,12.1167,76.6833
+nanjangud rural gp cluster,Nanjangud Rural GP Cluster,Nanjangud,Mysuru,12.1517,76.6583
+nanjangud north hobli,Nanjangud North Hobli,Nanjangud,Mysuru,12.1617,76.6983
+nanjangud south agricultural belt,Nanjangud South Agricultural Belt,Nanjangud,Mysuru,12.0767,76.6733
+piriyapatna kasaba / central hobli,Piriyapatna Kasaba / Central Hobli,Piriyapatna,Mysuru,12.34,75.99
+piriyapatna rural gp cluster,Piriyapatna Rural GP Cluster,Piriyapatna,Mysuru,12.375,75.965
+piriyapatna north hobli,Piriyapatna North Hobli,Piriyapatna,Mysuru,12.385,76.005
+piriyapatna south agricultural belt,Piriyapatna South Agricultural Belt,Piriyapatna,Mysuru,12.3,75.98
+t. narasipura kasaba / central hobli,T. Narasipura Kasaba / Central Hobli,T. Narasipura,Mysuru,12.21,76.9
+t. narasipura rural gp cluster,T. Narasipura Rural GP Cluster,T. Narasipura,Mysuru,12.245,76.875
+t. narasipura north hobli,T. Narasipura North Hobli,T. Narasipura,Mysuru,12.255,76.915
+t. narasipura south agricultural belt,T. Narasipura South Agricultural Belt,T. Narasipura,Mysuru,12.17,76.89
+heggadadevankote kasaba / central hobli,Heggadadevankote Kasaba / Central Hobli,Heggadadevankote,Mysuru,11.9167,76.3333
+heggadadevankote rural gp cluster,Heggadadevankote Rural GP Cluster,Heggadadevankote,Mysuru,11.9517,76.3083
+heggadadevankote north hobli,Heggadadevankote North Hobli,Heggadadevankote,Mysuru,11.9617,76.3483
+heggadadevankote south agricultural belt,Heggadadevankote South Agricultural Belt,Heggadadevankote,Mysuru,11.8767,76.3233
+k.r. nagar kasaba / central hobli,K.R. Nagar Kasaba / Central Hobli,K.R. Nagar,Mysuru,12.5833,76.3833
+k.r. nagar rural gp cluster,K.R. Nagar Rural GP Cluster,K.R. Nagar,Mysuru,12.6183,76.3583
+k.r. nagar north hobli,K.R. Nagar North Hobli,K.R. Nagar,Mysuru,12.6283,76.3983
+k.r. nagar south agricultural belt,K.R. Nagar South Agricultural Belt,K.R. Nagar,Mysuru,12.5433,76.3733
+saragur kasaba / central hobli,Saragur Kasaba / Central Hobli,Saragur,Mysuru,11.98,76.41
+saragur rural gp cluster,Saragur Rural GP Cluster,Saragur,Mysuru,12.015,76.385
+saragur north hobli,Saragur North Hobli,Saragur,Mysuru,12.025,76.425
+saragur south agricultural belt,Saragur South Agricultural Belt,Saragur,Mysuru,11.94,76.4
+saligrama kasaba / central hobli,Saligrama Kasaba / Central Hobli,Saligrama,Mysuru,12.5602,76.2629
+saligrama rural gp cluster,Saligrama Rural GP Cluster,Saligrama,Mysuru,12.5952,76.2379
+saligrama north hobli,Saligrama North Hobli,Saligrama,Mysuru,12.6052,76.2779
+saligrama south agricultural belt,Saligrama South Agricultural Belt,Saligrama,Mysuru,12.5202,76.2529
+raichur kasaba / central hobli,Raichur Kasaba / Central Hobli,Raichur,Raichur,16.2076,77.3463
+raichur rural gp cluster,Raichur Rural GP Cluster,Raichur,Raichur,16.2426,77.3213
+raichur north hobli,Raichur North Hobli,Raichur,Raichur,16.2526,77.3613
+raichur south agricultural belt,Raichur South Agricultural Belt,Raichur,Raichur,16.1676,77.3363
+manvi kasaba / central hobli,Manvi Kasaba / Central Hobli,Manvi,Raichur,15.9833,77.05
+manvi rural gp cluster,Manvi Rural GP Cluster,Manvi,Raichur,16.0183,77.025
+manvi north hobli,Manvi North Hobli,Manvi,Raichur,16.0283,77.065
+manvi south agricultural belt,Manvi South Agricultural Belt,Manvi,Raichur,15.9433,77.04
+sindhanur kasaba / central hobli,Sindhanur Kasaba / Central Hobli,Sindhanur,Raichur,15.7667,76.7667
+sindhanur rural gp cluster,Sindhanur Rural GP Cluster,Sindhanur,Raichur,15.8017,76.7417
+sindhanur north hobli,Sindhanur North Hobli,Sindhanur,Raichur,15.8117,76.7817
+sindhanur south agricultural belt,Sindhanur South Agricultural Belt,Sindhanur,Raichur,15.7267,76.7567
+devadurga kasaba / central hobli,Devadurga Kasaba / Central Hobli,Devadurga,Raichur,16.4167,76.9333
+devadurga rural gp cluster,Devadurga Rural GP Cluster,Devadurga,Raichur,16.4517,76.9083
+devadurga north hobli,Devadurga North Hobli,Devadurga,Raichur,16.4617,76.9483
+devadurga south agricultural belt,Devadurga South Agricultural Belt,Devadurga,Raichur,16.3767,76.9233
+lingsugur kasaba / central hobli,Lingsugur Kasaba / Central Hobli,Lingsugur,Raichur,16.1667,76.5167
+lingsugur rural gp cluster,Lingsugur Rural GP Cluster,Lingsugur,Raichur,16.2017,76.4917
+lingsugur north hobli,Lingsugur North Hobli,Lingsugur,Raichur,16.2117,76.5317
+lingsugur south agricultural belt,Lingsugur South Agricultural Belt,Lingsugur,Raichur,16.1267,76.5067
+maski kasaba / central hobli,Maski Kasaba / Central Hobli,Maski,Raichur,15.9667,76.6667
+maski rural gp cluster,Maski Rural GP Cluster,Maski,Raichur,16.0017,76.6417
+maski north hobli,Maski North Hobli,Maski,Raichur,16.0117,76.6817
+maski south agricultural belt,Maski South Agricultural Belt,Maski,Raichur,15.9267,76.6567
+sirwar kasaba / central hobli,Sirwar Kasaba / Central Hobli,Sirwar,Raichur,16.15,77.0167
+sirwar rural gp cluster,Sirwar Rural GP Cluster,Sirwar,Raichur,16.185,76.9917
+sirwar north hobli,Sirwar North Hobli,Sirwar,Raichur,16.195,77.0317
+sirwar south agricultural belt,Sirwar South Agricultural Belt,Sirwar,Raichur,16.11,77.0067
+ramanagara kasaba / central hobli,Ramanagara Kasaba / Central Hobli,Ramanagara,Ramanagara,12.715,77.281
+ramanagara rural gp cluster,Ramanagara Rural GP Cluster,Ramanagara,Ramanagara,12.75,77.256
+ramanagara north hobli,Ramanagara North Hobli,Ramanagara,Ramanagara,12.76,77.296
+ramanagara south agricultural belt,Ramanagara South Agricultural Belt,Ramanagara,Ramanagara,12.675,77.271
+channapatna kasaba / central hobli,Channapatna Kasaba / Central Hobli,Channapatna,Ramanagara,12.65,77.2
+channapatna rural gp cluster,Channapatna Rural GP Cluster,Channapatna,Ramanagara,12.685,77.175
+channapatna north hobli,Channapatna North Hobli,Channapatna,Ramanagara,12.695,77.215
+channapatna south agricultural belt,Channapatna South Agricultural Belt,Channapatna,Ramanagara,12.61,77.19
+kanakapura kasaba / central hobli,Kanakapura Kasaba / Central Hobli,Kanakapura,Ramanagara,12.55,77.4167
+kanakapura rural gp cluster,Kanakapura Rural GP Cluster,Kanakapura,Ramanagara,12.585,77.3917
+kanakapura north hobli,Kanakapura North Hobli,Kanakapura,Ramanagara,12.595,77.4317
+kanakapura south agricultural belt,Kanakapura South Agricultural Belt,Kanakapura,Ramanagara,12.51,77.4067
+magadi kasaba / central hobli,Magadi Kasaba / Central Hobli,Magadi,Ramanagara,12.9667,77.2333
+magadi rural gp cluster,Magadi Rural GP Cluster,Magadi,Ramanagara,13.0017,77.2083
+magadi north hobli,Magadi North Hobli,Magadi,Ramanagara,13.0117,77.2483
+magadi south agricultural belt,Magadi South Agricultural Belt,Magadi,Ramanagara,12.9267,77.2233
+harohalli kasaba / central hobli,Harohalli Kasaba / Central Hobli,Harohalli,Ramanagara,12.6833,77.45
+harohalli rural gp cluster,Harohalli Rural GP Cluster,Harohalli,Ramanagara,12.7183,77.425
+harohalli north hobli,Harohalli North Hobli,Harohalli,Ramanagara,12.7283,77.465
+harohalli south agricultural belt,Harohalli South Agricultural Belt,Harohalli,Ramanagara,12.6433,77.44
+shivamogga kasaba / central hobli,Shivamogga Kasaba / Central Hobli,Shivamogga,Shivamogga,13.9299,75.5681
+shivamogga rural gp cluster,Shivamogga Rural GP Cluster,Shivamogga,Shivamogga,13.9649,75.5431
+shivamogga north hobli,Shivamogga North Hobli,Shivamogga,Shivamogga,13.9749,75.5831
+shivamogga south agricultural belt,Shivamogga South Agricultural Belt,Shivamogga,Shivamogga,13.8899,75.5581
+bhadravathi kasaba / central hobli,Bhadravathi Kasaba / Central Hobli,Bhadravathi,Shivamogga,13.84,75.7
+bhadravathi rural gp cluster,Bhadravathi Rural GP Cluster,Bhadravathi,Shivamogga,13.875,75.675
+bhadravathi north hobli,Bhadravathi North Hobli,Bhadravathi,Shivamogga,13.885,75.715
+bhadravathi south agricultural belt,Bhadravathi South Agricultural Belt,Bhadravathi,Shivamogga,13.8,75.69
+thirthahalli kasaba / central hobli,Thirthahalli Kasaba / Central Hobli,Thirthahalli,Shivamogga,13.7,75.25
+thirthahalli rural gp cluster,Thirthahalli Rural GP Cluster,Thirthahalli,Shivamogga,13.735,75.225
+thirthahalli north hobli,Thirthahalli North Hobli,Thirthahalli,Shivamogga,13.745,75.265
+thirthahalli south agricultural belt,Thirthahalli South Agricultural Belt,Thirthahalli,Shivamogga,13.66,75.24
+sagara kasaba / central hobli,Sagara Kasaba / Central Hobli,Sagara,Shivamogga,14.1667,75.0333
+sagara rural gp cluster,Sagara Rural GP Cluster,Sagara,Shivamogga,14.2017,75.0083
+sagara north hobli,Sagara North Hobli,Sagara,Shivamogga,14.2117,75.0483
+sagara south agricultural belt,Sagara South Agricultural Belt,Sagara,Shivamogga,14.1267,75.0233
+soraba kasaba / central hobli,Soraba Kasaba / Central Hobli,Soraba,Shivamogga,14.3833,75.1
+soraba rural gp cluster,Soraba Rural GP Cluster,Soraba,Shivamogga,14.4183,75.075
+soraba north hobli,Soraba North Hobli,Soraba,Shivamogga,14.4283,75.115
+soraba south agricultural belt,Soraba South Agricultural Belt,Soraba,Shivamogga,14.3433,75.09
+shikaripura kasaba / central hobli,Shikaripura Kasaba / Central Hobli,Shikaripura,Shivamogga,14.2667,75.35
+shikaripura rural gp cluster,Shikaripura Rural GP Cluster,Shikaripura,Shivamogga,14.3017,75.325
+shikaripura north hobli,Shikaripura North Hobli,Shikaripura,Shivamogga,14.3117,75.365
+shikaripura south agricultural belt,Shikaripura South Agricultural Belt,Shikaripura,Shivamogga,14.2267,75.34
+hosanagara kasaba / central hobli,Hosanagara Kasaba / Central Hobli,Hosanagara,Shivamogga,13.9167,75.0667
+hosanagara rural gp cluster,Hosanagara Rural GP Cluster,Hosanagara,Shivamogga,13.9517,75.0417
+hosanagara north hobli,Hosanagara North Hobli,Hosanagara,Shivamogga,13.9617,75.0817
+hosanagara south agricultural belt,Hosanagara South Agricultural Belt,Hosanagara,Shivamogga,13.8767,75.0567
+tumakuru kasaba / central hobli,Tumakuru Kasaba / Central Hobli,Tumakuru,Tumakuru,13.3409,77.101
+tumakuru rural gp cluster,Tumakuru Rural GP Cluster,Tumakuru,Tumakuru,13.3759,77.076
+tumakuru north hobli,Tumakuru North Hobli,Tumakuru,Tumakuru,13.3859,77.116
+tumakuru south agricultural belt,Tumakuru South Agricultural Belt,Tumakuru,Tumakuru,13.3009,77.091
+chiknayakanahalli kasaba / central hobli,Chiknayakanahalli Kasaba / Central Hobli,Chiknayakanahalli,Tumakuru,13.4167,76.6167
+chiknayakanahalli rural gp cluster,Chiknayakanahalli Rural GP Cluster,Chiknayakanahalli,Tumakuru,13.4517,76.5917
+chiknayakanahalli north hobli,Chiknayakanahalli North Hobli,Chiknayakanahalli,Tumakuru,13.4617,76.6317
+chiknayakanahalli south agricultural belt,Chiknayakanahalli South Agricultural Belt,Chiknayakanahalli,Tumakuru,13.3767,76.6067
+gubbi kasaba / central hobli,Gubbi Kasaba / Central Hobli,Gubbi,Tumakuru,13.3167,76.9333
+gubbi rural gp cluster,Gubbi Rural GP Cluster,Gubbi,Tumakuru,13.3517,76.9083
+gubbi north hobli,Gubbi North Hobli,Gubbi,Tumakuru,13.3617,76.9483
+gubbi south agricultural belt,Gubbi South Agricultural Belt,Gubbi,Tumakuru,13.2767,76.9233
+koratagere kasaba / central hobli,Koratagere Kasaba / Central Hobli,Koratagere,Tumakuru,13.5167,77.2333
+koratagere rural gp cluster,Koratagere Rural GP Cluster,Koratagere,Tumakuru,13.5517,77.2083
+koratagere north hobli,Koratagere North Hobli,Koratagere,Tumakuru,13.5617,77.2483
+koratagere south agricultural belt,Koratagere South Agricultural Belt,Koratagere,Tumakuru,13.4767,77.2233
+kunigal kasaba / central hobli,Kunigal Kasaba / Central Hobli,Kunigal,Tumakuru,13.0167,77.0333
+kunigal rural gp cluster,Kunigal Rural GP Cluster,Kunigal,Tumakuru,13.0517,77.0083
+kunigal north hobli,Kunigal North Hobli,Kunigal,Tumakuru,13.0617,77.0483
+kunigal south agricultural belt,Kunigal South Agricultural Belt,Kunigal,Tumakuru,12.9767,77.0233
+madhugiri kasaba / central hobli,Madhugiri Kasaba / Central Hobli,Madhugiri,Tumakuru,13.6667,77.2167
+madhugiri rural gp cluster,Madhugiri Rural GP Cluster,Madhugiri,Tumakuru,13.7017,77.1917
+madhugiri north hobli,Madhugiri North Hobli,Madhugiri,Tumakuru,13.7117,77.2317
+madhugiri south agricultural belt,Madhugiri South Agricultural Belt,Madhugiri,Tumakuru,13.6267,77.2067
+pavagada kasaba / central hobli,Pavagada Kasaba / Central Hobli,Pavagada,Tumakuru,14.1,77.2833
+pavagada rural gp cluster,Pavagada Rural GP Cluster,Pavagada,Tumakuru,14.135,77.2583
+pavagada north hobli,Pavagada North Hobli,Pavagada,Tumakuru,14.145,77.2983
+pavagada south agricultural belt,Pavagada South Agricultural Belt,Pavagada,Tumakuru,14.06,77.2733
+sira kasaba / central hobli,Sira Kasaba / Central Hobli,Sira,Tumakuru,13.75,76.9
+sira rural gp cluster,Sira Rural GP Cluster,Sira,Tumakuru,13.785,76.875
+sira north hobli,Sira North Hobli,Sira,Tumakuru,13.795,76.915
+sira south agricultural belt,Sira South Agricultural Belt,Sira,Tumakuru,13.71,76.89
+tiptur kasaba / central hobli,Tiptur Kasaba / Central Hobli,Tiptur,Tumakuru,13.2667,76.4833
+tiptur rural gp cluster,Tiptur Rural GP Cluster,Tiptur,Tumakuru,13.3017,76.4583
+tiptur north hobli,Tiptur North Hobli,Tiptur,Tumakuru,13.3117,76.4983
+tiptur south agricultural belt,Tiptur South Agricultural Belt,Tiptur,Tumakuru,13.2267,76.4733
+turuvekere kasaba / central hobli,Turuvekere Kasaba / Central Hobli,Turuvekere,Tumakuru,13.1667,76.6667
+turuvekere rural gp cluster,Turuvekere Rural GP Cluster,Turuvekere,Tumakuru,13.2017,76.6417
+turuvekere north hobli,Turuvekere North Hobli,Turuvekere,Tumakuru,13.2117,76.6817
+turuvekere south agricultural belt,Turuvekere South Agricultural Belt,Turuvekere,Tumakuru,13.1267,76.6567
+udupi kasaba / central hobli,Udupi Kasaba / Central Hobli,Udupi,Udupi,13.3409,74.7421
+udupi rural gp cluster,Udupi Rural GP Cluster,Udupi,Udupi,13.3759,74.7171
+udupi north hobli,Udupi North Hobli,Udupi,Udupi,13.3859,74.7571
+udupi south agricultural belt,Udupi South Agricultural Belt,Udupi,Udupi,13.3009,74.7321
+kundapura kasaba / central hobli,Kundapura Kasaba / Central Hobli,Kundapura,Udupi,13.6333,74.6833
+kundapura rural gp cluster,Kundapura Rural GP Cluster,Kundapura,Udupi,13.6683,74.6583
+kundapura north hobli,Kundapura North Hobli,Kundapura,Udupi,13.6783,74.6983
+kundapura south agricultural belt,Kundapura South Agricultural Belt,Kundapura,Udupi,13.5933,74.6733
+karkala kasaba / central hobli,Karkala Kasaba / Central Hobli,Karkala,Udupi,13.2,74.9833
+karkala rural gp cluster,Karkala Rural GP Cluster,Karkala,Udupi,13.235,74.9583
+karkala north hobli,Karkala North Hobli,Karkala,Udupi,13.245,74.9983
+karkala south agricultural belt,Karkala South Agricultural Belt,Karkala,Udupi,13.16,74.9733
+brahmavara kasaba / central hobli,Brahmavara Kasaba / Central Hobli,Brahmavara,Udupi,13.43,74.75
+brahmavara rural gp cluster,Brahmavara Rural GP Cluster,Brahmavara,Udupi,13.465,74.725
+brahmavara north hobli,Brahmavara North Hobli,Brahmavara,Udupi,13.475,74.765
+brahmavara south agricultural belt,Brahmavara South Agricultural Belt,Brahmavara,Udupi,13.39,74.74
+byndoor kasaba / central hobli,Byndoor Kasaba / Central Hobli,Byndoor,Udupi,13.87,74.63
+byndoor rural gp cluster,Byndoor Rural GP Cluster,Byndoor,Udupi,13.905,74.605
+byndoor north hobli,Byndoor North Hobli,Byndoor,Udupi,13.915,74.645
+byndoor south agricultural belt,Byndoor South Agricultural Belt,Byndoor,Udupi,13.83,74.62
+hebri kasaba / central hobli,Hebri Kasaba / Central Hobli,Hebri,Udupi,13.32,75.01
+hebri rural gp cluster,Hebri Rural GP Cluster,Hebri,Udupi,13.355,74.985
+hebri north hobli,Hebri North Hobli,Hebri,Udupi,13.365,75.025
+hebri south agricultural belt,Hebri South Agricultural Belt,Hebri,Udupi,13.28,75.0
+kaup kasaba / central hobli,Kaup Kasaba / Central Hobli,Kaup,Udupi,13.22,74.74
+kaup rural gp cluster,Kaup Rural GP Cluster,Kaup,Udupi,13.255,74.715
+kaup north hobli,Kaup North Hobli,Kaup,Udupi,13.265,74.755
+kaup south agricultural belt,Kaup South Agricultural Belt,Kaup,Udupi,13.18,74.73
+karwar kasaba / central hobli,Karwar Kasaba / Central Hobli,Karwar,Uttara Kannada,14.8185,74.1416
+karwar rural gp cluster,Karwar Rural GP Cluster,Karwar,Uttara Kannada,14.8535,74.1166
+karwar north hobli,Karwar North Hobli,Karwar,Uttara Kannada,14.8635,74.1566
+karwar south agricultural belt,Karwar South Agricultural Belt,Karwar,Uttara Kannada,14.7785,74.1316
+sirsi kasaba / central hobli,Sirsi Kasaba / Central Hobli,Sirsi,Uttara Kannada,14.6195,74.8354
+sirsi rural gp cluster,Sirsi Rural GP Cluster,Sirsi,Uttara Kannada,14.6545,74.8104
+sirsi north hobli,Sirsi North Hobli,Sirsi,Uttara Kannada,14.6645,74.8504
+sirsi south agricultural belt,Sirsi South Agricultural Belt,Sirsi,Uttara Kannada,14.5795,74.8254
+kumta kasaba / central hobli,Kumta Kasaba / Central Hobli,Kumta,Uttara Kannada,14.4268,74.4079
+kumta rural gp cluster,Kumta Rural GP Cluster,Kumta,Uttara Kannada,14.4618,74.3829
+kumta north hobli,Kumta North Hobli,Kumta,Uttara Kannada,14.4718,74.4229
+kumta south agricultural belt,Kumta South Agricultural Belt,Kumta,Uttara Kannada,14.3868,74.3979
+bhatkal kasaba / central hobli,Bhatkal Kasaba / Central Hobli,Bhatkal,Uttara Kannada,13.9877,74.5529
+bhatkal rural gp cluster,Bhatkal Rural GP Cluster,Bhatkal,Uttara Kannada,14.0227,74.5279
+bhatkal north hobli,Bhatkal North Hobli,Bhatkal,Uttara Kannada,14.0327,74.5679
+bhatkal south agricultural belt,Bhatkal South Agricultural Belt,Bhatkal,Uttara Kannada,13.9477,74.5429
+yellapur kasaba / central hobli,Yellapur Kasaba / Central Hobli,Yellapur,Uttara Kannada,14.9643,74.7121
+yellapur rural gp cluster,Yellapur Rural GP Cluster,Yellapur,Uttara Kannada,14.9993,74.6871
+yellapur north hobli,Yellapur North Hobli,Yellapur,Uttara Kannada,15.0093,74.7271
+yellapur south agricultural belt,Yellapur South Agricultural Belt,Yellapur,Uttara Kannada,14.9243,74.7021
+haliyal kasaba / central hobli,Haliyal Kasaba / Central Hobli,Haliyal,Uttara Kannada,15.3262,74.7597
+haliyal rural gp cluster,Haliyal Rural GP Cluster,Haliyal,Uttara Kannada,15.3612,74.7347
+haliyal north hobli,Haliyal North Hobli,Haliyal,Uttara Kannada,15.3712,74.7747
+haliyal south agricultural belt,Haliyal South Agricultural Belt,Haliyal,Uttara Kannada,15.2862,74.7497
+ankola kasaba / central hobli,Ankola Kasaba / Central Hobli,Ankola,Uttara Kannada,14.6653,74.3013
+ankola rural gp cluster,Ankola Rural GP Cluster,Ankola,Uttara Kannada,14.7003,74.2763
+ankola north hobli,Ankola North Hobli,Ankola,Uttara Kannada,14.7103,74.3163
+ankola south agricultural belt,Ankola South Agricultural Belt,Ankola,Uttara Kannada,14.6253,74.2913
+honnavar kasaba / central hobli,Honnavar Kasaba / Central Hobli,Honnavar,Uttara Kannada,14.2796,74.4439
+honnavar rural gp cluster,Honnavar Rural GP Cluster,Honnavar,Uttara Kannada,14.3146,74.4189
+honnavar north hobli,Honnavar North Hobli,Honnavar,Uttara Kannada,14.3246,74.4589
+honnavar south agricultural belt,Honnavar South Agricultural Belt,Honnavar,Uttara Kannada,14.2396,74.4339
+siddapur kasaba / central hobli,Siddapur Kasaba / Central Hobli,Siddapur,Uttara Kannada,14.3364,74.8973
+siddapur rural gp cluster,Siddapur Rural GP Cluster,Siddapur,Uttara Kannada,14.3714,74.8723
+siddapur north hobli,Siddapur North Hobli,Siddapur,Uttara Kannada,14.3814,74.9123
+siddapur south agricultural belt,Siddapur South Agricultural Belt,Siddapur,Uttara Kannada,14.2964,74.8873
+mundgod kasaba / central hobli,Mundgod Kasaba / Central Hobli,Mundgod,Uttara Kannada,14.9701,75.0343
+mundgod rural gp cluster,Mundgod Rural GP Cluster,Mundgod,Uttara Kannada,15.0051,75.0093
+mundgod north hobli,Mundgod North Hobli,Mundgod,Uttara Kannada,15.0151,75.0493
+mundgod south agricultural belt,Mundgod South Agricultural Belt,Mundgod,Uttara Kannada,14.9301,75.0243
+joida kasaba / central hobli,Joida Kasaba / Central Hobli,Joida,Uttara Kannada,15.1764,74.4842
+joida rural gp cluster,Joida Rural GP Cluster,Joida,Uttara Kannada,15.2114,74.4592
+joida north hobli,Joida North Hobli,Joida,Uttara Kannada,15.2214,74.4992
+joida south agricultural belt,Joida South Agricultural Belt,Joida,Uttara Kannada,15.1364,74.4742
+dandeli kasaba / central hobli,Dandeli Kasaba / Central Hobli,Dandeli,Uttara Kannada,15.2333,74.6167
+dandeli rural gp cluster,Dandeli Rural GP Cluster,Dandeli,Uttara Kannada,15.2683,74.5917
+dandeli north hobli,Dandeli North Hobli,Dandeli,Uttara Kannada,15.2783,74.6317
+dandeli south agricultural belt,Dandeli South Agricultural Belt,Dandeli,Uttara Kannada,15.1933,74.6067
+vijayapura kasaba / central hobli,Vijayapura Kasaba / Central Hobli,Vijayapura,Vijayapura,16.8302,75.71
+vijayapura rural gp cluster,Vijayapura Rural GP Cluster,Vijayapura,Vijayapura,16.8652,75.685
+vijayapura north hobli,Vijayapura North Hobli,Vijayapura,Vijayapura,16.8752,75.725
+vijayapura south agricultural belt,Vijayapura South Agricultural Belt,Vijayapura,Vijayapura,16.7902,75.7
+indi kasaba / central hobli,Indi Kasaba / Central Hobli,Indi,Vijayapura,17.1833,75.9667
+indi rural gp cluster,Indi Rural GP Cluster,Indi,Vijayapura,17.2183,75.9417
+indi north hobli,Indi North Hobli,Indi,Vijayapura,17.2283,75.9817
+indi south agricultural belt,Indi South Agricultural Belt,Indi,Vijayapura,17.1433,75.9567
+sindagi kasaba / central hobli,Sindagi Kasaba / Central Hobli,Sindagi,Vijayapura,16.9167,76.2333
+sindagi rural gp cluster,Sindagi Rural GP Cluster,Sindagi,Vijayapura,16.9517,76.2083
+sindagi north hobli,Sindagi North Hobli,Sindagi,Vijayapura,16.9617,76.2483
+sindagi south agricultural belt,Sindagi South Agricultural Belt,Sindagi,Vijayapura,16.8767,76.2233
+basavana bagewadi kasaba / central hobli,Basavana Bagewadi Kasaba / Central Hobli,Basavana Bagewadi,Vijayapura,16.5833,75.9667
+basavana bagewadi rural gp cluster,Basavana Bagewadi Rural GP Cluster,Basavana Bagewadi,Vijayapura,16.6183,75.9417
+basavana bagewadi north hobli,Basavana Bagewadi North Hobli,Basavana Bagewadi,Vijayapura,16.6283,75.9817
+basavana bagewadi south agricultural belt,Basavana Bagewadi South Agricultural Belt,Basavana Bagewadi,Vijayapura,16.5433,75.9567
+muddebihal kasaba / central hobli,Muddebihal Kasaba / Central Hobli,Muddebihal,Vijayapura,16.3333,76.1333
+muddebihal rural gp cluster,Muddebihal Rural GP Cluster,Muddebihal,Vijayapura,16.3683,76.1083
+muddebihal north hobli,Muddebihal North Hobli,Muddebihal,Vijayapura,16.3783,76.1483
+muddebihal south agricultural belt,Muddebihal South Agricultural Belt,Muddebihal,Vijayapura,16.2933,76.1233
+talikote kasaba / central hobli,Talikote Kasaba / Central Hobli,Talikote,Vijayapura,16.4833,76.3167
+talikote rural gp cluster,Talikote Rural GP Cluster,Talikote,Vijayapura,16.5183,76.2917
+talikote north hobli,Talikote North Hobli,Talikote,Vijayapura,16.5283,76.3317
+talikote south agricultural belt,Talikote South Agricultural Belt,Talikote,Vijayapura,16.4433,76.3067
+chadachan kasaba / central hobli,Chadachan Kasaba / Central Hobli,Chadachan,Vijayapura,17.2,75.8
+chadachan rural gp cluster,Chadachan Rural GP Cluster,Chadachan,Vijayapura,17.235,75.775
+chadachan north hobli,Chadachan North Hobli,Chadachan,Vijayapura,17.245,75.815
+chadachan south agricultural belt,Chadachan South Agricultural Belt,Chadachan,Vijayapura,17.16,75.79
+tikota kasaba / central hobli,Tikota Kasaba / Central Hobli,Tikota,Vijayapura,16.85,75.5167
+tikota rural gp cluster,Tikota Rural GP Cluster,Tikota,Vijayapura,16.885,75.4917
+tikota north hobli,Tikota North Hobli,Tikota,Vijayapura,16.895,75.5317
+tikota south agricultural belt,Tikota South Agricultural Belt,Tikota,Vijayapura,16.81,75.5067
+babaleshwara kasaba / central hobli,Babaleshwara Kasaba / Central Hobli,Babaleshwara,Vijayapura,16.7,75.6
+babaleshwara rural gp cluster,Babaleshwara Rural GP Cluster,Babaleshwara,Vijayapura,16.735,75.575
+babaleshwara north hobli,Babaleshwara North Hobli,Babaleshwara,Vijayapura,16.745,75.615
+babaleshwara south agricultural belt,Babaleshwara South Agricultural Belt,Babaleshwara,Vijayapura,16.66,75.59
+kolhara kasaba / central hobli,Kolhara Kasaba / Central Hobli,Kolhara,Vijayapura,16.5667,75.85
+kolhara rural gp cluster,Kolhara Rural GP Cluster,Kolhara,Vijayapura,16.6017,75.825
+kolhara north hobli,Kolhara North Hobli,Kolhara,Vijayapura,16.6117,75.865
+kolhara south agricultural belt,Kolhara South Agricultural Belt,Kolhara,Vijayapura,16.5267,75.84
+nidagundi kasaba / central hobli,Nidagundi Kasaba / Central Hobli,Nidagundi,Vijayapura,16.45,76.0167
+nidagundi rural gp cluster,Nidagundi Rural GP Cluster,Nidagundi,Vijayapura,16.485,75.9917
+nidagundi north hobli,Nidagundi North Hobli,Nidagundi,Vijayapura,16.495,76.0317
+nidagundi south agricultural belt,Nidagundi South Agricultural Belt,Nidagundi,Vijayapura,16.41,76.0067
+devara hipparagi kasaba / central hobli,Devara Hipparagi Kasaba / Central Hobli,Devara Hipparagi,Vijayapura,16.7667,76.0833
+devara hipparagi rural gp cluster,Devara Hipparagi Rural GP Cluster,Devara Hipparagi,Vijayapura,16.8017,76.0583
+devara hipparagi north hobli,Devara Hipparagi North Hobli,Devara Hipparagi,Vijayapura,16.8117,76.0983
+devara hipparagi south agricultural belt,Devara Hipparagi South Agricultural Belt,Devara Hipparagi,Vijayapura,16.7267,76.0733
+yadgir kasaba / central hobli,Yadgir Kasaba / Central Hobli,Yadgir,Yadgir,16.7644,77.1378
+yadgir rural gp cluster,Yadgir Rural GP Cluster,Yadgir,Yadgir,16.7994,77.1128
+yadgir north hobli,Yadgir North Hobli,Yadgir,Yadgir,16.8094,77.1528
+yadgir south agricultural belt,Yadgir South Agricultural Belt,Yadgir,Yadgir,16.7244,77.1278
+shahapur kasaba / central hobli,Shahapur Kasaba / Central Hobli,Shahapur,Yadgir,16.7,76.8333
+shahapur rural gp cluster,Shahapur Rural GP Cluster,Shahapur,Yadgir,16.735,76.8083
+shahapur north hobli,Shahapur North Hobli,Shahapur,Yadgir,16.745,76.8483
+shahapur south agricultural belt,Shahapur South Agricultural Belt,Shahapur,Yadgir,16.66,76.8233
+shorapur kasaba / central hobli,Shorapur Kasaba / Central Hobli,Shorapur,Yadgir,16.5167,76.75
+shorapur rural gp cluster,Shorapur Rural GP Cluster,Shorapur,Yadgir,16.5517,76.725
+shorapur north hobli,Shorapur North Hobli,Shorapur,Yadgir,16.5617,76.765
+shorapur south agricultural belt,Shorapur South Agricultural Belt,Shorapur,Yadgir,16.4767,76.74
+hunsagi kasaba / central hobli,Hunsagi Kasaba / Central Hobli,Hunsagi,Yadgir,16.4333,76.5167
+hunsagi rural gp cluster,Hunsagi Rural GP Cluster,Hunsagi,Yadgir,16.4683,76.4917
+hunsagi north hobli,Hunsagi North Hobli,Hunsagi,Yadgir,16.4783,76.5317
+hunsagi south agricultural belt,Hunsagi South Agricultural Belt,Hunsagi,Yadgir,16.3933,76.5067
+vadagera kasaba / central hobli,Vadagera Kasaba / Central Hobli,Vadagera,Yadgir,16.6333,77.0167
+vadagera rural gp cluster,Vadagera Rural GP Cluster,Vadagera,Yadgir,16.6683,76.9917
+vadagera north hobli,Vadagera North Hobli,Vadagera,Yadgir,16.6783,77.0317
+vadagera south agricultural belt,Vadagera South Agricultural Belt,Vadagera,Yadgir,16.5933,77.0067
+gurmitkal kasaba / central hobli,Gurmitkal Kasaba / Central Hobli,Gurmitkal,Yadgir,16.8667,77.4
+gurmitkal rural gp cluster,Gurmitkal Rural GP Cluster,Gurmitkal,Yadgir,16.9017,77.375
+gurmitkal north hobli,Gurmitkal North Hobli,Gurmitkal,Yadgir,16.9117,77.415
+gurmitkal south agricultural belt,Gurmitkal South Agricultural Belt,Gurmitkal,Yadgir,16.8267,77.39
+hosapete kasaba / central hobli,Hosapete Kasaba / Central Hobli,Hosapete,Vijayanagara,15.2689,76.3909
+hosapete rural gp cluster,Hosapete Rural GP Cluster,Hosapete,Vijayanagara,15.3039,76.3659
+hosapete north hobli,Hosapete North Hobli,Hosapete,Vijayanagara,15.3139,76.4059
+hosapete south agricultural belt,Hosapete South Agricultural Belt,Hosapete,Vijayanagara,15.2289,76.3809
+hagaribommanahalli kasaba / central hobli,Hagaribommanahalli Kasaba / Central Hobli,Hagaribommanahalli,Vijayanagara,15.0833,76.2
+hagaribommanahalli rural gp cluster,Hagaribommanahalli Rural GP Cluster,Hagaribommanahalli,Vijayanagara,15.1183,76.175
+hagaribommanahalli north hobli,Hagaribommanahalli North Hobli,Hagaribommanahalli,Vijayanagara,15.1283,76.215
+hagaribommanahalli south agricultural belt,Hagaribommanahalli South Agricultural Belt,Hagaribommanahalli,Vijayanagara,15.0433,76.19
+harapanahalli kasaba / central hobli,Harapanahalli Kasaba / Central Hobli,Harapanahalli,Vijayanagara,14.8,75.9833
+harapanahalli rural gp cluster,Harapanahalli Rural GP Cluster,Harapanahalli,Vijayanagara,14.835,75.9583
+harapanahalli north hobli,Harapanahalli North Hobli,Harapanahalli,Vijayanagara,14.845,75.9983
+harapanahalli south agricultural belt,Harapanahalli South Agricultural Belt,Harapanahalli,Vijayanagara,14.76,75.9733
+hoovina hadagali kasaba / central hobli,Hoovina Hadagali Kasaba / Central Hobli,Hoovina Hadagali,Vijayanagara,15.0167,75.95
+hoovina hadagali rural gp cluster,Hoovina Hadagali Rural GP Cluster,Hoovina Hadagali,Vijayanagara,15.0517,75.925
+hoovina hadagali north hobli,Hoovina Hadagali North Hobli,Hoovina Hadagali,Vijayanagara,15.0617,75.965
+hoovina hadagali south agricultural belt,Hoovina Hadagali South Agricultural Belt,Hoovina Hadagali,Vijayanagara,14.9767,75.94
+kudligi kasaba / central hobli,Kudligi Kasaba / Central Hobli,Kudligi,Vijayanagara,14.9,76.3833
+kudligi rural gp cluster,Kudligi Rural GP Cluster,Kudligi,Vijayanagara,14.935,76.3583
+kudligi north hobli,Kudligi North Hobli,Kudligi,Vijayanagara,14.945,76.3983
+kudligi south agricultural belt,Kudligi South Agricultural Belt,Kudligi,Vijayanagara,14.86,76.3733
+kotturu kasaba / central hobli,Kotturu Kasaba / Central Hobli,Kotturu,Vijayanagara,14.9333,76.2167
+kotturu rural gp cluster,Kotturu Rural GP Cluster,Kotturu,Vijayanagara,14.9683,76.1917
+kotturu north hobli,Kotturu North Hobli,Kotturu,Vijayanagara,14.9783,76.2317
+kotturu south agricultural belt,Kotturu South Agricultural Belt,Kotturu,Vijayanagara,14.8933,76.2067
