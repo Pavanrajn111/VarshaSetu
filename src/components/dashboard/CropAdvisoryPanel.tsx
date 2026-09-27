@@ -34,6 +34,7 @@ export function CropAdvisoryPanel() {
     cropStage,
     setCropStage,
     advisoryText,
+    isLoadingForecast,
     isLoadingAdvisory,
     advisoryError,
     loadAdvisory,
@@ -119,10 +120,10 @@ export function CropAdvisoryPanel() {
 
           <Button
             type="submit"
-            disabled={isLoadingAdvisory}
+            disabled={isLoadingAdvisory || isLoadingForecast}
             className="bg-signal text-signal-foreground hover:bg-signal/90 font-mono text-xs font-semibold h-10 px-5"
           >
-            {isLoadingAdvisory ? (
+            {isLoadingAdvisory || isLoadingForecast ? (
               <>
                 <Loader2 className="mr-1.5 size-3.5 animate-spin" />
                 Synthesizing
@@ -152,7 +153,7 @@ export function CropAdvisoryPanel() {
             )}
           </div>
 
-          {isLoadingAdvisory ? (
+          {isLoadingAdvisory || isLoadingForecast ? (
             <div className="flex flex-col items-center justify-center py-10 gap-3 text-muted-foreground">
               <Loader2 className="size-6 animate-spin text-signal" />
               <span className="font-mono text-xs">Computing Penman-Monteith water balance & crop rules...</span>

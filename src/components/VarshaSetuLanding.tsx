@@ -25,9 +25,10 @@ import {
 import { motion, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 
+import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AppBackground } from "@/components/AppBackground";
+import { AppHeader } from "@/components/AppHeader";
 import { ForecastDashboard } from "@/components/ForecastDashboard";
 
 const ClimateGlobe = lazy(() =>
@@ -182,32 +183,20 @@ const workflow = [
 ];
 
 export function VarshaSetuLanding() {
-  const reduceMotion = useReducedMotion() ?? false;
-  const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 80, damping: 22, restDelta: 0.001 });
-
   return (
     <main className="relative overflow-clip bg-background text-foreground">
-      <motion.div className="fixed inset-x-0 top-0 z-50 h-px origin-left bg-signal" style={{ scaleX: progress }} />
-      <AppBackground reduceMotion={reduceMotion} />
-
-      <header className="absolute inset-x-0 top-0 z-30 mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
-        <a href="#top" className="flex items-center gap-3" aria-label="Varsha Setu home">
-          <span className="grid size-9 place-items-center rounded-md border border-signal/30 bg-signal/10"><CloudRain className="size-5 text-signal" /></span>
-          <span className="font-display text-lg font-semibold">Varsha Setu</span>
-        </a>
-        <div className="hidden items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground sm:flex">
-          <span className="size-1.5 animate-pulse rounded-full bg-success" /> Karnataka network live
-        </div>
+      <AppHeader showProgress={true}>
         <div className="flex items-center gap-2">
-          <Button asChild variant="outline" size="sm" className="border-border/80 bg-glass/80 backdrop-blur-lg">
+          <Button asChild variant="outline" size="sm" className="border-border/80 bg-glass/80 backdrop-blur-lg h-8 text-xs">
             <a href="#impact">Impact</a>
           </Button>
-          <Button asChild size="sm" className="bg-signal text-signal-foreground">
-            <a href="/dashboard">Live Studio <ArrowRight className="ml-1 h-3 w-3" /></a>
+          <Button asChild size="sm" className="bg-signal text-signal-foreground hover:bg-signal/90 font-medium h-8 text-xs">
+            <Link to="/dashboard">
+              Live Studio <ArrowRight className="ml-1 h-3 w-3" />
+            </Link>
           </Button>
         </div>
-      </header>
+      </AppHeader>
 
       <section id="top" className="relative z-10 min-h-[100svh] border-b border-border/60">
         <div className="mx-auto grid min-h-[100svh] max-w-7xl items-center px-5 pb-20 pt-28 sm:px-8 lg:grid-cols-[1.08fr_0.92fr] lg:px-10">

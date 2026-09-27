@@ -40,7 +40,7 @@ async def compute_forecast(request: Request, req: ForecastRequest) -> ForecastRe
     district_name = req.district
 
     if not taluk_name or not district_name:
-        nearest_taluk, nearest_dist = await asyncio.to_thread(
+        nearest_taluk, nearest_dist, _ = await asyncio.to_thread(
             find_nearest_taluk, req.lat, req.lon, bundle.taluks_df
         )
         taluk_name = taluk_name or nearest_taluk

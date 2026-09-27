@@ -15,6 +15,8 @@ class CropTypeEnum(str, Enum):
     SUGARCANE = "Sugarcane"
     PADDY = "Paddy"
     COTTON = "Cotton"
+    RED_GRAM = "Red Gram (Tur)"
+    SOYBEAN = "Soybean"
 
 class CropStageEnum(str, Enum):
     PRE_SOWING = "Pre-Sowing / Land Preparation"
@@ -22,6 +24,7 @@ class CropStageEnum(str, Enum):
     VEGETATIVE = "Vegetative Growth"
     FLOWERING = "Flowering / Grain Formation"
     HARVESTING = "Harvesting"
+    HARVESTING_POST = "Harvesting & Post-Harvest"
 
 class LanguageEnum(str, Enum):
     EN = "en"

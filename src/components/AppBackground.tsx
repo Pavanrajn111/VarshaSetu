@@ -3,7 +3,20 @@ import { createContext, useContext, type ReactNode } from "react";
 
 const AppBackgroundContext = createContext<boolean>(false);
 
-export function AppBackground({ reduceMotion: reduceMotionProp }: { reduceMotion?: boolean } = {}) {
+export interface AppBackgroundProps {
+  reduceMotion?: boolean;
+}
+
+/**
+ * AppBackground — Atmospheric Meteorological Mist / Drifting Cloud Layers
+ *
+ * Replaces the literal rain/storm effect with slow, ambient drifting cloud and
+ * mist formations (Option A). Soft radial gradients drift at parallax speeds behind
+ * glass panels, evoking Karnataka's sub-seasonal monsoon cloud cover.
+ *
+ * Respects { reduceMotion }: disables animation and renders static, subtle ambient gradients.
+ */
+export function AppBackground({ reduceMotion: reduceMotionProp }: AppBackgroundProps = {}) {
   const systemReducedMotion = useReducedMotion() ?? false;
   const reduceMotion = reduceMotionProp !== undefined ? reduceMotionProp : systemReducedMotion;
 
@@ -12,64 +25,85 @@ export function AppBackground({ reduceMotion: reduceMotionProp }: { reduceMotion
     return null;
   }
 
-  const farDrops = Array.from({ length: reduceMotion ? 6 : 34 }, (_, i) => i);
-  const midDrops = Array.from({ length: reduceMotion ? 10 : 48 }, (_, i) => i);
-  const nearDrops = Array.from({ length: reduceMotion ? 3 : 16 }, (_, i) => i);
-
   return (
-    // z-20 keeps the storm layer above the opaque section backgrounds so rain
-    // is visible across the whole page, while staying below the header (z-30).
-    <div className="pointer-events-none fixed inset-0 z-20 overflow-hidden" aria-hidden="true">
-      <div className="storm-glow" />
-      {!reduceMotion && <div className="lightning-flash" />}
+    <div
+      className="pointer-events-none fixed inset-0 z-20 overflow-hidden"
+      aria-hidden="true"
+    >
+      <style>{`
+        @keyframes cloud-drift-primary {
+          0% {
+            transform: translate3d(-12%, -8%, 0) scale(1);
+          }
+          50% {
+            transform: translate3d(18%, 6%, 0) scale(1.06);
+          }
+          100% {
+            transform: translate3d(-12%, -8%, 0) scale(1);
+          }
+        }
+        @keyframes cloud-drift-secondary {
+          0% {
+            transform: translate3d(20%, 12%, 0) scale(1.05);
+          }
+          50% {
+            transform: translate3d(-18%, -4%, 0) scale(0.96);
+          }
+          100% {
+            transform: translate3d(20%, 12%, 0) scale(1.05);
+          }
+        }
+        @keyframes cloud-drift-tertiary {
+          0% {
+            transform: translate3d(-8%, 22%, 0) scale(0.97);
+          }
+          50% {
+            transform: translate3d(14%, 10%, 0) scale(1.04);
+          }
+          100% {
+            transform: translate3d(-8%, 22%, 0) scale(0.97);
+          }
+        }
+      `}</style>
 
-      {/* Far rain layer — slow, thin, dim */}
-      {farDrops.map((i) => (
-        <span
-          key={`far-${i}`}
-          className="rain-drop-far"
-          style={{
-            left: `${(i * 53) % 100}%`,
-            animationDelay: `${-((i * 0.49) % 4.5)}s`,
-            animationDuration: `${3.5 + (i % 5) * 0.2}s`,
-            transform: `rotate(${8 + (i % 4)}deg)`,
-            height: `${40 + (i % 6) * 3}px`,
-          }}
-        />
-      ))}
+      {/* Layer 1: High-altitude monsoon cloud shelf (slow, broad, soft cyan-teal) */}
+      <div
+        className="absolute -top-[15%] -left-[10%] h-[650px] w-[950px] rounded-full opacity-[0.16] blur-[95px] will-change-transform"
+        style={{
+          background:
+            "radial-gradient(circle at 45% 45%, color-mix(in oklab, var(--scene-atmosphere, #087eb4) 65%, var(--signal, #38bdf8) 35%) 0%, color-mix(in oklab, var(--signal, #38bdf8) 25%, transparent) 55%, transparent 75%)",
+          animation: reduceMotion ? "none" : "cloud-drift-primary 58s ease-in-out infinite",
+        }}
+      />
 
-      {/* Mid rain layer — default speed and size */}
-      {midDrops.map((i) => (
-        <span
-          key={`mid-${i}`}
-          className="rain-drop"
-          style={{
-            left: `${(i * 37) % 100}%`,
-            animationDelay: `${-((i * 0.37) % 3.8)}s`,
-            animationDuration: `${2.0 + (i % 7) * 0.15}s`,
-            transform: `rotate(${9 + (i % 5)}deg)`,
-            height: `${60 + (i % 8) * 3}px`,
-          }}
-        />
-      ))}
+      {/* Layer 2: Mid-altitude deep atmospheric moisture mass (parallax counter-drift) */}
+      <div
+        className="absolute top-[28%] -right-[12%] h-[750px] w-[1050px] rounded-full opacity-[0.13] blur-[110px] will-change-transform"
+        style={{
+          background:
+            "radial-gradient(circle at 55% 50%, color-mix(in oklab, var(--cyan, #06b6d4) 50%, var(--primary, #38bdf8) 50%) 0%, color-mix(in oklab, var(--scene-ocean, #08152f) 30%, transparent) 60%, transparent 80%)",
+          animation: reduceMotion ? "none" : "cloud-drift-secondary 74s ease-in-out infinite",
+        }}
+      />
 
-      {/* Near rain layer — fast, thick, slightly blurred */}
-      {nearDrops.map((i) => (
-        <span
-          key={`near-${i}`}
-          className="rain-drop-near"
-          style={{
-            left: `${(i * 67) % 100}%`,
-            animationDelay: `${-((i * 0.31) % 1.8)}s`,
-            animationDuration: `${1.2 + (i % 4) * 0.16}s`,
-            transform: `rotate(${10 + (i % 5)}deg)`,
-            height: `${90 + (i % 5) * 7}px`,
-          }}
-        />
-      ))}
+      {/* Layer 3: Low-altitude ambient mist veil (subtle, wide ground atmosphere) */}
+      <div
+        className="absolute -bottom-[10%] left-[15%] h-[550px] w-[1100px] rounded-full opacity-[0.11] blur-[100px] will-change-transform"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 50%, color-mix(in oklab, var(--signal, #38bdf8) 40%, transparent) 0%, color-mix(in oklab, var(--card, #0f172a) 40%, transparent) 65%, transparent 85%)",
+          animation: reduceMotion ? "none" : "cloud-drift-tertiary 86s ease-in-out infinite",
+        }}
+      />
 
-      {/* Ground-level mist */}
-      {!reduceMotion && <div className="ground-mist" />}
+      {/* Ambient subtle vignette */}
+      <div
+        className="absolute inset-0 opacity-[0.08]"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 50%, transparent 40%, color-mix(in oklab, var(--scene-ocean, #08152f) 80%, black) 100%)",
+        }}
+      />
     </div>
   );
 }

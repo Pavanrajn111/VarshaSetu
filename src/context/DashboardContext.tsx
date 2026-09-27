@@ -190,14 +190,21 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     setAdvisoryError(null);
 
     try {
+      const w1Break = forecast?.targets?.target_break_w1;
+      const w1Heavy = forecast?.targets?.target_heavy_w1;
+      const w1Active = forecast?.targets?.target_active_w1;
+
       const res = await apiClient.getAdvisory({
-        lat: location.lat,
-        lon: location.lon,
-        district: location.district,
-        taluk: location.taluk,
+        district: location.district || 'Uttara Kannada',
+        taluk: location.taluk || 'Sirsi',
         crop_type: cropType,
         crop_stage: cropStage,
         language,
+        t1_break_triggered: Boolean(w1Break?.triggered),
+        t1_break_prob: w1Break?.probability ?? 0.0,
+        t1_heavy_triggered: Boolean(w1Heavy?.triggered),
+        t1_heavy_prob: w1Heavy?.probability ?? 0.0,
+        t1_active_prob: w1Active?.probability ?? 0.0,
       });
       if (res.advisory_text) {
         setAdvisoryText(res.advisory_text);
@@ -208,7 +215,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoadingAdvisory(false);
     }
-  }, [location, cropType, cropStage, language]);
+  }, [location, cropType, cropStage, language, forecast]);
 
   const setLocation = useCallback(
     (newLoc: LocationState) => {
