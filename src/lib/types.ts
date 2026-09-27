@@ -43,6 +43,25 @@ export interface DistrictHierarchyResponse {
   districts: DistrictTaluks[];
 }
 
+export type RiskCategory = "LOW" | "MODERATE" | "HIGH";
+
+export interface TalukRiskItem {
+  taluk_name: string;
+  district: string;
+  lat: number;
+  lon: number;
+  risk_category: RiskCategory;
+  risk_score_pct: number;
+  risk_color_hex: string;
+  risk_basis: string;
+}
+
+export interface RiskMapDataResponse {
+  total_taluks: number;
+  generated_at: string;
+  taluks: TalukRiskItem[];
+}
+
 /**
  * Per-target fault-isolated prediction schema.
  * All fields are nullable to handle cases where a model target fails or is offline.

@@ -1,20 +1,49 @@
+import { useState, useEffect, lazy, Suspense } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { DashboardProvider } from "@/context/DashboardContext";
 import { AppHeader } from "@/components/AppHeader";
 import { BackendStatusBadge } from "@/components/dashboard/BackendStatusBadge";
 import { LanguageSwitcher } from "@/components/dashboard/LanguageSwitcher";
 import { LocationPicker } from "@/components/dashboard/LocationPicker";
-import { ForecastPanel } from "@/components/dashboard/ForecastPanel";
-import { RainfallOutlookPanel } from "@/components/dashboard/RainfallOutlookPanel";
-import { SoilProfilePanel } from "@/components/dashboard/SoilProfilePanel";
-import { CropAdvisoryPanel } from "@/components/dashboard/CropAdvisoryPanel";
-import { RiskMapPanel } from "@/components/dashboard/RiskMapPanel";
-import { NotificationOptInPanel } from "@/components/dashboard/NotificationOptInPanel";
+import {
+  DashboardSidebar,
+  DASHBOARD_SECTIONS,
+  type DashboardSection,
+} from "@/components/dashboard/DashboardSidebar";
+import { PanelSkeleton } from "@/components/dashboard/PanelSkeleton";
 import { ChatAssistantWidget } from "@/components/dashboard/ChatAssistantWidget";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ArrowLeft, ShieldCheck, CloudRain, BarChart3, Sprout, Map, BellRing } from "lucide-react";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
+
+// PART A: Code-split panels so only the active section's bundle is downloaded initially
+const ForecastPanel = lazy(() =>
+  import("@/components/dashboard/ForecastPanel").then((m) => ({ default: m.ForecastPanel })),
+);
+const RainfallOutlookPanel = lazy(() =>
+  import("@/components/dashboard/RainfallOutlookPanel").then((m) => ({
+    default: m.RainfallOutlookPanel,
+  })),
+);
+const SoilProfilePanel = lazy(() =>
+  import("@/components/dashboard/SoilProfilePanel").then((m) => ({ default: m.SoilProfilePanel })),
+);
+const CropAdvisoryPanel = lazy(() =>
+  import("@/components/dashboard/CropAdvisoryPanel").then((m) => ({
+    default: m.CropAdvisoryPanel,
+  })),
+);
+const RiskMapPanel = lazy(() =>
+  import("@/components/dashboard/RiskMapPanel").then((m) => ({ default: m.RiskMapPanel })),
+);
+const NotificationOptInPanel = lazy(() =>
+  import("@/components/dashboard/NotificationOptInPanel").then((m) => ({
+    default: m.NotificationOptInPanel,
+  })),
+);
+
+const SECTION_STORAGE_KEY = "varsha_active_section";
+const COLLAPSED_STORAGE_KEY = "varsha_sidebar_collapsed";
 
 export const Route = createFileRoute("/dashboard")({
   ssr: false,
@@ -32,6 +61,60 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function DashboardContent() {
+  // Precedence: URL parameter > Validated localStorage > Default 'forecast'
+  const [activeSection, setActiveSection] = useState<DashboardSection>(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlSection = urlParams.get("section") as DashboardSection | null;
+      if (urlSection && DASHBOARD_SECTIONS.includes(urlSection)) {
+        return urlSection;
+      }
+      try {
+        const stored = localStorage.getItem(SECTION_STORAGE_KEY) as DashboardSection | null;
+        if (stored && DASHBOARD_SECTIONS.includes(stored)) {
+          return stored;
+        }
+      } catch {
+        // Fall through to default on restricted storage environments
+      }
+    }
+    return "forecast";
+  });
+
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        return localStorage.getItem(COLLAPSED_STORAGE_KEY) === "true";
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  });
+
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
+
+  const handleSelectSection = (section: DashboardSection) => {
+    setActiveSection(section);
+    try {
+      localStorage.setItem(SECTION_STORAGE_KEY, section);
+    } catch {
+      // Ignore localStorage write failures
+    }
+  };
+
+  const handleToggleCollapse = () => {
+    setIsSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(COLLAPSED_STORAGE_KEY, String(next));
+      } catch {
+        // Ignore
+      }
+      return next;
+    });
+  };
+
   return (
     <div className="relative min-h-screen text-foreground">
       {/* Shared Unified Header */}
@@ -87,105 +170,37 @@ function DashboardContent() {
           <LocationPicker />
         </section>
 
-        {/* Modular Service Option Tabs */}
-        <Tabs defaultValue="forecast" className="space-y-6">
-          <div className="overflow-x-auto pb-1.5">
-            <TabsList className="h-auto p-1.5 bg-card/85 border border-border/70 backdrop-blur-xl rounded-xl inline-flex gap-2 shadow-md">
-              <TabsTrigger
-                value="forecast"
-                className="gap-2.5 px-4 py-2.5 rounded-lg data-[state=active]:bg-signal/15 data-[state=active]:text-signal data-[state=active]:border-signal/40 border border-transparent transition-all cursor-pointer font-sans"
-              >
-                <CloudRain className="size-4 text-signal shrink-0" />
-                <div className="text-left">
-                  <div className="text-xs font-semibold">4-Week Forecast</div>
-                  <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
-                    13 ML Targets
-                  </div>
+        {/* PART B: Two-Column Dashboard Architecture (Sidebar + Active Panel) */}
+        <div className="flex flex-col md:flex-row gap-6 items-start">
+          {/* Left Persistent / Collapsible Sidebar */}
+          <DashboardSidebar
+            activeSection={activeSection}
+            onSelectSection={handleSelectSection}
+            isCollapsed={isSidebarCollapsed}
+            onToggleCollapse={handleToggleCollapse}
+            mobileOpen={mobileSidebarOpen}
+            onMobileOpenChange={setMobileSidebarOpen}
+          />
+
+          {/* Active Service Panel (Lazy-Loaded with Suspense Fallback) */}
+          <section
+            aria-label="Active Operational Service"
+            className="flex-1 w-full min-w-0 transition-opacity duration-200"
+          >
+            <Suspense fallback={<PanelSkeleton title="Loading operational service..." />}>
+              {activeSection === "forecast" && <ForecastPanel />}
+              {activeSection === "outlook" && <RainfallOutlookPanel />}
+              {activeSection === "advisory" && (
+                <div className="grid gap-6 lg:grid-cols-2">
+                  <SoilProfilePanel />
+                  <CropAdvisoryPanel />
                 </div>
-              </TabsTrigger>
-
-              <TabsTrigger
-                value="outlook"
-                className="gap-2.5 px-4 py-2.5 rounded-lg data-[state=active]:bg-cyan/15 data-[state=active]:text-cyan data-[state=active]:border-cyan/40 border border-transparent transition-all cursor-pointer font-sans"
-              >
-                <BarChart3 className="size-4 text-cyan shrink-0" />
-                <div className="text-left">
-                  <div className="text-xs font-semibold">Rainfall Outlook</div>
-                  <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
-                    7–30d Ensemble
-                  </div>
-                </div>
-              </TabsTrigger>
-
-              <TabsTrigger
-                value="advisory"
-                className="gap-2.5 px-4 py-2.5 rounded-lg data-[state=active]:bg-warning/15 data-[state=active]:text-warning data-[state=active]:border-warning/40 border border-transparent transition-all cursor-pointer font-sans"
-              >
-                <Sprout className="size-4 text-warning shrink-0" />
-                <div className="text-left">
-                  <div className="text-xs font-semibold">Soil & Advisory</div>
-                  <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
-                    FAO-56 & Voice
-                  </div>
-                </div>
-              </TabsTrigger>
-
-              <TabsTrigger
-                value="map"
-                className="gap-2.5 px-4 py-2.5 rounded-lg data-[state=active]:bg-purple-500/15 data-[state=active]:text-purple-400 data-[state=active]:border-purple-500/40 border border-transparent transition-all cursor-pointer font-sans"
-              >
-                <Map className="size-4 text-purple-400 shrink-0" />
-                <div className="text-left">
-                  <div className="text-xs font-semibold">Statewide Risk Map</div>
-                  <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
-                    Taluk Choropleth
-                  </div>
-                </div>
-              </TabsTrigger>
-
-              <TabsTrigger
-                value="alerts"
-                className="gap-2.5 px-4 py-2.5 rounded-lg data-[state=active]:bg-emerald-500/15 data-[state=active]:text-emerald-400 data-[state=active]:border-emerald-500/40 border border-transparent transition-all cursor-pointer font-sans"
-              >
-                <BellRing className="size-4 text-emerald-400 shrink-0" />
-                <div className="text-left">
-                  <div className="text-xs font-semibold">Dispatches & Alerts</div>
-                  <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
-                    SMS & WhatsApp
-                  </div>
-                </div>
-              </TabsTrigger>
-            </TabsList>
-          </div>
-
-          {/* Service 1: 4-Week Probabilistic Monsoon Forecast & Onset */}
-          <TabsContent value="forecast" className="space-y-4 focus-visible:outline-none">
-            <ForecastPanel />
-          </TabsContent>
-
-          {/* Service 2: 7-30 Day Precipitation Outlook (Multi-Source Ensemble) */}
-          <TabsContent value="outlook" className="space-y-4 focus-visible:outline-none">
-            <RainfallOutlookPanel />
-          </TabsContent>
-
-          {/* Service 3: Soil Profile & Voice-Enabled Crop Advisory */}
-          <TabsContent value="advisory" className="space-y-4 focus-visible:outline-none">
-            <div className="grid gap-8 lg:grid-cols-2">
-              <SoilProfilePanel />
-              <CropAdvisoryPanel />
-            </div>
-          </TabsContent>
-
-          {/* Service 4: Statewide Risk Choropleth Map */}
-          <TabsContent value="map" className="space-y-4 focus-visible:outline-none">
-            <RiskMapPanel />
-          </TabsContent>
-
-          {/* Service 5: Farmer Alert Subscriptions (SMS & WhatsApp) */}
-          <TabsContent value="alerts" className="space-y-4 focus-visible:outline-none">
-            <NotificationOptInPanel />
-          </TabsContent>
-        </Tabs>
+              )}
+              {activeSection === "risk_map" && <RiskMapPanel />}
+              {activeSection === "alerts" && <NotificationOptInPanel />}
+            </Suspense>
+          </section>
+        </div>
 
         {/* Floating Conversational AI Assistant */}
         <ChatAssistantWidget />

@@ -1,6 +1,5 @@
 import { CloudRain, User, LogOut, ChevronDown, Sliders, MapPin } from "lucide-react";
-import { motion, useScroll, useSpring } from "motion/react";
-import { type ReactNode } from "react";
+import { type ReactNode, useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -19,16 +18,32 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ children, showProgress = true }: AppHeaderProps) {
-  const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 80, damping: 22, restDelta: 0.001 });
+  const [scrollProgress, setScrollProgress] = useState(0);
   const { user, isAuthenticated, logout } = useAuth();
+
+  useEffect(() => {
+    if (!showProgress) return;
+    let rafId: number;
+    const handleScroll = () => {
+      rafId = requestAnimationFrame(() => {
+        const total = document.documentElement.scrollHeight - window.innerHeight;
+        setScrollProgress(total > 0 ? Math.min(1, Math.max(0, window.scrollY / total)) : 0);
+      });
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      cancelAnimationFrame(rafId);
+    };
+  }, [showProgress]);
 
   return (
     <>
       {showProgress && (
-        <motion.div
-          className="fixed inset-x-0 top-0 z-50 h-0.5 origin-left bg-signal shadow-[0_0_8px_rgba(var(--signal),0.5)]"
-          style={{ scaleX: progress }}
+        <div
+          className="fixed inset-x-0 top-0 z-50 h-0.5 origin-left bg-signal shadow-[0_0_8px_rgba(var(--signal),0.5)] transition-transform duration-75 ease-out"
+          style={{ transform: `scaleX(${scrollProgress})` }}
         />
       )}
       <header className="sticky top-0 z-30 w-full border-b border-border/50 bg-background/70 backdrop-blur-xl">

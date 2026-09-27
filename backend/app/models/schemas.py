@@ -207,3 +207,22 @@ class HealthResponse(BaseModel):
     model_targets: List[str]
     dataset_coverage: str
     timestamp: str
+
+# ---------------------------------------------------------------------------
+# Statewide Risk Map Models
+# ---------------------------------------------------------------------------
+class TalukRiskItem(BaseModel):
+    taluk_name: str
+    district: str
+    lat: float
+    lon: float
+    risk_category: str
+    risk_score_pct: float
+    risk_color_hex: str
+    risk_basis: str
+
+class RiskMapDataResponse(BaseModel):
+    total_taluks: int
+    generated_at: str
+    taluks: List[TalukRiskItem]
+

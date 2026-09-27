@@ -1,4 +1,4 @@
-import { useReducedMotion } from "motion/react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { createContext, useContext, type ReactNode } from "react";
 
 const AppBackgroundContext = createContext<boolean>(false);

@@ -1,4 +1,4 @@
-import { useReducedMotion } from "motion/react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 export function LandingRainBackground({
   reduceMotion: reduceMotionProp,

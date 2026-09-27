@@ -2,7 +2,11 @@ import asyncio
 from fastapi import APIRouter, Query, Request
 from app.limiter import limiter
 from app.models.schemas import DistrictHierarchyResponse, LocationResolveResponse
-from app.services.location_resolver import get_admin_hierarchy, resolve_location_query
+from app.services.location_resolver import (
+    get_admin_hierarchy,
+    resolve_location_query,
+    reverse_geocode_coordinates,
+)
 
 router = APIRouter(prefix="/location", tags=["Location Resolution"])
 
@@ -29,3 +33,18 @@ async def resolve_location(
     Protected by rate limiting (30/min) and executes asynchronously in worker threadpool.
     """
     return await asyncio.to_thread(resolve_location_query, query)
+
+@router.get("/reverse", response_model=LocationResolveResponse)
+@limiter.limit("60/minute")
+async def reverse_location(
+    request: Request,
+    lat: float = Query(..., description="Latitude in decimal degrees"),
+    lon: float = Query(..., description="Longitude in decimal degrees")
+) -> LocationResolveResponse:
+    """
+    Reverse geocoding: finds nearest verified taluk or village by Haversine distance
+    across verified taluks and offline villages.
+    Enforces 60km distance cap.
+    """
+    return await asyncio.to_thread(reverse_geocode_coordinates, lat, lon)
+

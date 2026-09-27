@@ -268,3 +268,100 @@ def resolve_location_query(query: str, force_refresh: bool = False) -> LocationR
         status_code=404,
         detail=f"Location '{clean_q}' could not be resolved in Karnataka offline databases or live geocoding."
     )
+
+
+def reverse_geocode_coordinates(lat: float, lon: float) -> LocationResolveResponse:
+    """
+    Finds the nearest known taluk or village to the given coordinates
+    using vectorized Haversine distance across taluks_df and villages_df combined.
+    Enforces NOMINATIM_MAX_DISTANCE_KM sanity cap (60 km).
+    """
+    validate_coordinates(lat, lon)
+
+    bundle = get_bundle()
+    taluks_df = bundle.taluks_df
+    villages_df = bundle.villages_df
+
+    # 1. Search nearest taluk
+    taluk_name, taluk_dist_district, taluk_dist = find_nearest_taluk(lat, lon, taluks_df)
+
+    nearest_is_village = False
+    best_name = taluk_name
+    best_district = taluk_dist_district
+    best_taluk = taluk_name
+    best_dist = taluk_dist
+    best_lat = lat
+    best_lon = lon
+
+    # Look up authoritative taluk coordinates
+    t_rows = taluks_df[taluks_df['taluk_name'].str.lower() == taluk_name.lower()]
+    if not t_rows.empty:
+        best_lat = float(t_rows.iloc[0]['lat'])
+        best_lon = float(t_rows.iloc[0]['lon'])
+
+    # 2. Search nearest village
+    if villages_df is not None and not villages_df.empty and 'lat' in villages_df.columns and 'lon' in villages_df.columns:
+        v_lats = villages_df['lat'].astype(float).values
+        v_lons = villages_df['lon'].astype(float).values
+        R = 6371.0
+        p1 = np.radians(lat)
+        p2 = np.radians(v_lats)
+        dp = np.radians(v_lats - lat)
+        dl = np.radians(v_lons - lon)
+        a = np.sin(dp / 2.0)**2 + np.cos(p1) * np.cos(p2) * np.sin(dl / 2.0)**2
+        c = 2.0 * np.arctan2(np.sqrt(a), np.sqrt(1.0 - a))
+        v_distances = R * c
+        v_min_idx = int(np.argmin(v_distances))
+        v_min_dist = float(v_distances[v_min_idx])
+
+        if v_min_dist < best_dist:
+            v_row = villages_df.iloc[v_min_idx]
+            best_name = str(v_row['name'])
+            best_district = str(v_row['district'])
+            best_taluk = str(v_row['taluk'])
+            best_dist = v_min_dist
+            best_lat = float(v_row['lat'])
+            best_lon = float(v_row['lon'])
+            nearest_is_village = True
+
+    # 3. Check distance sanity cap (60km)
+    if best_dist > NOMINATIM_MAX_DISTANCE_KM:
+        return LocationResolveResponse(
+            status="not_found",
+            query=f"{lat:.4f},{lon:.4f}",
+            disambiguation_required=False,
+            scale_tag="out_of_bounds",
+            selected=None,
+            candidates=[],
+            message=(
+                f"Coordinates ({lat:.4f}°N, {lon:.4f}°E) are {best_dist:.1f} km from closest known node "
+                f"({best_name}), exceeding the {NOMINATIM_MAX_DISTANCE_KM:.0f} km sanity distance cap."
+            )
+        )
+
+    scale_tag = "village" if nearest_is_village else "taluk"
+    label = (
+        f"{best_name} ({best_taluk}, {best_district})"
+        if nearest_is_village
+        else f"{best_name} Taluk, {best_district}"
+    )
+
+    candidate = CandidateLocation(
+        name=best_name,
+        label=label,
+        taluk=best_taluk,
+        district=best_district,
+        lat=round(best_lat, 4),
+        lon=round(best_lon, 4)
+    )
+
+    return LocationResolveResponse(
+        status="success",
+        query=f"{lat:.4f},{lon:.4f}",
+        disambiguation_required=False,
+        scale_tag=scale_tag,
+        selected=candidate,
+        candidates=[candidate],
+        message=f"Resolved to nearest {scale_tag}: {best_name} ({best_dist:.1f} km away)"
+    )
+

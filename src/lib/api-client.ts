@@ -15,6 +15,7 @@ import type {
   HealthResponse,
   LocationResolveResponse,
   OutlookResponse,
+  RiskMapDataResponse,
   SupportedLanguage,
   UserProfile,
 } from "./types";
@@ -267,6 +268,22 @@ export const apiClient = {
       throw new ApiError(`Failed to fetch risk map HTML (${res.status})`, res.status);
     }
     return res.text();
+  },
+
+  /**
+   * Fetches lightweight structured Break Risk % data for all taluks.
+   */
+  async getRiskMapData(forceRefresh: boolean = false): Promise<RiskMapDataResponse> {
+    return this.get<RiskMapDataResponse>(
+      `/risk-map/data${forceRefresh ? "?force_refresh=true" : ""}`,
+    );
+  },
+
+  /**
+   * Reverse geocodes clicked coordinates to nearest verified taluk or village.
+   */
+  async reverseGeocode(lat: number, lon: number): Promise<LocationResolveResponse> {
+    return this.get<LocationResolveResponse>("/location/reverse", { lat, lon });
   },
 
   async getOutlook(talukName: string): Promise<OutlookResponse> {
