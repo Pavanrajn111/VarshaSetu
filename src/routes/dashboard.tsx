@@ -1,10 +1,15 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { DashboardProvider } from "@/context/DashboardContext";
+import { DashboardProvider, useDashboard } from "@/context/DashboardContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { AppHeader } from "@/components/AppHeader";
 import { BackendStatusBadge } from "@/components/dashboard/BackendStatusBadge";
 import { LanguageSwitcher } from "@/components/dashboard/LanguageSwitcher";
-import { LocationPicker } from "@/components/dashboard/LocationPicker";
+import { LocationSetupModal } from "@/components/dashboard/LocationSetupModal";
+import {
+  VarshaAudioGuideModal,
+  AudioGuideTriggerButton,
+} from "@/components/dashboard/VarshaAudioGuideModal";
 import {
   DashboardSidebar,
   DASHBOARD_SECTIONS,
@@ -14,9 +19,12 @@ import { PanelSkeleton } from "@/components/dashboard/PanelSkeleton";
 import { ChatAssistantWidget } from "@/components/dashboard/ChatAssistantWidget";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ShieldCheck, MapPin, Compass } from "lucide-react";
 
-// PART A: Code-split panels so only the active section's bundle is downloaded initially
+// Code-split panels so only the active section's bundle is downloaded initially
+const OverviewPanel = lazy(() =>
+  import("@/components/dashboard/OverviewPanel").then((m) => ({ default: m.OverviewPanel })),
+);
 const ForecastPanel = lazy(() =>
   import("@/components/dashboard/ForecastPanel").then((m) => ({ default: m.ForecastPanel })),
 );
@@ -61,7 +69,10 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function DashboardContent() {
-  // Precedence: URL parameter > Validated localStorage > Default 'forecast'
+  const { t } = useLanguage();
+  const { location, hasOnboardedLocation, setHasOnboardedLocation, isLocationSetupOpen, setIsLocationSetupOpen } = useDashboard();
+
+  // Precedence: URL parameter > Validated localStorage > Default 'overview'
   const [activeSection, setActiveSection] = useState<DashboardSection>(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
@@ -75,10 +86,10 @@ function DashboardContent() {
           return stored;
         }
       } catch {
-        // Fall through to default on restricted storage environments
+        // Fall through
       }
     }
-    return "forecast";
+    return "overview";
   });
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
@@ -92,6 +103,7 @@ function DashboardContent() {
     return false;
   });
 
+  const [isAudioGuideOpen, setIsAudioGuideOpen] = useState<boolean>(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
 
   const handleSelectSection = (section: DashboardSection) => {
@@ -99,7 +111,7 @@ function DashboardContent() {
     try {
       localStorage.setItem(SECTION_STORAGE_KEY, section);
     } catch {
-      // Ignore localStorage write failures
+      // Ignore
     }
   };
 
@@ -117,10 +129,27 @@ function DashboardContent() {
 
   return (
     <div className="relative min-h-screen text-foreground">
+      {/* Location Onboarding Modal for First-time / Unset Users */}
+      <LocationSetupModal
+        isOpen={!hasOnboardedLocation || isLocationSetupOpen}
+        onClose={() => {
+          setHasOnboardedLocation(true);
+          setIsLocationSetupOpen(false);
+        }}
+        isMandatoryOnboarding={!hasOnboardedLocation}
+      />
+
+      {/* 2-Minute Audio Guide Modal */}
+      <VarshaAudioGuideModal
+        isOpen={isAudioGuideOpen}
+        onClose={() => setIsAudioGuideOpen(false)}
+      />
+
       {/* Shared Unified Header */}
       <AppHeader showProgress={true}>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <BackendStatusBadge />
+          <AudioGuideTriggerButton onClick={() => setIsAudioGuideOpen(true)} />
           <LanguageSwitcher />
           <Button
             asChild
@@ -129,50 +158,60 @@ function DashboardContent() {
             className="hidden sm:inline-flex border-border/80 bg-glass/80 backdrop-blur-lg h-8 text-xs cursor-pointer"
           >
             <Link to="/">
-              <ArrowLeft className="mr-1.5 size-3.5" /> Landing
+              <ArrowLeft className="mr-1.5 size-3.5" /> {t.header.landing}
             </Link>
           </Button>
         </div>
       </AppHeader>
 
       {/* Main Dashboard Body */}
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-8 lg:px-10 space-y-6">
-        {/* Studio Title Banner */}
-        <div className="flex flex-col gap-2 border-b border-border/40 pb-5">
-          <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-signal">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>
-            <span>/</span>
-            <span>Live Prediction Studio</span>
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-8 lg:px-10 space-y-6">
+        {/* Studio Title Banner & Compact Location Context Bar */}
+        <div className="flex flex-col gap-3 border-b border-border/40 pb-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-signal">
+              <Link to="/" className="hover:underline">
+                {t.dashboard.breadcrumbHome}
+              </Link>
+              <span>/</span>
+              <span>{t.dashboard.breadcrumbStudio}</span>
+            </div>
+
+            {/* Compact Header Location Context Indicator & Guide Button */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsLocationSetupOpen(true)}
+                className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full border border-signal/30 bg-signal/10 text-signal hover:bg-signal/20 transition-all font-mono text-xs cursor-pointer"
+              >
+                <MapPin className="size-3.5 text-signal" />
+                <span className="font-semibold">{location.taluk}, {location.district}</span>
+                <span className="text-[10px] text-muted-foreground">({t.sidebar.changeLocation})</span>
+              </button>
+            </div>
           </div>
+
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-4xl">
-                Karnataka Monsoon Intelligence Studio
+              <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                {t.dashboard.studioTitle}
               </h1>
-              <p className="mt-1 text-sm text-muted-foreground sm:text-base">
-                Multi-model ensemble bias-corrected against 24-year IMD climatology & FAO-56 crop
-                water demand
+              <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+                {t.dashboard.studioSubtitle}
               </p>
             </div>
             <Badge
               variant="outline"
-              className="self-start sm:self-auto border-signal/40 bg-signal/10 px-3 py-1 font-mono text-xs text-signal"
+              className="self-start sm:self-auto border-signal/40 bg-signal/10 px-3 py-1 font-mono text-xs text-signal shrink-0"
             >
-              SIH 2026 · PS 26086
+              {t.dashboard.sihBadge}
             </Badge>
           </div>
         </div>
 
-        {/* Master Context: Location Picker (Pinned Top) */}
-        <section aria-label="Location Targeting">
-          <LocationPicker />
-        </section>
-
-        {/* PART B: Two-Column Dashboard Architecture (Sidebar + Active Panel) */}
+        {/* Two-Column Architecture: Modern Navigation Sidebar + Active Service Panel */}
         <div className="flex flex-col md:flex-row gap-6 items-start">
-          {/* Left Persistent / Collapsible Sidebar */}
+          {/* Left Navigation Sidebar */}
           <DashboardSidebar
             activeSection={activeSection}
             onSelectSection={handleSelectSection}
@@ -180,22 +219,25 @@ function DashboardContent() {
             onToggleCollapse={handleToggleCollapse}
             mobileOpen={mobileSidebarOpen}
             onMobileOpenChange={setMobileSidebarOpen}
+            onOpenLocationSetup={() => setIsLocationSetupOpen(true)}
           />
 
-          {/* Active Service Panel (Lazy-Loaded with Suspense Fallback) */}
+          {/* Active Service Panel View */}
           <section
             aria-label="Active Operational Service"
             className="flex-1 w-full min-w-0 transition-opacity duration-200"
           >
-            <Suspense fallback={<PanelSkeleton title="Loading operational service..." />}>
+            <Suspense fallback={<PanelSkeleton title={t.dashboard.loadingService} />}>
+              {activeSection === "overview" && (
+                <OverviewPanel
+                  onNavigateSection={handleSelectSection}
+                  onOpenLocationSetup={() => setIsLocationSetupOpen(true)}
+                />
+              )}
               {activeSection === "forecast" && <ForecastPanel />}
               {activeSection === "outlook" && <RainfallOutlookPanel />}
-              {activeSection === "advisory" && (
-                <div className="grid gap-6 lg:grid-cols-2">
-                  <SoilProfilePanel />
-                  <CropAdvisoryPanel />
-                </div>
-              )}
+              {activeSection === "soil" && <SoilProfilePanel />}
+              {activeSection === "crop" && <CropAdvisoryPanel />}
               {activeSection === "risk_map" && <RiskMapPanel />}
               {activeSection === "alerts" && <NotificationOptInPanel />}
             </Suspense>
@@ -209,10 +251,10 @@ function DashboardContent() {
       {/* Dashboard Footer */}
       <footer className="mt-16 border-t border-border/50 bg-background/60 py-6 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 font-mono text-[11px] text-muted-foreground sm:flex-row sm:px-8 lg:px-10">
-          <div>Varsha Setu · Smart India Hackathon 2026 · Team Nexus</div>
+          <div>{t.dashboard.footerCopyright}</div>
           <div className="flex items-center gap-2">
             <ShieldCheck className="size-3.5 text-success" />
-            <span>Operational ML Ensemble Serving Active</span>
+            <span>{t.dashboard.footerServing}</span>
           </div>
         </div>
       </footer>
