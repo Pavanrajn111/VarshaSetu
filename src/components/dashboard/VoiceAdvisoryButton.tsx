@@ -16,9 +16,14 @@ const BCP47_LANG_MAP: Record<SupportedLanguage, string> = {
   hi: "hi-IN",
 };
 
+function normalizeLangTag(tag: string): string {
+  return (tag || "").toLowerCase().replace(/_/g, "-").trim();
+}
+
 /**
  * Strict regional voice finder.
- * Ensures Kannada/Hindi never falls back to an English voice.
+ * Ensures Hindi strictly uses a Hindi-capable voice (hi-IN, hi, or Hindi voice names)
+ * and never falls back to an English voice.
  */
 function findMatchingBrowserVoice(
   voices: SpeechSynthesisVoice[],
@@ -26,31 +31,58 @@ function findMatchingBrowserVoice(
 ): SpeechSynthesisVoice | null {
   if (!voices || voices.length === 0) return null;
 
-  if (language === "kn") {
-    // Look strictly for Kannada voices (kn-IN or kn)
-    return (
-      voices.find((v) => v.lang.toLowerCase() === "kn-in") ||
-      voices.find((v) => v.lang.toLowerCase().startsWith("kn")) ||
-      null
+  if (language === "hi") {
+    // 1. Exact hi-IN match
+    const exactHiIn = voices.find((v) => normalizeLangTag(v.lang) === "hi-in");
+    if (exactHiIn) return exactHiIn;
+
+    // 2. Any hi-* match (e.g. hi, hi-IN, hi_IN)
+    const prefixHi = voices.find((v) => normalizeLangTag(v.lang).startsWith("hi"));
+    if (prefixHi) return prefixHi;
+
+    // 3. Name containing Hindi or Devanagari script indicator
+    const nameHi = voices.find(
+      (v) =>
+        v.name.toLowerCase().includes("hindi") ||
+        v.name.includes("हिन्दी") ||
+        v.name.toLowerCase().includes("kalpana") ||
+        v.name.toLowerCase().includes("hemant"),
     );
+    if (nameHi) return nameHi;
+
+    return null;
   }
 
-  if (language === "hi") {
-    // Look strictly for Hindi voices (hi-IN or hi)
-    return (
-      voices.find((v) => v.lang.toLowerCase() === "hi-in") ||
-      voices.find((v) => v.lang.toLowerCase().startsWith("hi")) ||
-      null
+  if (language === "kn") {
+    // 1. Exact kn-IN match
+    const exactKnIn = voices.find((v) => normalizeLangTag(v.lang) === "kn-in");
+    if (exactKnIn) return exactKnIn;
+
+    // 2. Any kn-* match
+    const prefixKn = voices.find((v) => normalizeLangTag(v.lang).startsWith("kn"));
+    if (prefixKn) return prefixKn;
+
+    // 3. Name containing Kannada
+    const nameKn = voices.find(
+      (v) =>
+        v.name.toLowerCase().includes("kannada") ||
+        v.name.includes("ಕನ್ನಡ"),
     );
+    if (nameKn) return nameKn;
+
+    return null;
   }
 
   if (language === "en") {
-    // Look for Indian English first, then any English voice
-    return (
-      voices.find((v) => v.lang.toLowerCase() === "en-in") ||
-      voices.find((v) => v.lang.toLowerCase().startsWith("en")) ||
-      null
-    );
+    // 1. Prefer Indian English (en-IN)
+    const exactEnIn = voices.find((v) => normalizeLangTag(v.lang) === "en-in");
+    if (exactEnIn) return exactEnIn;
+
+    // 2. Any English voice
+    const prefixEn = voices.find((v) => normalizeLangTag(v.lang).startsWith("en"));
+    if (prefixEn) return prefixEn;
+
+    return null;
   }
 
   return null;

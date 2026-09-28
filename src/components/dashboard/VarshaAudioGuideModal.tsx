@@ -42,8 +42,16 @@ interface VarshaAudioGuideModalProps {
 export const AUDIO_GUIDE_SEEN_KEY = "varsha_audio_guide_seen";
 
 /**
+ * Normalizes locale tags and handles various browser voice naming formats.
+ */
+function normalizeLangTag(tag: string): string {
+  return (tag || "").toLowerCase().replace(/_/g, "-").trim();
+}
+
+/**
  * Strict regional voice finder.
- * Ensures Kannada/Hindi never falls back to an English browser voice.
+ * Ensures Hindi strictly uses a Hindi-capable voice (hi-IN, hi, or Hindi voice names)
+ * and never falls back to an English voice.
  */
 function findMatchingBrowserVoice(
   voices: SpeechSynthesisVoice[],
@@ -51,28 +59,58 @@ function findMatchingBrowserVoice(
 ): SpeechSynthesisVoice | null {
   if (!voices || voices.length === 0) return null;
 
-  if (language === "kn") {
-    return (
-      voices.find((v) => v.lang.toLowerCase() === "kn-in") ||
-      voices.find((v) => v.lang.toLowerCase().startsWith("kn")) ||
-      null
+  if (language === "hi") {
+    // 1. Exact hi-IN match
+    const exactHiIn = voices.find((v) => normalizeLangTag(v.lang) === "hi-in");
+    if (exactHiIn) return exactHiIn;
+
+    // 2. Any hi-* match (e.g. hi, hi-IN, hi_IN)
+    const prefixHi = voices.find((v) => normalizeLangTag(v.lang).startsWith("hi"));
+    if (prefixHi) return prefixHi;
+
+    // 3. Name containing Hindi or Devanagari script indicator
+    const nameHi = voices.find(
+      (v) =>
+        v.name.toLowerCase().includes("hindi") ||
+        v.name.includes("हिन्दी") ||
+        v.name.toLowerCase().includes("kalpana") ||
+        v.name.toLowerCase().includes("hemant"),
     );
+    if (nameHi) return nameHi;
+
+    return null;
   }
 
-  if (language === "hi") {
-    return (
-      voices.find((v) => v.lang.toLowerCase() === "hi-in") ||
-      voices.find((v) => v.lang.toLowerCase().startsWith("hi")) ||
-      null
+  if (language === "kn") {
+    // 1. Exact kn-IN match
+    const exactKnIn = voices.find((v) => normalizeLangTag(v.lang) === "kn-in");
+    if (exactKnIn) return exactKnIn;
+
+    // 2. Any kn-* match
+    const prefixKn = voices.find((v) => normalizeLangTag(v.lang).startsWith("kn"));
+    if (prefixKn) return prefixKn;
+
+    // 3. Name containing Kannada
+    const nameKn = voices.find(
+      (v) =>
+        v.name.toLowerCase().includes("kannada") ||
+        v.name.includes("ಕನ್ನಡ"),
     );
+    if (nameKn) return nameKn;
+
+    return null;
   }
 
   if (language === "en") {
-    return (
-      voices.find((v) => v.lang.toLowerCase() === "en-in") ||
-      voices.find((v) => v.lang.toLowerCase().startsWith("en")) ||
-      null
-    );
+    // 1. Prefer Indian English (en-IN)
+    const exactEnIn = voices.find((v) => normalizeLangTag(v.lang) === "en-in");
+    if (exactEnIn) return exactEnIn;
+
+    // 2. Any English voice
+    const prefixEn = voices.find((v) => normalizeLangTag(v.lang).startsWith("en"));
+    if (prefixEn) return prefixEn;
+
+    return null;
   }
 
   return null;
@@ -85,13 +123,14 @@ export function buildAudioGuideScript(
   language: SupportedLanguage,
   taluk: string,
   district: string,
-): { title: string; script: string } {
+): { title: string; script: string; locale: string } {
   const talukName = taluk || "your selected taluk";
   const districtName = district || "Karnataka";
 
   if (language === "kn") {
     return {
       title: "ವರ್ಷ ಸೇತು ಆಡಿಯೋ ಮಾರ್ಗದರ್ಶಿ",
+      locale: "kn-IN",
       script: `ವರ್ಷ ಸೇತು ಕೃಷಿ ಹವಾಮಾನ ಮತ್ತು ಮಣ್ಣಿನ ಮಾಹಿತಿ ವೇದಿಕೆಗೆ ಸುಸ್ವಾಗತ. ಈ ಕಿರು ಮಾರ್ಗದರ್ಶಿಯು ಪ್ರತಿ ವಿಭಾಗದಲ್ಲಿ ನೀವು ಯಾವ ಮಾಹಿತಿಯನ್ನು ನೋಡಬಹುದು, ಅದರ ಅರ್ಥವೇನು ಮತ್ತು ಅದು ನಿಮ್ಮ ಕೃಷಿ ಕೆಲಸಗಳಿಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ವಿವರಿಸುತ್ತದೆ.
 
 ಮೊದಲನೆಯದಾಗಿ ನಿಮ್ಮ ಸ್ಥಳ: ನೀವು ${districtName} ಜಿಲ್ಲೆಯ ${talukName} ತಾಲೂಕನ್ನು ಆಯ್ಕೆ ಮಾಡಿದ್ದೀರಿ. ಸಂಪೂರ್ಣ ವೇದಿಕೆಯಲ್ಲಿನ ಎಲ್ಲಾ ಮುನ್ಸೂಚನೆಗಳು, ಮಣ್ಣಿನ ತೇವಾಂಶ ಮತ್ತು ಬೆಳೆ ಸಲಹೆಗಳು ಈ ಪ್ರದೇಶಕ್ಕೆ ಅನುಗುಣವಾಗಿ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಸಿದ್ಧಗೊಳ್ಳುತ್ತವೆ.
@@ -117,6 +156,7 @@ export function buildAudioGuideScript(
   if (language === "hi") {
     return {
       title: "वर्षा सेतु ऑडियो मार्गदर्शिका",
+      locale: "hi-IN",
       script: `वर्षा सेतु कृषि मौसम और मृदा सूचना मंच पर आपका स्वागत है। यह संक्षिप्त मार्गदर्शिका आपको बताएगी कि प्रत्येक अनुभाग में आप क्या जानकारी देख सकते हैं, उसका क्या अर्थ है और यह आपकी खेती की योजना बनाने में कैसे मदद कर सकती है।
 
 सबसे पहले आपका स्थान: आपने ${districtName} जिले का ${talukName} तालुका चुना है। पूरे प्लेटफॉर्म पर सभी पूर्वानुमान, मिट्टी की नमी और फसल सलाह स्वचालित रूप से इसी क्षेत्र के अनुसार अपडेट होते हैं।
@@ -141,6 +181,7 @@ export function buildAudioGuideScript(
 
   return {
     title: "Varsha Setu Audio Guide",
+    locale: "en-IN",
     script: `Welcome to Varsha Setu, your agricultural weather and soil intelligence platform for Karnataka. This short guide will explain what information you can see in each section, what it means, and how it can help you plan your farm activities.
 
 First, your location: You have selected ${talukName} in ${districtName} district. All forecasts, soil metrics, crop recommendations, and risk indices across the entire platform automatically update for this area.
@@ -186,13 +227,21 @@ export function VarshaAudioGuideModal({ isOpen, onClose }: VarshaAudioGuideModal
     }
   }, [isOpen, globalLang]);
 
-  // Load browser speech synthesis voices
+  // Load and listen for browser speech synthesis voices
   useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
 
     const updateVoices = () => {
       const available = window.speechSynthesis.getVoices();
       setBrowserVoices(available);
+      if (available.length > 0) {
+        const hindiVoice = findMatchingBrowserVoice(available, "hi");
+        const kannadaVoice = findMatchingBrowserVoice(available, "kn");
+        const englishVoice = findMatchingBrowserVoice(available, "en");
+        console.log(
+          `[AUDIO GUIDE] Voices loaded: total=${available.length}, hi=${hindiVoice ? hindiVoice.name : "none"}, kn=${kannadaVoice ? kannadaVoice.name : "none"}, en=${englishVoice ? englishVoice.name : "none"}`,
+        );
+      }
     };
 
     updateVoices();
@@ -204,6 +253,7 @@ export function VarshaAudioGuideModal({ isOpen, onClose }: VarshaAudioGuideModal
 
   // Stop and cleanup all active audio
   const stopAllAudio = useCallback(() => {
+    console.log("[AUDIO GUIDE] Stopping all speech & audio playback...");
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
@@ -239,6 +289,7 @@ export function VarshaAudioGuideModal({ isOpen, onClose }: VarshaAudioGuideModal
 
   // Pause playback
   const handlePause = () => {
+    console.log("[AUDIO GUIDE] Pausing audio...");
     if (audioRef.current && !audioRef.current.paused) {
       audioRef.current.pause();
       setIsPaused(true);
@@ -257,6 +308,7 @@ export function VarshaAudioGuideModal({ isOpen, onClose }: VarshaAudioGuideModal
 
   // Resume playback
   const handleResume = () => {
+    console.log("[AUDIO GUIDE] Resuming audio...");
     if (audioRef.current && isPaused) {
       audioRef.current.play().then(() => {
         setIsPlaying(true);
@@ -265,7 +317,7 @@ export function VarshaAudioGuideModal({ isOpen, onClose }: VarshaAudioGuideModal
           selectedLang === "kn"
             ? "ಆಡಿಯೋ ಮಾರ್ಗದರ್ಶಿ ಪ್ಲೇ ಆಗುತ್ತಿದೆ..."
             : selectedLang === "hi"
-            ? "ऑडियो मार्गदर्शिका चल रही है..."
+            ? "हिंदी ऑडियो मार्गदर्शिका चल रही है..."
             : "Playing audio guide...",
         );
       });
@@ -280,7 +332,7 @@ export function VarshaAudioGuideModal({ isOpen, onClose }: VarshaAudioGuideModal
         selectedLang === "kn"
           ? "ಆಡಿಯೋ ಮಾರ್ಗದರ್ಶಿ ಪ್ಲೇ ಆಗುತ್ತಿದೆ..."
           : selectedLang === "hi"
-          ? "ऑडियो मार्गदर्शिका चल रही है..."
+          ? "हिंदी ऑडियो मार्गदर्शिका चल रही है..."
           : "Playing audio guide...",
       );
       return;
@@ -289,76 +341,9 @@ export function VarshaAudioGuideModal({ isOpen, onClose }: VarshaAudioGuideModal
     handlePlay();
   };
 
-  // Start playback
-  const handlePlay = async () => {
-    stopAllAudio();
-    setIsLoadingAudio(true);
-    setStatusMessage(
-      selectedLang === "kn"
-        ? "ಧ್ವನಿ ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ..."
-        : selectedLang === "hi"
-        ? "ऑडियो तैयार किया जा रहा है..."
-        : "Preparing audio guide...",
-    );
-
-    const { script } = buildAudioGuideScript(
-      selectedLang,
-      location.taluk,
-      location.district,
-    );
-
-    // 1. Try Browser TTS with strict voice matching
-    const matchingVoice = findMatchingBrowserVoice(browserVoices, selectedLang);
-
-    if (matchingVoice && typeof window !== "undefined" && "speechSynthesis" in window) {
-      if (import.meta.env.DEV) {
-        console.log(`[AUDIO GUIDE] Using browser voice: ${matchingVoice.name} (${matchingVoice.lang})`);
-      }
-
-      const utterance = new SpeechSynthesisUtterance(script);
-      utterance.voice = matchingVoice;
-      utterance.lang = matchingVoice.lang;
-      utterance.rate = 0.95; // Friendly, clear pacing
-      utterance.pitch = 1.0;
-
-      utterance.onstart = () => {
-        setIsLoadingAudio(false);
-        setIsPlaying(true);
-        setIsPaused(false);
-        setStatusMessage(
-          selectedLang === "kn"
-            ? "ಕನ್ನಡ ಆಡಿಯೋ ಮಾರ್ಗದರ್ಶಿ ಕೇಳುತ್ತಿದೆ..."
-            : selectedLang === "hi"
-            ? "हिंदी ऑडियो मार्गदर्शिका सुन रहे हैं..."
-            : "Playing audio guide in English...",
-        );
-      };
-
-      utterance.onend = () => {
-        setIsPlaying(false);
-        setIsPaused(false);
-        setStatusMessage("Guide completed.");
-      };
-
-      utterance.onerror = (e) => {
-        if (import.meta.env.DEV) {
-          console.warn("[AUDIO GUIDE] Browser utterance error, attempting backend fallback:", e);
-        }
-        playWithBackendFallback(script, selectedLang);
-      };
-
-      window.speechSynthesis.speak(utterance);
-      return;
-    }
-
-    // 2. Fallback to high-quality Backend TTS (Google TTS)
-    await playWithBackendFallback(script, selectedLang);
-  };
-
+  // Fallback to high-quality Backend TTS (Google TTS)
   const playWithBackendFallback = async (script: string, lang: SupportedLanguage) => {
-    if (import.meta.env.DEV) {
-      console.log(`[AUDIO GUIDE] Invoking backend TTS fallback for lang=${lang}`);
-    }
+    console.log(`[AUDIO GUIDE] Invoking backend TTS endpoint for lang=${lang}, textLength=${script.length}...`);
 
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
@@ -366,13 +351,14 @@ export function VarshaAudioGuideModal({ isOpen, onClose }: VarshaAudioGuideModal
     try {
       setStatusMessage(
         lang === "kn"
-          ? "ಕನ್ನಡ ಧ್ವನಿ ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ..."
+          ? "ಕನ್ನಡ ಧ್ವನಿ ಲೋಡ್ ಆಗುತ್ತಿದೆ..."
           : lang === "hi"
-          ? "उच्च-गुणवत्ता ऑडियो लोड हो रहा है..."
-          : "Generating high-quality audio...",
+          ? "हिंदी ऑडियो तैयार किया जा रहा है..."
+          : "Loading high-quality audio...",
       );
 
       const blob = await apiClient.streamAdvisoryAudio(script, lang, abortController.signal);
+      console.log(`[AUDIO GUIDE] Backend audio received successfully: ${blob.size} bytes`);
       const url = URL.createObjectURL(blob);
       audioUrlRef.current = url;
 
@@ -388,17 +374,19 @@ export function VarshaAudioGuideModal({ isOpen, onClose }: VarshaAudioGuideModal
             ? "ಕನ್ನಡ ಆಡಿಯೋ ಮಾರ್ಗದರ್ಶಿ ಕೇಳುತ್ತಿದೆ..."
             : lang === "hi"
             ? "हिंदी ऑडियो मार्गदर्शिका सुन रहे हैं..."
-            : "Playing audio guide...",
+            : "Playing audio guide in English...",
         );
       };
 
       audio.onended = () => {
+        console.log("[AUDIO GUIDE] Backend audio playback finished.");
         setIsPlaying(false);
         setIsPaused(false);
         setStatusMessage("Guide completed.");
       };
 
-      audio.onerror = () => {
+      audio.onerror = (e) => {
+        console.error("[AUDIO GUIDE] Audio element error:", e);
         setIsLoadingAudio(false);
         setIsPlaying(false);
         setStatusMessage("Audio is currently unavailable. Please try again.");
@@ -407,19 +395,103 @@ export function VarshaAudioGuideModal({ isOpen, onClose }: VarshaAudioGuideModal
       await audio.play();
     } catch (err: unknown) {
       if (err instanceof Error && err.name === "AbortError") {
+        console.log("[AUDIO GUIDE] Request aborted.");
         return;
       }
+      console.error("[AUDIO GUIDE] Backend TTS fallback failed:", err);
       setIsLoadingAudio(false);
       setIsPlaying(false);
       setStatusMessage("Audio is currently unavailable. Please try again.");
     }
   };
 
+  // Start playback
+  const handlePlay = async () => {
+    stopAllAudio();
+    setIsLoadingAudio(true);
+    setStatusMessage(
+      selectedLang === "kn"
+        ? "ಧ್ವನಿ ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ..."
+        : selectedLang === "hi"
+        ? "ऑडियो तैयार किया जा रहा है..."
+        : "Preparing audio guide...",
+    );
+
+    const { script, locale } = buildAudioGuideScript(
+      selectedLang,
+      location.taluk,
+      location.district,
+    );
+
+    console.log(`[AUDIO GUIDE] Starting playback for language=${selectedLang}, locale=${locale}, textLength=${script.length}`);
+
+    // Check live available browser voices
+    const freshVoices =
+      typeof window !== "undefined" && "speechSynthesis" in window
+        ? window.speechSynthesis.getVoices()
+        : browserVoices;
+
+    const matchingVoice = findMatchingBrowserVoice(freshVoices, selectedLang);
+
+    if (matchingVoice && typeof window !== "undefined" && "speechSynthesis" in window) {
+      console.log(`[AUDIO GUIDE] Found matching browser voice: ${matchingVoice.name} (lang: ${matchingVoice.lang})`);
+
+      const utterance = new SpeechSynthesisUtterance(script);
+      utterance.voice = matchingVoice;
+      utterance.lang = locale; // Strictly hi-IN, kn-IN, or en-IN
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
+
+      utterance.onstart = () => {
+        console.log(`[AUDIO GUIDE] Browser SpeechSynthesis started: voice=${matchingVoice.name}, lang=${utterance.lang}`);
+        setIsLoadingAudio(false);
+        setIsPlaying(true);
+        setIsPaused(false);
+        setStatusMessage(
+          selectedLang === "kn"
+            ? "ಕನ್ನಡ ಆಡಿಯೋ ಮಾರ್ಗದರ್ಶಿ ಕೇಳುತ್ತಿದೆ..."
+            : selectedLang === "hi"
+            ? "हिंदी ऑडियो मार्गदर्शिका सुन रहे हैं..."
+            : "Playing audio guide in English...",
+        );
+      };
+
+      utterance.onend = () => {
+        console.log("[AUDIO GUIDE] Browser SpeechSynthesis ended.");
+        setIsPlaying(false);
+        setIsPaused(false);
+        setStatusMessage("Guide completed.");
+      };
+
+      utterance.onerror = (e) => {
+        console.warn("[AUDIO GUIDE] Browser utterance error encountered, falling back to backend TTS:", e);
+        playWithBackendFallback(script, selectedLang);
+      };
+
+      window.speechSynthesis.speak(utterance);
+      return;
+    }
+
+    console.log(`[AUDIO GUIDE] No matching browser voice found for ${selectedLang}. Directly streaming high-quality Google TTS audio from backend...`);
+    // 2. Fallback to backend TTS
+    await playWithBackendFallback(script, selectedLang);
+  };
+
   // Switch language
   const handleSelectLanguage = (lang: SupportedLanguage) => {
     if (lang === selectedLang) return;
+    console.log(`[AUDIO GUIDE] Language switched to: ${lang}`);
     stopAllAudio();
     setSelectedLang(lang);
+  };
+
+  // Handle section accordion toggle & audio stopping on section interaction
+  const handleToggleSection = (sectionId: string) => {
+    if (expandedSection === sectionId) {
+      setExpandedSection(null);
+    } else {
+      setExpandedSection(sectionId);
+    }
   };
 
   // Walkthrough Section Data
@@ -685,7 +757,7 @@ export function VarshaAudioGuideModal({ isOpen, onClose }: VarshaAudioGuideModal
                   >
                     <button
                       type="button"
-                      onClick={() => setExpandedSection(isExpanded ? null : sec.id)}
+                      onClick={() => handleToggleSection(sec.id)}
                       className="w-full flex items-center justify-between text-left cursor-pointer"
                     >
                       <div className="flex items-center gap-2.5">

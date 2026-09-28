@@ -189,7 +189,7 @@ class AdvisoryResponse(BaseModel):
 # Voice Models
 # ---------------------------------------------------------------------------
 class VoiceRequest(BaseModel):
-    text: str = Field(..., min_length=1, max_length=2000)
+    text: str = Field(..., min_length=1, max_length=10000)
     language: LanguageEnum = LanguageEnum.ENGLISH
 
 # ---------------------------------------------------------------------------
