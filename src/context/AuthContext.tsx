@@ -116,12 +116,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }) => {
       setAuthError(null);
       try {
-        const res = await apiClient.register(payload);
+        await apiClient.register(payload);
+        // Explicitly DO NOT auto-login or set token/user session upon signup
         if (typeof window !== "undefined") {
-          localStorage.setItem(TOKEN_STORAGE_KEY, res.token);
+          localStorage.removeItem(TOKEN_STORAGE_KEY);
         }
-        setToken(res.token);
-        setUser(res.user);
+        setToken(null);
+        setUser(null);
       } catch (err) {
         const msg = err instanceof ApiError ? err.message : "Failed to register account.";
         setAuthError(msg);

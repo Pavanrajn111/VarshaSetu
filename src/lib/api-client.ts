@@ -140,6 +140,7 @@ export const apiClient = {
   async get<T>(
     path: string,
     params?: Record<string, string | number | boolean | undefined | null>,
+    opts?: RequestOptions,
   ): Promise<T> {
     const url = new URL(`${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`);
     if (params) {
@@ -150,13 +151,17 @@ export const apiClient = {
       });
     }
 
+    const { headers: customHeaders, ...restOpts } = opts ?? {};
+
     const token = getStoredToken();
     const headers: Record<string, string> = {
       Accept: "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(customHeaders as Record<string, string> | undefined),
     };
 
     const res = await fetch(url.toString(), {
+      ...restOpts,
       method: "GET",
       headers,
     });
@@ -287,21 +292,27 @@ export const apiClient = {
     return this.get<LocationResolveResponse>("/location/reverse", { lat, lon });
   },
 
-  async getOutlook(talukName: string): Promise<OutlookResponse> {
-    return this.get<OutlookResponse>(`/outlook/${encodeURIComponent(talukName)}`);
+  async getOutlook(talukName: string, signal?: AbortSignal): Promise<OutlookResponse> {
+    return this.get<OutlookResponse>(`/outlook/${encodeURIComponent(talukName)}`, undefined, { signal });
   },
 
-  async getAdvisory(payload: AdvisoryRequest): Promise<AdvisoryResponse> {
-    return this.post<AdvisoryResponse>("/advisory", payload);
+  async getAdvisory(payload: AdvisoryRequest, signal?: AbortSignal): Promise<AdvisoryResponse> {
+    return this.post<AdvisoryResponse>("/advisory", payload, { signal });
   },
 
-  async streamAdvisoryAudio(text: string, language: SupportedLanguage): Promise<Blob> {
+  async streamAdvisoryAudio(text: string, language: SupportedLanguage, signal?: AbortSignal): Promise<Blob> {
+    const token = getStoredToken();
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Accept: "audio/mpeg",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
     const res = await fetch(`${API_BASE_URL}/advisory/audio`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify({ text, language }),
+      signal,
     });
 
     if (res.status === 401) {

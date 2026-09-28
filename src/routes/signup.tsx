@@ -35,6 +35,7 @@ import {
   EyeOff,
   Sliders,
   CheckCircle2,
+  LogIn,
 } from "lucide-react";
 
 export const Route = createFileRoute("/signup")({
@@ -72,6 +73,7 @@ function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSignupSuccess, setIsSignupSuccess] = useState(false);
 
   const handleSignup = async (e: FormEvent) => {
     e.preventDefault();
@@ -110,7 +112,10 @@ function SignupPage() {
         preferred_language: language,
         role,
       });
-      navigate({ to: "/dashboard" });
+
+      // DO NOT automatically log in or navigate to dashboard.
+      // Instead, show the inline success message and prompt manual login.
+      setIsSignupSuccess(true);
     } catch (err) {
       const msg =
         err instanceof Error ? err.message : "Registration failed. Please check your details.";
@@ -136,7 +141,7 @@ function SignupPage() {
         </Button>
       </AppHeader>
 
-      {/* Centered Glass Panel Floating Over Storm */}
+      {/* Centered Glass Panel */}
       <main className="flex-1 flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
         <div className="w-full max-w-lg">
           <Card className="border border-border/70 bg-card/75 shadow-2xl backdrop-blur-xl">
@@ -153,182 +158,226 @@ function SignupPage() {
               </CardDescription>
             </CardHeader>
 
-            <form onSubmit={handleSignup}>
-              <CardContent className="space-y-4">
-                {errorMsg && (
-                  <Alert
-                    variant="destructive"
-                    className="border-rose-500/30 bg-rose-500/10 text-rose-300 py-2.5"
-                  >
-                    <AlertCircle className="size-4 shrink-0 text-rose-400" />
-                    <AlertDescription className="text-xs">{errorMsg}</AlertDescription>
-                  </Alert>
-                )}
-
-                {/* Full Name */}
-                <div className="space-y-1.5">
-                  <Label htmlFor="fullname" className="text-xs font-medium text-foreground">
-                    Full Name
-                  </Label>
-                  <div className="relative flex items-center rounded-md border border-border/80 bg-background/50 focus-within:border-signal focus-within:ring-1 focus-within:ring-signal">
-                    <Input
-                      id="fullname"
-                      type="text"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="e.g. Ramesh Gowda"
-                      required
-                      className="border-0 bg-transparent text-sm placeholder:text-muted-foreground/50 focus-visible:ring-0 focus-visible:ring-offset-0"
-                    />
-                    <User className="mr-3 size-4 text-muted-foreground shrink-0" />
+            {isSignupSuccess ? (
+              /* Non-blocking beautiful success message */
+              <CardContent className="space-y-6 pt-2 pb-6 animate-in fade-in zoom-in-95 duration-300">
+                <div className="rounded-xl border border-success/40 bg-success/10 p-6 text-center space-y-4">
+                  <div className="mx-auto grid size-14 place-items-center rounded-full bg-success/20 text-success border border-success/30 shadow-lg shadow-success/10">
+                    <CheckCircle2 className="size-8" />
                   </div>
-                </div>
-
-                {/* Mobile Number */}
-                <div className="space-y-1.5">
-                  <Label htmlFor="phone" className="text-xs font-medium text-foreground">
-                    Mobile Number
-                  </Label>
-                  <div className="relative flex items-center rounded-md border border-border/80 bg-background/50 focus-within:border-signal focus-within:ring-1 focus-within:ring-signal">
-                    <span className="flex items-center px-3 text-xs font-mono text-muted-foreground border-r border-border/60">
-                      +91
-                    </span>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      placeholder="98450 12345"
-                      maxLength={15}
-                      required
-                      className="border-0 bg-transparent text-sm font-mono placeholder:text-muted-foreground/50 focus-visible:ring-0 focus-visible:ring-offset-0"
-                    />
-                    <Phone className="mr-3 size-4 text-muted-foreground shrink-0" />
-                  </div>
-                </div>
-
-                {/* Password & Confirm Password Grid */}
-                <div className="grid gap-3 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="password" className="text-xs font-medium text-foreground">
-                      Password (min 6)
-                    </Label>
-                    <div className="relative flex items-center rounded-md border border-border/80 bg-background/50 focus-within:border-signal focus-within:ring-1 focus-within:ring-signal">
-                      <Input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••"
-                        required
-                        className="border-0 bg-transparent text-sm placeholder:text-muted-foreground/50 focus-visible:ring-0 focus-visible:ring-offset-0"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="mr-3 text-muted-foreground hover:text-foreground"
-                      >
-                        {showPassword ? (
-                          <EyeOff className="size-3.5" />
-                        ) : (
-                          <Eye className="size-3.5" />
-                        )}
-                      </button>
-                    </div>
+                    <h3 className="font-display text-lg font-bold text-foreground">
+                      ✓ Account created successfully
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Log in to your created account.
+                    </p>
                   </div>
-
-                  <div className="space-y-1.5">
-                    <Label
-                      htmlFor="confirm-password"
-                      className="text-xs font-medium text-foreground"
+                  <div className="pt-2">
+                    <Button
+                      asChild
+                      className="w-full bg-signal text-signal-foreground hover:bg-signal/90 font-mono text-xs font-semibold h-11 shadow-lg shadow-signal/20 cursor-pointer"
                     >
-                      Confirm Password
-                    </Label>
-                    <div className="relative flex items-center rounded-md border border-border/80 bg-background/50 focus-within:border-signal focus-within:ring-1 focus-within:ring-signal">
-                      <Input
-                        id="confirm-password"
-                        type={showPassword ? "text" : "password"}
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="••••••••"
-                        required
-                        className="border-0 bg-transparent text-sm placeholder:text-muted-foreground/50 focus-visible:ring-0 focus-visible:ring-offset-0"
-                      />
-                      <Lock className="mr-3 size-3.5 text-muted-foreground shrink-0" />
-                    </div>
+                      <Link to="/login">
+                        <LogIn className="mr-2 size-4" /> Go to Login
+                      </Link>
+                    </Button>
                   </div>
                 </div>
-
-                {/* Language & Role Selectors Grid */}
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-medium text-foreground">
-                      Preferred Language
-                    </Label>
-                    <Select
-                      value={language}
-                      onValueChange={(val) => setLanguage(val as SupportedLanguage)}
-                    >
-                      <SelectTrigger className="border-border/80 bg-background/50 text-xs h-9">
-                        <Globe className="mr-1.5 size-3.5 text-signal" />
-                        <SelectValue placeholder="Select language" />
-                      </SelectTrigger>
-                      <SelectContent className="border-border/80 bg-background/95 backdrop-blur-xl">
-                        {LANGUAGE_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.code} value={opt.code} className="text-xs">
-                            {opt.label} ({opt.local})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-medium text-foreground">Primary Role</Label>
-                    <Select
-                      value={role}
-                      onValueChange={(val) => setRole(val as "farmer" | "officer")}
-                    >
-                      <SelectTrigger className="border-border/80 bg-background/50 text-xs h-9">
-                        <Briefcase className="mr-1.5 size-3.5 text-signal" />
-                        <SelectValue placeholder="Select role" />
-                      </SelectTrigger>
-                      <SelectContent className="border-border/80 bg-background/95 backdrop-blur-xl">
-                        <SelectItem value="farmer" className="text-xs">
-                          Farmer / Krishi Mitra
-                        </SelectItem>
-                        <SelectItem value="officer" className="text-xs">
-                          Agricultural Extension Officer
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </CardContent>
-
-              <CardFooter className="flex flex-col gap-3 pt-2">
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-signal text-signal-foreground hover:bg-signal/90 font-medium text-sm h-10 shadow-lg shadow-signal/20"
-                >
-                  {isSubmitting ? (
-                    "Creating Account..."
-                  ) : (
-                    <>
-                      Create Free Account <ArrowRight className="ml-1.5 size-4" />
-                    </>
-                  )}
-                </Button>
 
                 <div className="text-center text-xs text-muted-foreground">
-                  Already registered?{" "}
-                  <Link to="/login" className="font-semibold text-signal hover:underline">
-                    Sign in here
-                  </Link>
+                  Need to make changes?{" "}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsSignupSuccess(false);
+                      setPassword("");
+                      setConfirmPassword("");
+                    }}
+                    className="font-semibold text-signal hover:underline cursor-pointer"
+                  >
+                    Back to registration
+                  </button>
                 </div>
-              </CardFooter>
-            </form>
+              </CardContent>
+            ) : (
+              <form onSubmit={handleSignup}>
+                <CardContent className="space-y-4">
+                  {errorMsg && (
+                    <Alert
+                      variant="destructive"
+                      className="border-rose-500/30 bg-rose-500/10 text-rose-300 py-2.5"
+                    >
+                      <AlertCircle className="size-4 shrink-0 text-rose-400" />
+                      <AlertDescription className="text-xs">{errorMsg}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  {/* Full Name */}
+                  <div className="space-y-1.5">
+                    <Label htmlFor="fullname" className="text-xs font-medium text-foreground">
+                      Full Name
+                    </Label>
+                    <div className="relative flex items-center rounded-md border border-border/80 bg-background/50 focus-within:border-signal focus-within:ring-1 focus-within:ring-signal">
+                      <Input
+                        id="fullname"
+                        type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="e.g. Ramesh Gowda"
+                        required
+                        className="border-0 bg-transparent text-sm placeholder:text-muted-foreground/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                      />
+                      <User className="mr-3 size-4 text-muted-foreground shrink-0" />
+                    </div>
+                  </div>
+
+                  {/* Mobile Number */}
+                  <div className="space-y-1.5">
+                    <Label htmlFor="phone" className="text-xs font-medium text-foreground">
+                      Mobile Number
+                    </Label>
+                    <div className="relative flex items-center rounded-md border border-border/80 bg-background/50 focus-within:border-signal focus-within:ring-1 focus-within:ring-signal">
+                      <span className="flex items-center px-3 text-xs font-mono text-muted-foreground border-r border-border/60">
+                        +91
+                      </span>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        placeholder="98450 12345"
+                        maxLength={15}
+                        required
+                        className="border-0 bg-transparent text-sm font-mono placeholder:text-muted-foreground/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                      />
+                      <Phone className="mr-3 size-4 text-muted-foreground shrink-0" />
+                    </div>
+                  </div>
+
+                  {/* Password & Confirm Password Grid */}
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="password" className="text-xs font-medium text-foreground">
+                        Password (min 6)
+                      </Label>
+                      <div className="relative flex items-center rounded-md border border-border/80 bg-background/50 focus-within:border-signal focus-within:ring-1 focus-within:ring-signal">
+                        <Input
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="••••••••"
+                          required
+                          className="border-0 bg-transparent text-sm placeholder:text-muted-foreground/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="mr-3 text-muted-foreground hover:text-foreground cursor-pointer"
+                        >
+                          {showPassword ? (
+                            <EyeOff className="size-3.5" />
+                          ) : (
+                            <Eye className="size-3.5" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label
+                        htmlFor="confirm-password"
+                        className="text-xs font-medium text-foreground"
+                      >
+                        Confirm Password
+                      </Label>
+                      <div className="relative flex items-center rounded-md border border-border/80 bg-background/50 focus-within:border-signal focus-within:ring-1 focus-within:ring-signal">
+                        <Input
+                          id="confirm-password"
+                          type={showPassword ? "text" : "password"}
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          placeholder="••••••••"
+                          required
+                          className="border-0 bg-transparent text-sm placeholder:text-muted-foreground/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        />
+                        <Lock className="mr-3 size-3.5 text-muted-foreground shrink-0" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Language & Role Selectors Grid */}
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-medium text-foreground">
+                        Preferred Language
+                      </Label>
+                      <Select
+                        value={language}
+                        onValueChange={(val) => setLanguage(val as SupportedLanguage)}
+                      >
+                        <SelectTrigger className="border-border/80 bg-background/50 text-xs h-9">
+                          <Globe className="mr-1.5 size-3.5 text-signal" />
+                          <SelectValue placeholder="Select language" />
+                        </SelectTrigger>
+                        <SelectContent className="border-border/80 bg-background/95 backdrop-blur-xl">
+                          {LANGUAGE_OPTIONS.map((opt) => (
+                            <SelectItem key={opt.code} value={opt.code} className="text-xs">
+                              {opt.label} ({opt.local})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-medium text-foreground">Primary Role</Label>
+                      <Select
+                        value={role}
+                        onValueChange={(val) => setRole(val as "farmer" | "officer")}
+                      >
+                        <SelectTrigger className="border-border/80 bg-background/50 text-xs h-9">
+                          <Briefcase className="mr-1.5 size-3.5 text-signal" />
+                          <SelectValue placeholder="Select role" />
+                        </SelectTrigger>
+                        <SelectContent className="border-border/80 bg-background/95 backdrop-blur-xl">
+                          <SelectItem value="farmer" className="text-xs">
+                            Farmer / Krishi Mitra
+                          </SelectItem>
+                          <SelectItem value="officer" className="text-xs">
+                            Agricultural Extension Officer
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardContent>
+
+                <CardFooter className="flex flex-col gap-3 pt-2">
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-signal text-signal-foreground hover:bg-signal/90 font-medium text-sm h-10 shadow-lg shadow-signal/20 cursor-pointer"
+                  >
+                    {isSubmitting ? (
+                      "Creating Account..."
+                    ) : (
+                      <>
+                        Create Free Account <ArrowRight className="ml-1.5 size-4" />
+                      </>
+                    )}
+                  </Button>
+
+                  <div className="text-center text-xs text-muted-foreground">
+                    Already registered?{" "}
+                    <Link to="/login" className="font-semibold text-signal hover:underline">
+                      Sign in here
+                    </Link>
+                  </div>
+                </CardFooter>
+              </form>
+            )}
           </Card>
         </div>
       </main>

@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppBackground, AppBackgroundScope } from "../components/AppBackground";
 import { AuthProvider } from "@/context/AuthContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -135,12 +136,14 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <AppBackground reduceMotion={reduceMotion} />
-        <AppBackgroundScope>
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-        </AppBackgroundScope>
-        <Toaster position="top-right" />
+        <LanguageProvider>
+          <AppBackground reduceMotion={reduceMotion} />
+          <AppBackgroundScope>
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <Outlet />
+          </AppBackgroundScope>
+          <Toaster position="top-right" />
+        </LanguageProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

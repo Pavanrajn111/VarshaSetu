@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { apiClient } from "@/lib/api-client";
 import type { HealthResponse } from "@/lib/types";
-import { Activity, ShieldCheck, AlertCircle } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export function BackendStatusBadge() {
+  const { t } = useLanguage();
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
   const [lastChecked, setLastChecked] = useState<string>("");
@@ -30,7 +31,7 @@ export function BackendStatusBadge() {
     return (
       <div className="flex items-center gap-1.5 rounded-full border border-border/60 bg-background/60 px-2.5 py-1 font-mono text-[10px] text-muted-foreground backdrop-blur-md">
         <span className="size-1.5 animate-ping rounded-full bg-warning" />
-        <span>Checking backend...</span>
+        <span>{t.header.checkingBackend}</span>
       </div>
     );
   }
@@ -42,12 +43,11 @@ export function BackendStatusBadge() {
         title={`Backend at ${apiClient.getBaseUrl()} is unreachable. Make sure your FastAPI server is running.`}
       >
         <span className="size-1.5 rounded-full bg-destructive" />
-        <span>Backend Unreachable</span>
+        <span>{t.header.backendUnreachable}</span>
       </div>
     );
   }
 
-  // CORRECTION 4: Do not hardcode "v1.0.0". Only show version if returned by /health.
   const versionString = health?.version ? ` (v${health.version})` : "";
 
   return (
@@ -56,7 +56,10 @@ export function BackendStatusBadge() {
       title={`Backend Status: Operational\nTaluks: ${health?.verified_taluks_count ?? 31}\nTargets: ${health?.model_targets_count ?? 13}\nLast verified: ${lastChecked}`}
     >
       <span className="size-1.5 animate-pulse rounded-full bg-success" />
-      <span>Backend Connected{versionString}</span>
+      <span>
+        {t.header.backendConnected}
+        {versionString}
+      </span>
     </div>
   );
 }
