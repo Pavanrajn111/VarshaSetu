@@ -69,23 +69,8 @@ def generate_advisory_audio(text: str, language: str) -> io.BytesIO:
         return io.BytesIO(raw_bytes)
 
     except Exception as e:
-        logger.warning(
-            "Primary audio generation failed for language '%s': %s. "
-            "Attempting fallback audio synthesis...",
+        logger.error(
+            "Audio generation failed for language '%s': %s.",
             lang_code, e
         )
-        if lang_code != "en":
-            try:
-                fallback_buf = io.BytesIO()
-                fallback_tts = gTTS(text=clean_text, lang="en", slow=False)
-                fallback_tts.write_to_fp(fallback_buf)
-                fallback_buf.seek(0)
-                fb_bytes = fallback_buf.getvalue()
-                if len(fb_bytes) > 0:
-                    logger.info("Fallback audio synthesis (lang=en) succeeded.")
-                    _audio_cache[cache_key] = (fb_bytes, now + AUDIO_CACHE_TTL)
-                    return io.BytesIO(fb_bytes)
-            except Exception as fb_err:
-                logger.error("Fallback audio generation also failed: %s", fb_err)
-
         raise RuntimeError(f"Voice synthesis failed for language '{lang_code}': {str(e)}")
