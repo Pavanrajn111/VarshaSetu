@@ -238,12 +238,14 @@ function SearchableSelect({
 interface LocationSetupModalProps {
   isOpen: boolean;
   onClose?: () => void;
+  onLocationSelected?: (loc: LocationState) => void;
   isMandatoryOnboarding?: boolean;
 }
 
 export function LocationSetupModal({
   isOpen,
   onClose,
+  onLocationSelected,
   isMandatoryOnboarding = false,
 }: LocationSetupModalProps) {
   const { location, setLocation, loadForecast } = useDashboard();
@@ -260,6 +262,14 @@ export function LocationSetupModal({
   );
   const [selectedTaluk, setSelectedTaluk] = useState<string>(location.taluk || "Hukkeri");
   const [isLoadingTaluks, setIsLoadingTaluks] = useState<boolean>(!cachedDistricts);
+
+  // Sync pre-filled location whenever modal opens
+  useEffect(() => {
+    if (isOpen && location) {
+      if (location.district) setSelectedDistrict(location.district);
+      if (location.taluk) setSelectedTaluk(location.taluk);
+    }
+  }, [isOpen, location]);
 
   // Search village state
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -425,6 +435,7 @@ export function LocationSetupModal({
       // Brief delay for smooth checkmark transition
       setTimeout(() => {
         setIsUpdatingLocation(false);
+        if (onLocationSelected) onLocationSelected(targetLoc);
         if (onClose) onClose();
       }, 350);
     } catch (err: unknown) {

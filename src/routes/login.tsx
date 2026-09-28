@@ -24,6 +24,7 @@ import {
   EyeOff,
   Sliders,
 } from "lucide-react";
+import { LocationSetupModal } from "@/components/dashboard/LocationSetupModal";
 
 export const Route = createFileRoute("/login")({
   ssr: false,
@@ -49,6 +50,7 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
   // If already logged in, show quick redirect prompt or navigate
   const handleLogin = async (e: FormEvent) => {
@@ -68,7 +70,8 @@ function LoginPage() {
     setIsSubmitting(true);
     try {
       await login(phoneNumber, password);
-      navigate({ to: "/dashboard", search: { setup: "true" } });
+      // Open Location Setup modal directly before dashboard
+      setIsLocationModalOpen(true);
     } catch {
       // Backend guarantees a generic 401 message; match exactly
       setErrorMsg("Invalid phone number or password.");
@@ -82,14 +85,13 @@ function LoginPage() {
       {/* Shared Unified Header */}
       <AppHeader showProgress={false}>
         <Button
-          asChild
+          type="button"
+          onClick={() => setIsLocationModalOpen(true)}
           variant="outline"
           size="sm"
-          className="h-8 border-border/80 bg-glass/80 text-xs"
+          className="h-8 border-border/80 bg-glass/80 text-xs cursor-pointer"
         >
-          <Link to="/dashboard" search={{ setup: "true" }}>
-            <Sliders className="mr-1.5 size-3.5 text-signal" /> Studio
-          </Link>
+          <Sliders className="mr-1.5 size-3.5 text-signal" /> Studio
         </Button>
       </AppHeader>
 
@@ -207,6 +209,16 @@ function LoginPage() {
           Varsha Setu · Smart India Hackathon 2026 · Personalization & Multi-Model Forecasting
         </div>
       </footer>
+
+      {/* Mandatory Location Setup Gateway Modal */}
+      <LocationSetupModal
+        isOpen={isLocationModalOpen}
+        onClose={() => setIsLocationModalOpen(false)}
+        onLocationSelected={() => {
+          setIsLocationModalOpen(false);
+          navigate({ to: "/dashboard" });
+        }}
+      />
     </div>
   );
 }

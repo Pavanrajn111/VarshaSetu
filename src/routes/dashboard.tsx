@@ -150,6 +150,12 @@ function DashboardContent() {
         onClose={() => {
           setHasOnboardedLocation(true);
           setIsLocationSetupOpen(false);
+          if (typeof window !== "undefined" && (window.location.search.includes("setup=") || window.location.search.includes("location="))) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete("setup");
+            url.searchParams.delete("location");
+            window.history.replaceState({}, "", url.pathname + (url.search ? url.search : "") + url.hash);
+          }
         }}
         isMandatoryOnboarding={!hasOnboardedLocation}
       />
@@ -278,9 +284,5 @@ function DashboardContent() {
 }
 
 function DashboardPage() {
-  return (
-    <DashboardProvider>
-      <DashboardContent />
-    </DashboardProvider>
-  );
+  return <DashboardContent />;
 }

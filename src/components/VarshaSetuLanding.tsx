@@ -33,11 +33,12 @@ import {
 } from "motion/react";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AppHeader } from "@/components/AppHeader";
 import { LandingRainBackground } from "@/components/LandingRainBackground";
+import { LocationSetupModal } from "@/components/dashboard/LocationSetupModal";
 
 const ClimateGlobe = lazy(() =>
   import("@/components/ClimateGlobe").then((module) => ({ default: module.ClimateGlobe })),
@@ -290,6 +291,8 @@ const workflow = [
 
 export function VarshaSetuLanding() {
   const reduceMotion = useReducedMotion() ?? false;
+  const navigate = useNavigate();
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
   const scrollToSection = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault();
@@ -346,13 +349,12 @@ export function VarshaSetuLanding() {
           </nav>
 
           <Button
-            asChild
+            type="button"
+            onClick={() => setIsLocationModalOpen(true)}
             size="sm"
-            className="bg-signal text-signal-foreground hover:bg-signal/90 font-medium h-8 text-xs shadow-signal"
+            className="bg-signal text-signal-foreground hover:bg-signal/90 font-medium h-8 text-xs shadow-signal cursor-pointer"
           >
-            <Link to="/dashboard" search={{ setup: "true" }}>
-              Live Studio <ArrowRight className="ml-1 h-3 w-3" />
-            </Link>
+            Live Studio <ArrowRight className="ml-1 h-3 w-3" />
           </Button>
         </div>
       </AppHeader>
@@ -430,13 +432,12 @@ export function VarshaSetuLanding() {
               className="mt-9 flex flex-wrap gap-3"
             >
               <Button
-                asChild
+                type="button"
+                onClick={() => setIsLocationModalOpen(true)}
                 size="lg"
-                className="h-12 bg-signal px-6 text-signal-foreground shadow-signal hover:bg-signal/90"
+                className="h-12 bg-signal px-6 text-signal-foreground shadow-signal hover:bg-signal/90 cursor-pointer font-medium"
               >
-                <Link to="/dashboard" search={{ setup: "true" }}>
-                  Launch Prediction Studio <ArrowRight />
-                </Link>
+                Launch Prediction Studio <ArrowRight />
               </Button>
               <Button
                 asChild
@@ -722,13 +723,12 @@ export function VarshaSetuLanding() {
 
               <div className="mt-10 flex flex-wrap items-center gap-4">
                 <Button
-                  asChild
+                  type="button"
+                  onClick={() => setIsLocationModalOpen(true)}
                   size="lg"
-                  className="h-12 bg-signal px-8 text-signal-foreground shadow-signal hover:bg-signal/90 font-medium"
+                  className="h-12 bg-signal px-8 text-signal-foreground shadow-signal hover:bg-signal/90 font-medium cursor-pointer"
                 >
-                  <Link to="/dashboard" search={{ setup: "true" }}>
-                    Launch Prediction Studio <ArrowRight className="ml-2 size-4" />
-                  </Link>
+                  Launch Prediction Studio <ArrowRight className="ml-2 size-4" />
                 </Button>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Languages className="size-4 text-signal" />
@@ -943,6 +943,16 @@ export function VarshaSetuLanding() {
           </span>
         </div>
       </footer>
+
+      {/* Mandatory Location Setup Gateway Modal */}
+      <LocationSetupModal
+        isOpen={isLocationModalOpen}
+        onClose={() => setIsLocationModalOpen(false)}
+        onLocationSelected={() => {
+          setIsLocationModalOpen(false);
+          navigate({ to: "/dashboard" });
+        }}
+      />
     </main>
   );
 }
