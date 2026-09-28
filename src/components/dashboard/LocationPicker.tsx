@@ -97,6 +97,8 @@ export function LocationPicker() {
   const activeDistrictData = districts.find((d) => d.district === selectedDistrict);
   const availableTaluks = activeDistrictData ? activeDistrictData.taluks : [];
 
+  const debounceTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const handleDistrictChange = (distName: string) => {
     setSelectedDistrict(distName);
     const distData = districts.find((d) => d.district === distName);
@@ -106,14 +108,20 @@ export function LocationPicker() {
         return;
       }
       setSelectedTaluk(firstTaluk.taluk_name);
-      setLocation({
-        lat: firstTaluk.lat,
-        lon: firstTaluk.lon,
-        district: distName,
-        taluk: firstTaluk.taluk_name,
-        locationName: `${firstTaluk.taluk_name} Taluk HQ`,
-        scaleTag: "Administrative Taluk Node",
-      });
+
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      debounceTimerRef.current = setTimeout(() => {
+        setLocation({
+          lat: firstTaluk.lat,
+          lon: firstTaluk.lon,
+          district: distName,
+          taluk: firstTaluk.taluk_name,
+          locationName: `${firstTaluk.taluk_name} Taluk HQ`,
+          scaleTag: "Administrative Taluk Node",
+        });
+      }, 300);
     }
   };
 
@@ -121,16 +129,22 @@ export function LocationPicker() {
     setSelectedTaluk(talukName);
     const talukItem = availableTaluks.find((t) => t.taluk_name === talukName);
     if (talukItem) {
-      setLocation({
-        lat: talukItem.lat,
-        lon: talukItem.lon,
-        district: selectedDistrict,
-        taluk: talukItem.taluk_name,
-        locationName: `${talukItem.taluk_name} Taluk HQ`,
-        scaleTag: "Administrative Taluk Node",
-      });
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      debounceTimerRef.current = setTimeout(() => {
+        setLocation({
+          lat: talukItem.lat,
+          lon: talukItem.lon,
+          district: selectedDistrict,
+          taluk: talukItem.taluk_name,
+          locationName: `${talukItem.taluk_name} Taluk HQ`,
+          scaleTag: "Administrative Taluk Node",
+        });
+      }, 300);
     }
   };
+
 
   // Village search handler
   const handleSearchSubmit = async (e: React.FormEvent) => {

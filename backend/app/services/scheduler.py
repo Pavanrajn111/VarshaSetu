@@ -168,11 +168,22 @@ def run_rainfall_backfill_pipeline(target_date: Optional[str] = None) -> Dict[st
         "failed_or_pending": failed_count
     }
 
+from app.services.teleconnections import update_teleconnections_in_background
+
 def get_scheduler() -> BackgroundScheduler:
     """Returns or creates the global BackgroundScheduler instance."""
     global _scheduler
     if _scheduler is None:
         _scheduler = BackgroundScheduler(timezone="Asia/Kolkata")
+        # Cron trigger 0: Every 6 hours teleconnection background sync
+        _scheduler.add_job(
+            update_teleconnections_in_background,
+            trigger="interval",
+            hours=6,
+            id="teleconnections_sync_job",
+            replace_existing=True,
+            name="Periodic Teleconnections Indices Sync"
+        )
         # Cron trigger 1: 00:00 (Midnight daily)
         _scheduler.add_job(
             run_outlook_pipeline,
@@ -205,8 +216,12 @@ def start_scheduler():
     if not sched.running:
         sched.start()
         logger.info(
-            "APScheduler started with 3 daily cron triggers: 00:00, 01:00 (backfill) & 12:00 Asia/Kolkata."
+            "APScheduler started with teleconnections sync + 3 daily cron triggers: 00:00, 01:00 (backfill) & 12:00 Asia/Kolkata."
         )
+        # Warm teleconnections in background thread immediately
+        import threading
+        threading.Thread(target=update_teleconnections_in_background, daemon=True).start()
+
 
 def shutdown_scheduler():
     """Gracefully shuts down the background scheduler."""

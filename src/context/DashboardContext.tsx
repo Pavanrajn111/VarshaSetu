@@ -4,9 +4,9 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  useRef,
   type ReactNode,
 } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ForecastResponse, SupportedLanguage } from "@/lib/types";
 import { apiClient, ApiError } from "@/lib/api-client";
 import { useAuth } from "@/context/AuthContext";
@@ -25,7 +25,7 @@ interface DashboardContextType {
   location: LocationState;
   setLocation: (loc: LocationState) => void;
 
-  // Language (CORRECTION 1: strictly 'en' | 'kn' | 'hi')
+  // Language
   language: SupportedLanguage;
   setLanguage: (lang: SupportedLanguage) => void;
 
@@ -67,17 +67,13 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [cropType, setCropType] = useState<string>("Finger Millet (Ragi)");
   const [cropStage, setCropStage] = useState<string>("Sowing & Germination");
 
-  const [forecast, setForecast] = useState<ForecastResponse | null>(null);
-  const [isLoadingForecast, setIsLoadingForecast] = useState<boolean>(false);
-  const [forecastError, setForecastError] = useState<string | null>(null);
   const [rateLimitCountdown, setRateLimitCountdown] = useState<number | null>(null);
-
   const [advisoryText, setAdvisoryText] = useState<string>("");
   const [isLoadingAdvisory, setIsLoadingAdvisory] = useState<boolean>(false);
   const [advisoryError, setAdvisoryError] = useState<string | null>(null);
 
+  const queryClient = useQueryClient();
   const { user } = useAuth();
-  const forecastRequestIdRef = useRef<number>(0);
 
   // Pre-fill user default location & language when authenticated
   useEffect(() => {
@@ -114,7 +110,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  // Rate-limit countdown effect
+  // Rate-limit countdown timer
   useEffect(() => {
     if (rateLimitCountdown === null || rateLimitCountdown <= 0) return;
     const timer = setInterval(() => {
@@ -129,93 +125,75 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(timer);
   }, [rateLimitCountdown]);
 
-  // Load forecast for selected location
-  const loadForecast = useCallback(
-    async (overrideLoc?: LocationState, overrideLang?: SupportedLanguage) => {
-      const activeLoc = overrideLoc || location;
-      const activeLang = overrideLang || language;
-      const requestId = ++forecastRequestIdRef.current;
-
-      setIsLoadingForecast(true);
-      setForecastError(null);
-
-      const attemptFetch = async (): Promise<ForecastResponse> => {
-        return apiClient.computeForecast({
-          lat: activeLoc.lat,
-          lon: activeLoc.lon,
-          district: activeLoc.district,
-          taluk: activeLoc.taluk,
-          location_name: activeLoc.locationName,
-          scale_tag: activeLoc.scaleTag,
+  // TanStack React Query for Forecast with instant cache and automatic SWR
+  const forecastQuery = useQuery({
+    queryKey: [
+      "forecast",
+      location.district,
+      location.taluk,
+      cropType,
+      cropStage,
+      language,
+    ],
+    queryFn: async ({ signal }) => {
+      return apiClient.computeForecast(
+        {
+          lat: location.lat,
+          lon: location.lon,
+          district: location.district,
+          taluk: location.taluk,
+          location_name: location.locationName,
+          scale_tag: location.scaleTag,
           crop_type: cropType,
           crop_stage: cropStage,
-          language: activeLang,
-        });
-      };
-
-      try {
-        const data = await attemptFetch();
-        if (requestId !== forecastRequestIdRef.current) {
-          return;
-        }
-        setForecast(data);
-        if (data.advisory_text) {
-          setAdvisoryText(data.advisory_text);
-        }
-      } catch (err: unknown) {
-        if (requestId !== forecastRequestIdRef.current) {
-          return;
-        }
-        if (err instanceof ApiError && err.isRateLimited() && err.retryAfterSeconds) {
-          const waitSec = err.retryAfterSeconds;
-          setRateLimitCountdown(waitSec);
-          setForecastError(`System is busy under rate limiting. Auto-retrying in ${waitSec}s...`);
-
-          // Auto-retry once after retryAfter duration
-          setTimeout(async () => {
-            if (requestId !== forecastRequestIdRef.current) {
-              return;
-            }
-            try {
-              const retryData = await attemptFetch();
-              if (requestId !== forecastRequestIdRef.current) {
-                return;
-              }
-              setForecast(retryData);
-              setForecastError(null);
-              setRateLimitCountdown(null);
-              if (retryData.advisory_text) {
-                setAdvisoryText(retryData.advisory_text);
-              }
-            } catch (retryErr: unknown) {
-              if (requestId !== forecastRequestIdRef.current) {
-                return;
-              }
-              const msg =
-                retryErr instanceof Error
-                  ? retryErr.message
-                  : "Forecast request failed after retry.";
-              setForecastError(msg);
-              setRateLimitCountdown(null);
-            }
-          }, waitSec * 1000);
-        } else {
-          const msg =
-            err instanceof Error
-              ? err.message
-              : "Unable to compute forecast for the selected location.";
-          setForecastError(msg);
-        }
-      } finally {
-        if (requestId === forecastRequestIdRef.current) {
-          setIsLoadingForecast(false);
-        }
-      }
+          language: language,
+        },
+        signal,
+      );
     },
-    [location, language, cropType, cropStage],
+    staleTime: 1000 * 60 * 30, // 30 minutes in-memory freshness
+    gcTime: 1000 * 60 * 60 * 24, // 24 hours persistent cache retention
+    placeholderData: (previousData) => previousData, // Instant smooth rendering without layout jumps
+    retry: (failureCount, error) => {
+      if (error instanceof ApiError && error.isRateLimited()) {
+        const waitSec = error.retryAfterSeconds || 5;
+        setRateLimitCountdown(waitSec);
+        return failureCount < 2;
+      }
+      return failureCount < 1;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000),
+  });
+
+  const forecast = forecastQuery.data ?? null;
+  const isLoadingForecast = forecastQuery.isFetching;
+
+  // Sync advisory text from forecast data when received
+  useEffect(() => {
+    if (forecast?.advisory_text) {
+      setAdvisoryText(forecast.advisory_text);
+    }
+  }, [forecast?.advisory_text]);
+
+  const forecastError = forecastQuery.error
+    ? forecastQuery.error instanceof Error
+      ? forecastQuery.error.message
+      : "Unable to compute forecast for the selected location."
+    : null;
+
+  // Load forecast on-demand / manual refresh
+  const loadForecast = useCallback(
+    async (overrideLoc?: LocationState, overrideLang?: SupportedLanguage) => {
+      if (overrideLoc) setLocationState(overrideLoc);
+      if (overrideLang) setLanguageState(overrideLang);
+      await queryClient.invalidateQueries({
+        queryKey: ["forecast"],
+      });
+    },
+    [queryClient],
   );
 
-  // Load agronomic advisory
+  // Load agronomic advisory on demand
   const loadAdvisory = useCallback(async () => {
     setIsLoadingAdvisory(true);
     setAdvisoryError(null);
@@ -251,23 +229,16 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const setLocation = useCallback(
     (newLoc: LocationState) => {
       setLocationState(newLoc);
-      loadForecast(newLoc, language);
     },
-    [language, loadForecast],
+    [],
   );
 
   const setLanguage = useCallback(
     (newLang: SupportedLanguage) => {
       setLanguageState(newLang);
-      loadForecast(location, newLang);
     },
-    [location, loadForecast],
+    [],
   );
-
-  // Initial fetch on mount
-  useEffect(() => {
-    loadForecast();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <DashboardContext.Provider
@@ -304,3 +275,4 @@ export function useDashboard() {
   }
   return context;
 }
+

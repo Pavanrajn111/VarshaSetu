@@ -254,9 +254,10 @@ export const apiClient = {
     return this.get<LocationResolveResponse>("/location/resolve", { query });
   },
 
-  async computeForecast(payload: ForecastRequest): Promise<ForecastResponse> {
-    return this.post<ForecastResponse>("/forecast", payload);
+  async computeForecast(payload: ForecastRequest, signal?: AbortSignal): Promise<ForecastResponse> {
+    return this.post<ForecastResponse>("/forecast", payload, { signal });
   },
+
 
   /**
    * Correction 2: GET /risk-map with NO query parameters.

@@ -32,6 +32,10 @@ def run_ensemble_inference(f_vec: pd.DataFrame, district: str = "") -> Tuple[Dic
 
     predictions: Dict[str, TargetPrediction] = {}
 
+    # Ensure DataFrame is contiguous and columns match exactly
+    if not isinstance(f_vec, pd.DataFrame):
+        f_vec = pd.DataFrame([f_vec])
+
     for tgt in TARGET_KEYS:
         try:
             if tgt not in models:
@@ -41,7 +45,7 @@ def run_ensemble_inference(f_vec: pd.DataFrame, district: str = "") -> Tuple[Dic
             xgb_model = m["xgb"]
             rf_model = m["rf"]
 
-            # Dual-model probability prediction
+            # Dual-model probability prediction (0.60 XGB + 0.40 RF)
             prob_xgb = float(xgb_model.predict_proba(f_vec)[0][1])
             prob_rf = float(rf_model.predict_proba(f_vec)[0][1])
             prob = float(0.60 * prob_xgb + 0.40 * prob_rf)
@@ -71,6 +75,7 @@ def run_ensemble_inference(f_vec: pd.DataFrame, district: str = "") -> Tuple[Dic
                 badge=None,
                 error="model_unavailable"
             )
+
 
     # Build 4 Weekly Horizons
     horizons: Dict[str, HorizonForecast] = {}
