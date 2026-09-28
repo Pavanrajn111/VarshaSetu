@@ -463,14 +463,6 @@ export function VarshaSetuLanding() {
             >
               <ClimateGlobe reduceMotion={reduceMotion} />
             </Suspense>
-            <div className="absolute bottom-6 left-0 border-l border-signal bg-glass/70 px-4 py-3 backdrop-blur-xl lg:left-8">
-              <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-                Focus region
-              </div>
-              <div className="mt-1 flex items-center gap-2 text-sm font-medium">
-                <span className="size-1.5 rounded-full bg-warning" /> Karnataka · 14.5°N
-              </div>
-            </div>
           </motion.div>
 
           <div className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 items-center gap-3 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground lg:flex">
