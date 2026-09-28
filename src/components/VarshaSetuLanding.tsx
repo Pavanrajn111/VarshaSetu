@@ -350,7 +350,7 @@ export function VarshaSetuLanding() {
             size="sm"
             className="bg-signal text-signal-foreground hover:bg-signal/90 font-medium h-8 text-xs shadow-signal"
           >
-            <Link to="/dashboard">
+            <Link to="/dashboard" search={{ setup: "true" }}>
               Live Studio <ArrowRight className="ml-1 h-3 w-3" />
             </Link>
           </Button>
@@ -434,7 +434,7 @@ export function VarshaSetuLanding() {
                 size="lg"
                 className="h-12 bg-signal px-6 text-signal-foreground shadow-signal hover:bg-signal/90"
               >
-                <Link to="/dashboard">
+                <Link to="/dashboard" search={{ setup: "true" }}>
                   Launch Prediction Studio <ArrowRight />
                 </Link>
               </Button>
@@ -726,7 +726,7 @@ export function VarshaSetuLanding() {
                   size="lg"
                   className="h-12 bg-signal px-8 text-signal-foreground shadow-signal hover:bg-signal/90 font-medium"
                 >
-                  <Link to="/dashboard">
+                  <Link to="/dashboard" search={{ setup: "true" }}>
                     Launch Prediction Studio <ArrowRight className="ml-2 size-4" />
                   </Link>
                 </Button>

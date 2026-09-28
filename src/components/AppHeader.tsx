@@ -115,7 +115,7 @@ export function AppHeader({ children, showProgress = true }: AppHeaderProps) {
                     )}
                   </div>
                   <DropdownMenuItem asChild className="cursor-pointer text-xs">
-                    <Link to="/dashboard">
+                    <Link to="/dashboard" search={{ setup: "true" }}>
                       <Sliders className="mr-2 size-3.5 text-muted-foreground" />
                       Prediction Studio
                     </Link>

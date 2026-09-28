@@ -55,6 +55,12 @@ const COLLAPSED_STORAGE_KEY = "varsha_sidebar_collapsed";
 
 export const Route = createFileRoute("/dashboard")({
   ssr: false,
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      section: (search.section as string) || undefined,
+      setup: (search.setup as string | boolean) || undefined,
+    };
+  },
   head: () => ({
     meta: [
       { title: "Live Prediction Studio | Varsha Setu" },
@@ -71,6 +77,15 @@ export const Route = createFileRoute("/dashboard")({
 function DashboardContent() {
   const { t } = useLanguage();
   const { location, hasOnboardedLocation, setHasOnboardedLocation, isLocationSetupOpen, setIsLocationSetupOpen } = useDashboard();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("setup") === "true" || urlParams.get("location") === "select") {
+        setIsLocationSetupOpen(true);
+      }
+    }
+  }, [setIsLocationSetupOpen]);
 
   // Precedence: URL parameter > Validated localStorage > Default 'overview'
   const [activeSection, setActiveSection] = useState<DashboardSection>(() => {

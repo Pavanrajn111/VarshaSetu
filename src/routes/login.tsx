@@ -68,7 +68,7 @@ function LoginPage() {
     setIsSubmitting(true);
     try {
       await login(phoneNumber, password);
-      navigate({ to: "/dashboard" });
+      navigate({ to: "/dashboard", search: { setup: "true" } });
     } catch {
       // Backend guarantees a generic 401 message; match exactly
       setErrorMsg("Invalid phone number or password.");
@@ -87,7 +87,7 @@ function LoginPage() {
           size="sm"
           className="h-8 border-border/80 bg-glass/80 text-xs"
         >
-          <Link to="/dashboard">
+          <Link to="/dashboard" search={{ setup: "true" }}>
             <Sliders className="mr-1.5 size-3.5 text-signal" /> Studio
           </Link>
         </Button>

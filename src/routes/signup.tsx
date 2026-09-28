@@ -135,7 +135,7 @@ function SignupPage() {
           size="sm"
           className="h-8 border-border/80 bg-glass/80 text-xs"
         >
-          <Link to="/dashboard">
+          <Link to="/dashboard" search={{ setup: "true" }}>
             <Sliders className="mr-1.5 size-3.5 text-signal" /> Studio
           </Link>
         </Button>
