@@ -23,6 +23,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import {
+  AnimatePresence,
   motion,
   useInView,
   useMotionValue,
@@ -39,6 +40,24 @@ import { Button } from "@/components/ui/button";
 import { AppHeader } from "@/components/AppHeader";
 import { LandingRainBackground } from "@/components/LandingRainBackground";
 import { LocationSetupModal } from "@/components/dashboard/LocationSetupModal";
+
+const HERO_TAGLINES = [
+  {
+    lang: "kn",
+    text: "ಮಳೆಯ ಮುನ್ನೋಟ. ರೈತರ ನಿರ್ಧಾರ.",
+    className: "font-kannada text-base sm:text-lg",
+  },
+  {
+    lang: "en",
+    text: "Understand the rain. Plan with confidence.",
+    className: "font-sans text-sm sm:text-base tracking-wide",
+  },
+  {
+    lang: "hi",
+    text: "बारिश को समझें। बेहतर योजना बनाएं।",
+    className: "font-sans text-sm sm:text-base tracking-normal",
+  },
+];
 
 const ClimateGlobe = lazy(() =>
   import("@/components/ClimateGlobe").then((module) => ({ default: module.ClimateGlobe })),
@@ -293,6 +312,15 @@ export function VarshaSetuLanding() {
   const reduceMotion = useReducedMotion() ?? false;
   const navigate = useNavigate();
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [taglineIndex, setTaglineIndex] = useState(0);
+
+  useEffect(() => {
+    if (reduceMotion) return;
+    const timer = setInterval(() => {
+      setTaglineIndex((prev) => (prev + 1) % HERO_TAGLINES.length);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [reduceMotion]);
 
   const scrollToSection = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault();
@@ -308,7 +336,7 @@ export function VarshaSetuLanding() {
       <LandingRainBackground reduceMotion={reduceMotion} />
 
       <AppHeader showProgress={true}>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {/* Desktop Section Navigation with Smooth Auto-Scroll */}
           <nav className="hidden md:flex items-center gap-1 font-mono text-xs">
             <button
@@ -352,7 +380,7 @@ export function VarshaSetuLanding() {
             type="button"
             onClick={() => setIsLocationModalOpen(true)}
             size="sm"
-            className="bg-signal text-signal-foreground hover:bg-signal/90 font-medium h-8 text-xs shadow-signal cursor-pointer"
+            className="bg-signal text-signal-foreground hover:bg-signal/90 font-medium h-8 text-xs shadow-signal cursor-pointer px-3"
           >
             Live Studio <ArrowRight className="ml-1 h-3 w-3" />
           </Button>
@@ -378,46 +406,44 @@ export function VarshaSetuLanding() {
                 <Zap className="size-3" /> SIH 2026 · PS 26086 · Team Nexus
               </Badge>
             </motion.div>
-            <motion.p
-              variants={blurIn}
-              transition={{ duration: 0.7 }}
-              className="mb-3 font-kannada text-base text-cyan"
+
+            {/* Rotating Multilingual Tagline with Stable Height */}
+            <div
+              className="mb-3 flex h-8 items-center overflow-hidden"
+              aria-live="polite"
+              aria-atomic="true"
             >
-              ಮಳೆಯ ಮುನ್ಸೂಚನೆ. ರೈತರ ನಿರ್ಧಾರ.
-            </motion.p>
+              {reduceMotion ? (
+                <p className={`text-cyan font-medium ${HERO_TAGLINES[0].className}`}>
+                  {HERO_TAGLINES[0].text}
+                </p>
+              ) : (
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={HERO_TAGLINES[taglineIndex].lang}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.45, ease: "easeInOut" }}
+                    className={`text-cyan font-medium ${HERO_TAGLINES[taglineIndex].className}`}
+                  >
+                    {HERO_TAGLINES[taglineIndex].text}
+                  </motion.p>
+                </AnimatePresence>
+              )}
+            </div>
+
+            {/* Stable, Solid Main Title */}
             <motion.h1
-              variants={{ visible: { transition: { staggerChildren: 0.06 } } }}
+              variants={fadeUp}
+              transition={{ type: "spring", stiffness: 80, damping: 18 }}
               className="max-w-3xl font-display text-[clamp(4.2rem,11vw,8.8rem)] font-semibold leading-[0.78] text-foreground"
             >
-              {"Varsha".split("").map((char, i) => (
-                <motion.span
-                  key={`v-${i}`}
-                  variants={fadeUp}
-                  transition={{ type: "spring", stiffness: 100, damping: 16 }}
-                  className="inline-block"
-                >
-                  {char}
-                </motion.span>
-              ))}
+              Varsha
               <br />
-              <span className="text-signal">
-                {"Setu.".split("").map((char, i) => (
-                  <motion.span
-                    key={`s-${i}`}
-                    variants={fadeUp}
-                    transition={{
-                      type: "spring",
-                      stiffness: 100,
-                      damping: 16,
-                      delay: 0.36 + i * 0.06,
-                    }}
-                    className="inline-block"
-                  >
-                    {char}
-                  </motion.span>
-                ))}
-              </span>
+              <span className="text-signal">Setu.</span>
             </motion.h1>
+
             <motion.p
               variants={blurIn}
               transition={{ duration: 0.8, delay: 0.2 }}
