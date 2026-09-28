@@ -1,5 +1,6 @@
 import React from "react";
 import { useDashboard } from "@/context/DashboardContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,12 +8,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   MapPin,
   X,
-  CloudRain,
   SunMedium,
   CloudLightning,
   Sparkles,
   Layers,
-  Droplets,
   Loader2,
 } from "lucide-react";
 
@@ -24,10 +23,10 @@ interface RiskMapDetailPanelProps {
 
 export function RiskMapDetailPanel({
   onClose,
-  clickedPointName,
   clickedPointDistance,
 }: RiskMapDetailPanelProps) {
   const { location, forecast, isLoadingForecast, forecastError } = useDashboard();
+  const { t } = useLanguage();
 
   // Guard against displaying stale data from a previous location
   const isForecastStale =
@@ -50,10 +49,10 @@ export function RiskMapDetailPanel({
           </span>
           <div className="min-w-0">
             <CardTitle className="truncate font-display text-sm font-semibold text-foreground">
-              {location.locationName || `${location.taluk} Taluk`}
+              {location.locationName || `${location.taluk} ${t.location.talukLabel}`}
             </CardTitle>
             <div className="flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground truncate">
-              <span>{location.district} District</span>
+              <span>{location.district} {t.location.districtLabel}</span>
               {clickedPointDistance !== undefined && clickedPointDistance > 0 && (
                 <>
                   <span>·</span>
@@ -69,7 +68,7 @@ export function RiskMapDetailPanel({
           size="icon"
           onClick={onClose}
           className="size-7 text-muted-foreground hover:text-foreground cursor-pointer"
-          aria-label="Close location detail panel"
+          aria-label={t.riskMap.closeDetails}
         >
           <X className="size-4" />
         </Button>
@@ -80,7 +79,7 @@ export function RiskMapDetailPanel({
           <div className="space-y-3 py-2">
             <div className="flex items-center gap-2 font-mono text-xs text-signal">
               <Loader2 className="size-3.5 animate-spin" />
-              <span>Updating ML forecast for {location.taluk}...</span>
+              <span>{t.common.loading} {location.taluk}...</span>
             </div>
             <Skeleton className="h-16 w-full rounded-lg bg-muted/30" />
             <Skeleton className="h-28 w-full rounded-lg bg-muted/30" />
@@ -98,25 +97,25 @@ export function RiskMapDetailPanel({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
                     <Sparkles className="size-3.5 text-signal" />
-                    <span>Monsoon Onset Status</span>
+                    <span>{t.forecast.onsetTitle}</span>
                   </div>
                   <Badge
                     variant="outline"
                     className="font-mono text-[10px] border-signal/40 bg-signal/10 text-signal"
                   >
-                    {onset.status_tag}
+                    {onset.status_tag || "Standard"}
                   </Badge>
                 </div>
                 <div className="mt-2 flex items-center justify-between text-xs font-mono">
-                  <span className="text-muted-foreground">Onset Probability:</span>
+                  <span className="text-muted-foreground">{t.forecast.onsetProb}:</span>
                   <span className="font-semibold text-foreground">
                     {onset.probability !== null
                       ? `${(onset.probability * 100).toFixed(1)}%`
-                      : "N/A"}
+                      : t.common.n_a}
                   </span>
                 </div>
                 <div className="mt-1 flex items-center justify-between text-[11px] font-mono text-muted-foreground">
-                  <span>Normal Climatological Window:</span>
+                  <span>{t.forecast.historicalWindow}:</span>
                   <span>{onset.normal_date_window}</span>
                 </div>
               </div>
@@ -126,9 +125,9 @@ export function RiskMapDetailPanel({
             {horizons && (
               <div className="space-y-2">
                 <div className="text-xs font-semibold text-foreground flex items-center justify-between">
-                  <span>Weekly Spell Hazard Probabilities</span>
+                  <span>{t.forecast.title}</span>
                   <span className="font-mono text-[10px] text-muted-foreground">
-                    0.60 XGB + 0.40 RF
+                    ML Ensemble
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -148,7 +147,7 @@ export function RiskMapDetailPanel({
                         </div>
                         <div className="flex items-center justify-between text-[11px]">
                           <span className="flex items-center gap-1 text-amber-400">
-                            <SunMedium className="size-3" /> Break
+                            <SunMedium className="size-3" /> {t.forecast.breakSpell}
                           </span>
                           <span className="font-mono font-medium text-foreground">
                             {breakProb !== null ? `${(breakProb * 100).toFixed(0)}%` : "—"}
@@ -156,7 +155,7 @@ export function RiskMapDetailPanel({
                         </div>
                         <div className="flex items-center justify-between text-[11px]">
                           <span className="flex items-center gap-1 text-rose-400">
-                            <CloudLightning className="size-3" /> Heavy
+                            <CloudLightning className="size-3" /> {t.forecast.heavyRain}
                           </span>
                           <span className="font-mono font-medium text-foreground">
                             {heavyProb !== null ? `${(heavyProb * 100).toFixed(0)}%` : "—"}
@@ -175,31 +174,31 @@ export function RiskMapDetailPanel({
                 <div className="flex items-center justify-between text-xs font-semibold text-foreground">
                   <div className="flex items-center gap-1.5">
                     <Layers className="size-3.5 text-warning" />
-                    <span>Soil Profile & Buffer</span>
+                    <span>{t.soil.title}</span>
                   </div>
                   <Badge
                     variant="outline"
                     className="font-mono text-[10px] border-warning/40 text-warning"
                   >
-                    FAO-56 Calibrated
+                    {t.soil.faoBadge}
                   </Badge>
                 </div>
                 <div className="grid grid-cols-2 gap-2 pt-1 font-mono text-[11px]">
                   <div>
-                    <span className="text-muted-foreground block">Soil Type:</span>
+                    <span className="text-muted-foreground block">{t.soil.classification}:</span>
                     <span className="font-medium text-foreground">{soil.type}</span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground block">Drainage Class:</span>
+                    <span className="text-muted-foreground block">{t.soil.drainageDynamics}:</span>
                     <span className="font-medium text-foreground">{soil.drainage}</span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground block">AWC Moisture:</span>
+                    <span className="text-muted-foreground block">{t.soil.awc}:</span>
                     <span className="font-medium text-foreground">{soil.awc} mm/m</span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground block">Buffer Window:</span>
-                    <span className="font-medium text-signal">{soil.buffer_days} Days</span>
+                    <span className="text-muted-foreground block">{t.soil.drySpellBuffer}:</span>
+                    <span className="font-medium text-signal">{soil.buffer_days} {t.soil.bufferDays}</span>
                   </div>
                 </div>
               </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDashboard } from "@/context/DashboardContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { subscribeToAdvisories } from "@/lib/notification-service";
 import type { SupportedLanguage } from "@/lib/types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -18,6 +19,7 @@ import {
 
 export function NotificationOptInPanel() {
   const { location, cropType, language: globalLanguage, advisoryText } = useDashboard();
+  const { t, availableLanguages } = useLanguage();
 
   const [phone, setPhone] = useState<string>("");
   const [receiveSms, setReceiveSms] = useState<boolean>(true);
@@ -54,7 +56,7 @@ export function NotificationOptInPanel() {
       });
       setSubmitted(true);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Subscription failed. Please try again.";
+      const msg = err instanceof Error ? err.message : t.common.error;
       setPhoneError(msg);
     } finally {
       setIsSubmitting(false);
@@ -76,10 +78,10 @@ export function NotificationOptInPanel() {
             </span>
             <div>
               <CardTitle className="font-display text-lg font-semibold text-foreground">
-                Last-Mile SMS & WhatsApp Alert Gateway
+                {t.alerts.title}
               </CardTitle>
               <p className="text-xs text-muted-foreground">
-                Interactive simulation for automated push notifications to farmers' feature phones
+                {t.alerts.subtitle}
               </p>
             </div>
           </div>
@@ -87,7 +89,7 @@ export function NotificationOptInPanel() {
             variant="outline"
             className="border-amber-500/40 bg-amber-500/10 font-mono text-[10px] text-amber-300"
           >
-            Simulated Alert Gateway (Demo Mode)
+            {t.alerts.demoBadge}
           </Badge>
         </div>
       </CardHeader>
@@ -98,7 +100,7 @@ export function NotificationOptInPanel() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="mb-1.5 block font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                Farmer Mobile Number (+91)
+                {t.alerts.mobileNumber} (+91)
               </label>
               <div className="flex gap-2">
                 <span className="flex items-center rounded-md border border-border bg-background/80 px-3 font-mono text-xs text-muted-foreground">
@@ -106,7 +108,7 @@ export function NotificationOptInPanel() {
                 </span>
                 <Input
                   type="tel"
-                  placeholder="98765 43210"
+                  placeholder={t.alerts.mobilePlaceholder}
                   value={phone}
                   onChange={(e) => {
                     setPhone(e.target.value);
@@ -124,7 +126,7 @@ export function NotificationOptInPanel() {
             {/* Channels */}
             <div>
               <label className="mb-1.5 block font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                Delivery Channels
+                {t.alerts.channels}
               </label>
               <div className="flex flex-wrap gap-4">
                 <label className="flex items-center gap-2 cursor-pointer text-xs text-foreground">
@@ -135,7 +137,7 @@ export function NotificationOptInPanel() {
                     className="size-4 rounded border-border text-signal focus:ring-signal"
                   />
                   <Smartphone className="size-3.5 text-signal" />
-                  SMS Text Alert
+                  {t.alerts.smsChannel}
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer text-xs text-foreground">
                   <input
@@ -145,7 +147,7 @@ export function NotificationOptInPanel() {
                     className="size-4 rounded border-border text-signal focus:ring-signal"
                   />
                   <MessageSquare className="size-3.5 text-success" />
-                  WhatsApp Audio + Text
+                  {t.alerts.whatsappChannel}
                 </label>
               </div>
             </div>
@@ -153,14 +155,10 @@ export function NotificationOptInPanel() {
             {/* Language Preference */}
             <div>
               <label className="mb-1.5 block font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                Advisory Dialect / Language
+                {t.alerts.langPref}
               </label>
               <div className="flex gap-2">
-                {[
-                  { code: "kn" as const, label: "ಕನ್ನಡ (Kannada)" },
-                  { code: "en" as const, label: "English" },
-                  { code: "hi" as const, label: "हिन्दी (Hindi)" },
-                ].map((l) => (
+                {availableLanguages.map((l) => (
                   <button
                     key={l.code}
                     type="button"
@@ -189,17 +187,17 @@ export function NotificationOptInPanel() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 size-4 animate-spin" />
-                  Registering Dispatch Rules...
+                  {t.alerts.subscribing}
                 </>
               ) : submitted ? (
                 <>
                   <CheckCircle2 className="mr-2 size-4 text-signal-foreground" />
-                  Alert Rules Subscribed
+                  {t.alerts.subscribedSuccess}
                 </>
               ) : (
                 <>
                   <Send className="mr-2 size-4" />
-                  Subscribe to Daily Advisory Alerts
+                  {t.alerts.subscribeBtn}
                 </>
               )}
             </Button>
@@ -210,10 +208,10 @@ export function NotificationOptInPanel() {
             <div className="mb-3 flex items-center justify-between border-b border-border/40 pb-2">
               <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                 <Radio className="size-3.5 text-signal animate-pulse" />
-                Live Handset Message Preview
+                {t.alerts.previewTitle}
               </span>
               <Badge variant="secondary" className="font-mono text-[9px]">
-                GSM-7 Plain Text
+                GSM-7 / UTF-8
               </Badge>
             </div>
 
@@ -230,6 +228,10 @@ export function NotificationOptInPanel() {
                 <span>Chars: {plainSmsPreview.length} / 160</span>
                 <span className="text-signal">Delivery: Priority</span>
               </div>
+            </div>
+
+            <div className="mt-2 text-[10px] text-muted-foreground font-mono">
+              {t.alerts.voiceCallNote}
             </div>
           </div>
         </div>

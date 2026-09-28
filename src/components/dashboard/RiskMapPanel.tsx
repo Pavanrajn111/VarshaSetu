@@ -6,6 +6,7 @@ import {
   Marker,
   Popup,
   Tooltip,
+  useMap,
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
@@ -13,12 +14,12 @@ import "leaflet/dist/leaflet.css";
 
 import { apiClient } from "@/lib/api-client";
 import { useDashboard } from "@/context/DashboardContext";
+import { useLanguage } from "@/context/LanguageContext";
 import type { TalukRiskItem, RiskMapDataResponse, RiskCategory } from "@/lib/types";
 import { RiskMapDetailPanel } from "@/components/dashboard/RiskMapDetailPanel";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Map as MapIcon,
   RefreshCw,
@@ -29,6 +30,7 @@ import {
   Loader2,
   Layers,
   MapPin,
+  Compass,
 } from "lucide-react";
 
 // Fix default Leaflet icon paths in bundlers
@@ -49,6 +51,7 @@ const RISK_COLORS: Record<RiskCategory, { fill: string; border: string }> = {
 // Karnataka geographic center and bounds
 const KARNATAKA_CENTER: [number, number] = [15.3173, 75.7139];
 const KARNATAKA_ZOOM = 7;
+const TALUK_FOCUS_ZOOM = 10;
 
 interface ClickedPin {
   lat: number;
@@ -57,7 +60,77 @@ interface ClickedPin {
   distanceKm?: number;
 }
 
-// Inner component handling clicks on the empty map canvas
+// Custom animated pulsing pin icon for selected dashboard location
+function createSelectedLocationPin(talukName: string) {
+  return L.divIcon({
+    className: "varsha-selected-pin-wrapper",
+    html: `
+      <div style="position: relative; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%); pointer-events: auto;">
+        <div style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(14, 165, 233, 0.95); color: #ffffff; border-radius: 9999px; box-shadow: 0 4px 14px rgba(14, 165, 233, 0.5), 0 0 0 2px rgba(255, 255, 255, 0.3); font-family: ui-monospace, monospace; font-size: 11px; font-weight: 700; white-space: nowrap;">
+          <span style="width: 8px; height: 8px; border-radius: 9999px; background: #ffffff; box-shadow: 0 0 6px #ffffff;"></span>
+          <span>📍 ${talukName} HQ</span>
+        </div>
+        <div style="width: 2px; height: 8px; background: #0ea5e9;"></div>
+        <div style="width: 8px; height: 8px; border-radius: 9999px; background: #0ea5e9; box-shadow: 0 0 8px #0ea5e9;"></div>
+      </div>
+    `,
+    iconSize: [0, 0],
+    iconAnchor: [0, 0],
+  });
+}
+
+// Auto-focus controller: smoothly flies to dashboard's selected location
+function MapLocationController({
+  targetLat,
+  targetLon,
+  talukName,
+}: {
+  targetLat: number;
+  targetLon: number;
+  talukName: string;
+}) {
+  const map = useMap();
+  const prevLocKeyRef = useRef<string>("");
+  const isFirstRunRef = useRef<boolean>(true);
+
+  useEffect(() => {
+    if (!targetLat || !targetLon || isNaN(targetLat) || isNaN(targetLon)) return;
+    const currentLocKey = `${talukName}:${targetLat.toFixed(4)}:${targetLon.toFixed(4)}`;
+
+    if (isFirstRunRef.current) {
+      isFirstRunRef.current = false;
+      prevLocKeyRef.current = currentLocKey;
+      // Smooth initial flyTo once map is mounted
+      const timer = setTimeout(() => {
+        try {
+          map.flyTo([targetLat, targetLon], TALUK_FOCUS_ZOOM, {
+            duration: 1.0,
+            easeLinearity: 0.25,
+          });
+        } catch {
+          // ignore if unmounted
+        }
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+
+    if (prevLocKeyRef.current !== currentLocKey) {
+      prevLocKeyRef.current = currentLocKey;
+      try {
+        map.flyTo([targetLat, targetLon], TALUK_FOCUS_ZOOM, {
+          duration: 1.0,
+          easeLinearity: 0.25,
+        });
+      } catch {
+        // ignore
+      }
+    }
+  }, [map, targetLat, targetLon, talukName]);
+
+  return null;
+}
+
+// Inner component handling clicks on the map canvas
 function MapClickHandler({ onMapClick }: { onMapClick: (lat: number, lon: number) => void }) {
   useMapEvents({
     click: (e) => {
@@ -69,9 +142,11 @@ function MapClickHandler({ onMapClick }: { onMapClick: (lat: number, lon: number
 
 export function RiskMapPanel() {
   const { location, setLocation } = useDashboard();
+  const { t } = useLanguage();
   const [riskData, setRiskData] = useState<RiskMapDataResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [tileError, setTileError] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [detailPanelOpen, setDetailPanelOpen] = useState<boolean>(false);
   const [clickedPin, setClickedPin] = useState<ClickedPin | null>(null);
@@ -98,7 +173,7 @@ export function RiskMapPanel() {
     fetchRiskData();
   }, [fetchRiskData]);
 
-  // Click on a specific taluk CircleMarker (authoritative data, no reverse geocode)
+  // Click on a specific taluk CircleMarker
   const handleMarkerClick = useCallback(
     (item: TalukRiskItem) => {
       setClickedPin({
@@ -125,10 +200,9 @@ export function RiskMapPanel() {
     [location.taluk, setLocation],
   );
 
-  // Click on empty map canvas: debounced reverse geocoding with 60km sanity cap
+  // Click on map canvas: debounced reverse geocoding with distance validation
   const handleCanvasClick = useCallback(
     async (lat: number, lon: number) => {
-      // Cancel any ongoing reverse geocoding request
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
@@ -149,7 +223,6 @@ export function RiskMapPanel() {
             distanceKm: 0,
           });
 
-          // Only update location if resolved node is different
           if (
             location.taluk.trim().toLowerCase() !== sel.taluk.trim().toLowerCase() ||
             location.locationName.trim().toLowerCase() !== sel.name.trim().toLowerCase()
@@ -166,9 +239,8 @@ export function RiskMapPanel() {
 
           setDetailPanelOpen(true);
         } else {
-          // Point outside Karnataka or exceeding distance cap
           setToastMessage(
-            resp.message || "Clicked point is too far from any known Karnataka agricultural node.",
+            resp.message || "Clicked point is outside Karnataka agricultural boundaries.",
           );
         }
       } catch (err: unknown) {
@@ -181,6 +253,10 @@ export function RiskMapPanel() {
     [location, setLocation],
   );
 
+  // Active selected taluk from DashboardContext
+  const selectedTalukLower = (location.taluk || "").trim().toLowerCase();
+  const selectedPinIcon = createSelectedLocationPin(location.taluk || "Selected");
+
   return (
     <Card
       className={`overflow-hidden border border-border/70 bg-card/75 shadow-lg backdrop-blur-xl transition-all ${
@@ -189,34 +265,33 @@ export function RiskMapPanel() {
     >
       <CardHeader className="border-b border-border/40 pb-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <span className="grid size-9 place-items-center rounded-md border border-signal/30 bg-signal/10">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="grid size-9 shrink-0 place-items-center rounded-md border border-signal/30 bg-signal/10">
               <MapIcon className="size-5 text-signal" />
             </span>
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
                 <CardTitle className="font-display text-lg font-semibold text-foreground">
-                  Statewide Interactive Risk Map
+                  {t.riskMap.title}
                 </CardTitle>
                 <Badge
                   variant="outline"
-                  className="border-signal/40 bg-signal/10 font-mono text-[10px] text-signal"
+                  className="border-signal/40 bg-signal/10 font-mono text-[10px] text-signal shrink-0"
                 >
-                  Interactive Folium / Leaflet
+                  OpenStreetMap + Leaflet
                 </Badge>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Click any taluk or coordinate to inspect localized break spell risk and trigger ML
-                forecast
+              <p className="text-xs text-muted-foreground truncate">
+                {t.riskMap.subtitle}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 self-end sm:self-auto">
+          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
             {isReverseGeocoding && (
               <div className="flex items-center gap-1.5 font-mono text-xs text-signal">
                 <Loader2 className="size-3.5 animate-spin" />
-                <span>Resolving location...</span>
+                <span className="hidden md:inline">{t.location.searching}</span>
               </div>
             )}
             <Button
@@ -227,7 +302,18 @@ export function RiskMapPanel() {
               className="h-8 gap-1.5 border-border/80 bg-glass/80 text-xs cursor-pointer"
             >
               <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">Refresh Data</span>
+              <span className="hidden sm:inline">{t.riskMap.refreshData}</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDetailPanelOpen((prev) => !prev)}
+              className="h-8 gap-1.5 border-border/80 bg-glass/80 text-xs cursor-pointer"
+            >
+              <Compass className="size-3.5 text-signal" />
+              <span className="hidden sm:inline">
+                {detailPanelOpen ? t.riskMap.closeDetails : t.riskMap.detailsTitle}
+              </span>
             </Button>
             <Button
               variant="outline"
@@ -236,11 +322,7 @@ export function RiskMapPanel() {
               className="h-8 gap-1.5 border-border/80 bg-glass/80 text-xs cursor-pointer"
               aria-label={isFullscreen ? "Exit fullscreen map" : "Enter fullscreen map"}
             >
-              {isFullscreen ? (
-                <Minimize2 className="size-3.5" />
-              ) : (
-                <Maximize2 className="size-3.5" />
-              )}
+              {isFullscreen ? <Minimize2 className="size-3.5" /> : <Maximize2 className="size-3.5" />}
             </Button>
           </div>
         </div>
@@ -250,23 +332,31 @@ export function RiskMapPanel() {
         {/* On-map transient alert banner */}
         {toastMessage && (
           <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] max-w-md w-11/12 rounded-lg border border-warning/40 bg-background/95 px-4 py-2.5 shadow-xl backdrop-blur-xl flex items-center justify-between text-xs text-warning">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 min-w-0">
               <AlertTriangle className="size-4 shrink-0" />
-              <span>{toastMessage}</span>
+              <span className="truncate">{toastMessage}</span>
             </div>
             <button
               type="button"
               onClick={() => setToastMessage(null)}
-              className="text-muted-foreground hover:text-foreground font-mono ml-2"
+              className="text-muted-foreground hover:text-foreground font-mono ml-2 shrink-0 cursor-pointer"
             >
               ✕
             </button>
           </div>
         )}
 
-        <div className="flex flex-col lg:flex-row min-h-[580px] h-[650px] relative">
+        {/* Tile error graceful non-intrusive fallback notice */}
+        {tileError && (
+          <div className="absolute top-3 left-3 z-[1000] max-w-sm rounded-lg border border-border/80 bg-background/90 px-3 py-2 shadow-lg backdrop-blur-md text-[11px] text-muted-foreground flex items-center gap-2">
+            <Info className="size-3.5 text-signal shrink-0" />
+            <span>{t.riskMap.tilesUnavailable}</span>
+          </div>
+        )}
+
+        <div className="flex flex-col lg:flex-row min-h-[580px] h-[650px] relative w-full overflow-hidden">
           {/* Main Leaflet Map View */}
-          <div className="flex-1 w-full h-full relative">
+          <div className="flex-1 w-full h-full relative min-w-0">
             {isLoading && !riskData ? (
               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-background/80 backdrop-blur-md">
                 <Loader2 className="size-8 animate-spin text-signal" />
@@ -285,38 +375,53 @@ export function RiskMapPanel() {
             ) : null}
 
             <MapContainer
-              center={KARNATAKA_CENTER}
-              zoom={KARNATAKA_ZOOM}
+              center={
+                location.lat && location.lon
+                  ? [location.lat, location.lon]
+                  : KARNATAKA_CENTER
+              }
+              zoom={location.lat && location.lon ? TALUK_FOCUS_ZOOM : KARNATAKA_ZOOM}
               minZoom={6}
-              maxZoom={14}
+              maxZoom={18}
               scrollWheelZoom={true}
               className="w-full h-full z-0"
-              style={{ background: "#0b1329" }}
             >
+              {/* Reliable OpenStreetMap public tile layer with keyless access */}
               <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
                 maxZoom={19}
+                eventHandlers={{
+                  tileerror: () => setTileError(true),
+                  tileload: () => setTileError(false),
+                }}
+              />
+
+              {/* Automatic map focus & synchronization with DashboardContext */}
+              <MapLocationController
+                targetLat={location.lat}
+                targetLon={location.lon}
+                talukName={location.taluk}
               />
 
               <MapClickHandler onMapClick={handleCanvasClick} />
 
-              {/* 236 Taluk CircleMarkers */}
+              {/* 236 Taluk Micro-Region CircleMarkers */}
               {riskData?.taluks.map((item) => {
                 const colors = RISK_COLORS[item.risk_category] ?? RISK_COLORS.LOW;
                 const isSelected =
-                  location.taluk.trim().toLowerCase() === item.taluk_name.trim().toLowerCase();
+                  selectedTalukLower === item.taluk_name.trim().toLowerCase();
 
                 return (
                   <CircleMarker
                     key={`${item.taluk_name}-${item.district}`}
                     center={[item.lat, item.lon]}
-                    radius={isSelected ? 9 : 6}
+                    radius={isSelected ? 11 : 6}
                     pathOptions={{
-                      color: isSelected ? "#38bdf8" : colors.border,
+                      color: isSelected ? "#0284c7" : colors.border,
                       fillColor: colors.fill,
-                      fillOpacity: isSelected ? 0.9 : 0.65,
-                      weight: isSelected ? 3 : 1.5,
+                      fillOpacity: isSelected ? 0.9 : 0.6,
+                      weight: isSelected ? 3 : 1.2,
                     }}
                     eventHandlers={{
                       click: (e) => {
@@ -345,43 +450,118 @@ export function RiskMapPanel() {
                 );
               })}
 
-              {/* Dropped Pinpoint Marker on Clicked Coordinates */}
-              {clickedPin && (
-                <Marker position={[clickedPin.lat, clickedPin.lon]}>
+              {/* Prominent Selected Location Pin from DashboardContext */}
+              {location.lat && location.lon && (
+                <Marker
+                  position={[location.lat, location.lon]}
+                  icon={selectedPinIcon}
+                  zIndexOffset={1000}
+                >
                   <Popup>
                     <div className="p-1 text-xs">
-                      <div className="font-semibold">{clickedPin.title}</div>
+                      <div className="font-semibold text-foreground">
+                        📍 {location.locationName || `${location.taluk} Taluk HQ`}
+                      </div>
                       <div className="font-mono text-[10px] text-muted-foreground mt-0.5">
-                        {clickedPin.lat.toFixed(4)}°N, {clickedPin.lon.toFixed(4)}°E
+                        {location.district} District · {location.lat.toFixed(4)}°N, {location.lon.toFixed(4)}°E
+                      </div>
+                      <div className="mt-1.5 text-[10px] text-signal font-mono">
+                        ✓ {t.riskMap.selectedLocation}
                       </div>
                     </div>
                   </Popup>
                 </Marker>
               )}
+
+              {/* Dropped Pinpoint Marker on reverse-geocoded map click */}
+              {clickedPin &&
+                (clickedPin.lat !== location.lat || clickedPin.lon !== location.lon) && (
+                  <Marker position={[clickedPin.lat, clickedPin.lon]}>
+                    <Popup>
+                      <div className="p-1 text-xs">
+                        <div className="font-semibold">{clickedPin.title}</div>
+                        <div className="font-mono text-[10px] text-muted-foreground mt-0.5">
+                          {clickedPin.lat.toFixed(4)}°N, {clickedPin.lon.toFixed(4)}°E
+                        </div>
+                      </div>
+                    </Popup>
+                  </Marker>
+                )}
             </MapContainer>
 
+            {/* Floating Selected Location Information Card (Top Right Overlay) */}
+            <div className="absolute top-4 right-4 z-[400] max-w-xs rounded-xl border border-border/80 bg-background/95 p-3.5 shadow-xl backdrop-blur-xl pointer-events-auto">
+              <div className="flex items-center justify-between gap-2 mb-1.5">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <MapPin className="size-4 text-signal shrink-0" />
+                  <span className="font-display text-xs font-bold text-foreground truncate">
+                    {location.taluk} Taluk
+                  </span>
+                </div>
+                <Badge variant="outline" className="text-[10px] font-mono border-signal/30 text-signal shrink-0">
+                  {location.district}
+                </Badge>
+              </div>
+
+              {/* Selected taluk risk status lookup */}
+              {(() => {
+                const selectedRisk = riskData?.taluks.find(
+                  (t) => t.taluk_name.trim().toLowerCase() === selectedTalukLower
+                );
+                const riskColor = selectedRisk ? (RISK_COLORS[selectedRisk.risk_category] ?? RISK_COLORS.LOW) : RISK_COLORS.LOW;
+                
+                return (
+                  <div className="space-y-2 mt-2 pt-2 border-t border-border/50">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground">Break Spell Risk:</span>
+                      <div className="flex items-center gap-1.5 font-mono font-semibold">
+                        <span>{selectedRisk?.risk_score_pct ?? "--"}%</span>
+                        {selectedRisk && (
+                          <span
+                            className="text-[10px] px-1.5 py-0.5 rounded font-bold"
+                            style={{ background: `${riskColor.fill}20`, color: riskColor.fill }}
+                          >
+                            {selectedRisk.risk_category}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => setDetailPanelOpen(true)}
+                      className="w-full h-7 text-xs bg-signal text-signal-foreground hover:bg-signal/90 font-medium cursor-pointer shadow-sm"
+                    >
+                      <Compass className="size-3.5 mr-1.5" />
+                      View Risk Assessment
+                    </Button>
+                  </div>
+                );
+              })()}
+            </div>
+
             {/* Map Legend Overlay */}
-            <div className="absolute bottom-4 left-4 z-[400] rounded-xl border border-border/80 bg-background/90 p-3 shadow-xl backdrop-blur-xl pointer-events-auto">
+            <div className="absolute bottom-4 left-4 z-[400] rounded-xl border border-border/80 bg-background/95 p-3 shadow-xl backdrop-blur-xl pointer-events-auto">
               <div className="font-display text-[11px] font-semibold text-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
                 <Layers className="size-3 text-signal" />
-                <span>Break Spell Risk Scale</span>
+                <span>{t.forecast.breakSpell}</span>
               </div>
               <div className="flex flex-col gap-1.5 font-mono text-[11px]">
                 <div className="flex items-center gap-2">
                   <span className="size-2.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)]" />
-                  <span className="text-foreground">Low Risk (&lt; 25%)</span>
+                  <span className="text-foreground">{t.riskMap.riskLow} (&lt; 25%)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="size-2.5 rounded-full bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.5)]" />
-                  <span className="text-foreground">Moderate (25–45%)</span>
+                  <span className="text-foreground">{t.riskMap.riskModerate} (25–45%)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="size-2.5 rounded-full bg-rose-500 shadow-[0_0_6px_rgba(239,68,68,0.5)]" />
-                  <span className="text-foreground">High Risk (&gt; 45%)</span>
+                  <span className="text-foreground">{t.riskMap.riskHigh} (&gt; 45%)</span>
                 </div>
               </div>
               <div className="mt-2 pt-2 border-t border-border/40 font-mono text-[9px] text-muted-foreground">
-                Showing {riskData?.total_taluks ?? 236} taluks
+                {t.riskMap.totalTaluks}: {riskData?.total_taluks ?? 236}
               </div>
             </div>
           </div>
@@ -401,11 +581,11 @@ export function RiskMapPanel() {
         {/* Grounded Methodology Transparency Notice */}
         <div className="flex items-start gap-2.5 border-t border-border/40 bg-muted/20 px-5 py-3 text-xs text-muted-foreground">
           <Info className="mt-0.5 size-4 shrink-0 text-signal" />
-          <span>
+          <span className="leading-relaxed">
             <strong>Authoritative Risk Methodology:</strong> Map colors represent calibrated
-            statistical Break Spell Probability derived from the project's verified 236-taluk
-            baseline, standardized across pilot and non-pilot taluks. Clicking any location
-            automatically loads live dual-model (0.60 XGB + 0.40 RF) 4-week forward inferences.
+            statistical Break Spell Probability across all 236 Karnataka taluks. The selected
+            dashboard location (<strong>{location.taluk}</strong>) is synchronized live into the
+            map viewport.
           </span>
         </div>
       </CardContent>

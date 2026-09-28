@@ -1,5 +1,6 @@
 import React from "react";
 import { useDashboard } from "@/context/DashboardContext";
+import { useLanguage } from "@/context/LanguageContext";
 import type { TargetPrediction, OnsetOutlook, HorizonForecast } from "@/lib/types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +12,6 @@ import {
   AlertTriangle,
   CheckCircle2,
   Clock,
-  Sparkles,
   RefreshCw,
   Droplets,
   SunMedium,
@@ -23,6 +23,7 @@ import {
 export function ForecastPanel() {
   const { forecast, isLoadingForecast, forecastError, rateLimitCountdown, loadForecast } =
     useDashboard();
+  const { t } = useLanguage();
 
   if (isLoadingForecast && !forecast) {
     return (
@@ -55,7 +56,6 @@ export function ForecastPanel() {
     );
   }
 
-
   return (
     <div className="space-y-6">
       {/* Rate Limit Banner (429) */}
@@ -63,10 +63,10 @@ export function ForecastPanel() {
         <Alert className="border-warning/50 bg-warning/10 text-warning">
           <Clock className="size-4 animate-spin text-warning" />
           <AlertTitle className="font-mono text-xs font-semibold uppercase tracking-wider">
-            Rate Limiter Active (429)
+            {t.forecast.rateLimiterActive}
           </AlertTitle>
           <AlertDescription className="text-xs">
-            System is pacing high-concurrency requests. Auto-retrying in{" "}
+            {t.forecast.rateLimiterDesc}{" "}
             <span className="font-mono font-bold text-foreground">{rateLimitCountdown}s</span>...
           </AlertDescription>
         </Alert>
@@ -77,7 +77,7 @@ export function ForecastPanel() {
         <Alert className="border-destructive/50 bg-destructive/10 text-destructive">
           <AlertOctagon className="size-4" />
           <AlertTitle className="font-mono text-xs font-semibold uppercase tracking-wider">
-            Model Serving Notice
+            {t.forecast.modelServingNotice}
           </AlertTitle>
           <AlertDescription className="flex items-center justify-between text-xs">
             <span>{forecastError}</span>
@@ -87,13 +87,13 @@ export function ForecastPanel() {
               onClick={() => loadForecast()}
               className="ml-4 h-7 border-destructive/40 bg-background/50 text-xs hover:bg-background"
             >
-              <RefreshCw className="mr-1.5 size-3" /> Retry
+              <RefreshCw className="mr-1.5 size-3" /> {t.forecast.retryButton}
             </Button>
           </AlertDescription>
         </Alert>
       )}
 
-      {/* Onset Outlook Card (Correction 3: Dedicated Fault Isolation) */}
+      {/* Onset Outlook Card */}
       <OnsetOutlookCard onset={forecast?.onset} />
 
       {/* 4-Week Horizon Grid */}
@@ -104,9 +104,9 @@ export function ForecastPanel() {
 
 /**
  * Onset Outlook Card
- * Explicit, independent error isolation: evaluates onset.error and onset.probability === null
  */
 function OnsetOutlookCard({ onset }: { onset: OnsetOutlook | undefined }) {
+  const { t } = useLanguage();
   const isOnsetUnavailable = !onset || onset.error || onset.probability === null;
 
   return (
@@ -119,10 +119,10 @@ function OnsetOutlookCard({ onset }: { onset: OnsetOutlook | undefined }) {
             </span>
             <div>
               <CardTitle className="font-display text-lg font-semibold text-foreground">
-                Monsoon Onset Outlook
+                {t.forecast.onsetTitle}
               </CardTitle>
               <p className="text-xs text-muted-foreground">
-                Climatological transition window & dynamical trigger probability
+                {t.forecast.onsetSubtitle}
               </p>
             </div>
           </div>
@@ -130,7 +130,7 @@ function OnsetOutlookCard({ onset }: { onset: OnsetOutlook | undefined }) {
             variant="outline"
             className="border-cyan/40 bg-cyan/10 font-mono text-[10px] text-cyan"
           >
-            Climatology + ML
+            {t.forecast.climatologyPlusML}
           </Badge>
         </div>
       </CardHeader>
@@ -141,12 +141,12 @@ function OnsetOutlookCard({ onset }: { onset: OnsetOutlook | undefined }) {
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border/80 bg-background/40 p-6 text-center">
             <AlertTriangle className="size-6 text-muted-foreground mb-2 opacity-70" />
             <Badge variant="secondary" className="font-mono text-xs text-muted-foreground">
-              Temporarily unavailable
+              {t.forecast.temporarilyUnavailable}
             </Badge>
             <p className="mt-2 max-w-md text-xs text-muted-foreground">
               {onset?.error
-                ? `Onset model notice: ${onset.error}`
-                : "Onset probability model is temporarily offline or uninitialized for this spatial coordinate."}
+                ? `${t.forecast.modelServingNotice}: ${onset.error}`
+                : t.forecast.temporarilyUnavailableDesc}
             </p>
           </div>
         ) : (
@@ -155,28 +155,28 @@ function OnsetOutlookCard({ onset }: { onset: OnsetOutlook | undefined }) {
             {/* Probability Metric */}
             <div className="rounded-lg border border-border/60 bg-background/50 p-4">
               <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-                Onset Trigger Probability
+                {t.forecast.onsetProb}
               </div>
               <div className="mt-2 flex items-baseline gap-2">
                 <span className="font-display text-3xl font-semibold text-foreground">
                   {Math.round(onset.probability > 1 ? onset.probability : onset.probability * 100)}%
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  (Cutoff:{" "}
+                  ({t.forecast.cutoff}:{" "}
                   {onset.cutoff !== null && onset.cutoff !== undefined
                     ? `${Math.round(onset.cutoff > 1 ? onset.cutoff : onset.cutoff * 100)}%`
-                    : "N/A"}
+                    : t.common.n_a}
                   )
                 </span>
               </div>
               <div className="mt-3">
                 {onset.triggered ? (
                   <Badge className="gap-1 border-warning/40 bg-warning/15 text-warning font-mono text-[10px]">
-                    <AlertTriangle className="size-3" /> Onset Criteria Triggered
+                    <AlertTriangle className="size-3" /> {t.forecast.onsetTriggered}
                   </Badge>
                 ) : (
                   <Badge className="gap-1 border-success/40 bg-success/15 text-success font-mono text-[10px]">
-                    <CheckCircle2 className="size-3" /> Within Climatological Normal
+                    <CheckCircle2 className="size-3" /> {t.forecast.withinNormal}
                   </Badge>
                 )}
               </div>
@@ -185,16 +185,16 @@ function OnsetOutlookCard({ onset }: { onset: OnsetOutlook | undefined }) {
             {/* Normal Date Window */}
             <div className="rounded-lg border border-border/60 bg-background/50 p-4">
               <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-                Historical Normal Window
+                {t.forecast.historicalWindow}
               </div>
               <div className="mt-2 font-display text-xl font-medium text-foreground">
                 {onset.normal_date_window || "June 05 – June 10"}
               </div>
               <div className="mt-1 text-[11px] text-muted-foreground">
-                Climatological baseline reference (Monsoon onset occurs annually May–June).
+                {t.forecast.historicalWindowDesc}
               </div>
               <div className="mt-2 text-xs text-muted-foreground">
-                Status Tag:{" "}
+                {t.forecast.statusTag}:{" "}
                 <span className="font-mono text-signal">{onset.status_tag || "Standard"}</span>
               </div>
             </div>
@@ -202,7 +202,7 @@ function OnsetOutlookCard({ onset }: { onset: OnsetOutlook | undefined }) {
             {/* Drivers / Synoptic Context */}
             <div className="rounded-lg border border-border/60 bg-background/50 p-4">
               <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-                Dynamical Drivers
+                {t.forecast.dynamicalDrivers}
               </div>
               <div className="mt-2 text-xs leading-relaxed text-foreground/90">
                 {onset.driver_outlook ||
@@ -218,12 +218,11 @@ function OnsetOutlookCard({ onset }: { onset: OnsetOutlook | undefined }) {
 
 /**
  * 4-Week Horizon Grid
- * Per-target fault isolation: each target cell independently checks error / probability === null
  */
 function HorizonGrid({ horizons }: { horizons: Record<string, HorizonForecast> | undefined }) {
+  const { t } = useLanguage();
   const weeks = [1, 2, 3, 4];
 
-  // Helper to extract horizon by week number or key
   const getHorizon = (weekNum: number): HorizonForecast | null => {
     if (!horizons) return null;
     return (
@@ -244,16 +243,16 @@ function HorizonGrid({ horizons }: { horizons: Record<string, HorizonForecast> |
             </span>
             <div>
               <CardTitle className="font-display text-lg font-semibold text-foreground">
-                4-Week Probabilistic Monsoon Outlook
+                {t.forecast.title}
               </CardTitle>
               <p className="text-xs text-muted-foreground">
-                Multi-model ensemble bias-corrected against IMD 24-year climatology
+                {t.forecast.subtitle}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2 font-mono text-[11px] text-muted-foreground">
-            <span className="size-2 rounded-full bg-warning" /> Alert (&gt; Cutoff)
-            <span className="ml-2 size-2 rounded-full bg-success" /> Normal
+            <span className="size-2 rounded-full bg-warning" /> {t.forecast.alertStatus}
+            <span className="ml-2 size-2 rounded-full bg-success" /> {t.forecast.normalStatus}
           </div>
         </div>
       </CardHeader>
@@ -270,7 +269,7 @@ function HorizonGrid({ horizons }: { horizons: Record<string, HorizonForecast> |
                 {/* Week Header */}
                 <div className="mb-4 flex items-center justify-between border-b border-border/40 pb-2.5">
                   <div className="font-display text-base font-semibold text-foreground">
-                    Week {w}
+                    {t.forecast.week} {w}
                   </div>
                   <span className="font-mono text-[10px] text-muted-foreground">
                     {h?.horizon_label || `T+${(w - 1) * 7} to T+${w * 7}d`}
@@ -280,21 +279,21 @@ function HorizonGrid({ horizons }: { horizons: Record<string, HorizonForecast> |
                 {/* 3 Meteorological Targets */}
                 <div className="space-y-4">
                   <TargetCell
-                    title="Break Spell"
+                    title={t.forecast.breakSpell}
                     icon={<SunMedium className="size-3.5 text-warning" />}
                     target={h?.break_spell}
                     colorClass="bg-warning"
                     textColorClass="text-warning"
                   />
                   <TargetCell
-                    title="Active Monsoon"
+                    title={t.forecast.activeMonsoon}
                     icon={<Droplets className="size-3.5 text-cyan" />}
                     target={h?.active_monsoon}
                     colorClass="bg-cyan"
                     textColorClass="text-cyan"
                   />
                   <TargetCell
-                    title="Heavy Rain"
+                    title={t.forecast.heavyRain}
                     icon={<CloudLightning className="size-3.5 text-signal" />}
                     target={h?.heavy_rain}
                     colorClass="bg-signal"
@@ -311,8 +310,7 @@ function HorizonGrid({ horizons }: { horizons: Record<string, HorizonForecast> |
 }
 
 /**
- * Individual Target Cell with strict Fault Isolation
- * Never crashes when target.error is present or probability is null
+ * Individual Target Cell
  */
 function TargetCell({
   title,
@@ -327,6 +325,7 @@ function TargetCell({
   colorClass: string;
   textColorClass: string;
 }) {
+  const { t } = useLanguage();
   const isUnavailable = !target || target.error !== null || target.probability === null;
 
   return (
@@ -341,31 +340,29 @@ function TargetCell({
             variant="outline"
             className="border-border text-[9px] font-mono text-muted-foreground"
           >
-            Offline
+            {t.common.n_a}
           </Badge>
         ) : target.triggered ? (
           <Badge className="border-warning/40 bg-warning/15 font-mono text-[9px] text-warning">
-            ⚠️ ALERT
+            ⚠️ {t.forecast.triggered}
           </Badge>
         ) : (
           <Badge
             variant="outline"
             className="border-success/30 bg-success/10 font-mono text-[9px] text-success"
           >
-            ✔️ Normal
+            ✔️ {t.forecast.normal}
           </Badge>
         )}
       </div>
 
       {isUnavailable ? (
-        /* Isolated Muted Fallback */
         <div className="mt-2.5 rounded bg-background/50 px-2 py-1.5 text-center">
           <span className="font-mono text-[10px] text-muted-foreground">
-            Temporarily unavailable
+            {t.forecast.temporarilyUnavailable}
           </span>
         </div>
       ) : (
-        /* Valid Probability Bar */
         (() => {
           const prob = Math.round(
             target.probability! > 1 ? target.probability! : target.probability! * 100,
@@ -378,7 +375,7 @@ function TargetCell({
               <div className="flex items-center justify-between font-mono text-xs">
                 <span className={`font-semibold ${textColorClass}`}>{prob}%</span>
                 {cutoff !== null && (
-                  <span className="text-[10px] text-muted-foreground">Cutoff: {cutoff}%</span>
+                  <span className="text-[10px] text-muted-foreground">{t.forecast.cutoff}: {cutoff}%</span>
                 )}
               </div>
               <div className="relative h-2 w-full overflow-hidden rounded-full bg-border/60">
@@ -390,7 +387,7 @@ function TargetCell({
                   <div
                     className="absolute top-0 bottom-0 w-0.5 bg-foreground/60 z-10"
                     style={{ left: `${Math.min(100, Math.max(0, cutoff))}%` }}
-                    title={`Threshold cutoff: ${cutoff}%`}
+                    title={`${t.forecast.cutoff}: ${cutoff}%`}
                   />
                 )}
               </div>

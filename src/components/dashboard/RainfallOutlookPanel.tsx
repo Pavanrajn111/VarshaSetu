@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useDashboard, type LocationState } from "@/context/DashboardContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { apiClient, ApiError } from "@/lib/api-client";
 import type { OutlookResponse, DailyOutlookRecord } from "@/lib/types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -172,20 +173,24 @@ function CustomOutlookTooltip({ active, payload, label }: CustomTooltipProps) {
 
 export function RainfallOutlookPanel() {
   const { location, setLocation } = useDashboard();
+  const { t } = useLanguage();
   const [outlook, setOutlook] = useState<OutlookResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [isPilotOnlyError, setIsPilotOnlyError] = useState<boolean>(false);
 
-  const fetchOutlook = async (talukName: string) => {
+  const fetchOutlook = async (talukName: string, signal?: AbortSignal) => {
     setIsLoading(true);
     setError(null);
     setIsPilotOnlyError(false);
 
     try {
-      const data = await apiClient.getOutlook(talukName);
+      const data = await apiClient.getOutlook(talukName, signal);
       setOutlook(data);
-    } catch (err) {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") {
+        return; // ignore aborted request
+      }
       setOutlook(null);
       if (err instanceof ApiError && err.status === 404) {
         setIsPilotOnlyError(true);
@@ -203,15 +208,15 @@ export function RainfallOutlookPanel() {
   };
 
   useEffect(() => {
-    if (location?.taluk) {
-      fetchOutlook(location.taluk);
-    }
+    if (!location?.taluk) return;
+    const controller = new AbortController();
+    fetchOutlook(location.taluk, controller.signal);
+    return () => {
+      controller.abort();
+    };
   }, [location?.taluk]);
 
-  // Transform data for Recharts:
-  // Days 1-16: blended_line (solid cyan)
-  // Days 16-30: climatology_line (dashed purple/slate)
-  // Day 16 bridges both for visual continuity without a disjoint gap.
+  // Transform data for Recharts
   const chartData = useMemo(() => {
     if (!outlook?.daily_outlook) return [];
 
@@ -224,9 +229,7 @@ export function RainfallOutlookPanel() {
         ...record,
         dayIndex: dayNum,
         shortDate: record.forecast_date.slice(5),
-        // Blended line has values on days 1-16
         blendedLineMm: isBlended ? record.combined_mm : null,
-        // Climatology line has values on days 16-30 (including day 16 to connect smoothly)
         climatologyLineMm: !isBlended || isBridgeDay ? record.combined_mm : null,
       };
     });
@@ -238,22 +241,22 @@ export function RainfallOutlookPanel() {
 
     const weeks = [
       {
-        label: "Week 1 (Days 1–7)",
+        label: `${t.forecast.week} 1 (Days 1–7)`,
         slice: outlook.daily_outlook.slice(0, 7),
         type: "Blended Live",
       },
       {
-        label: "Week 2 (Days 8–14)",
+        label: `${t.forecast.week} 2 (Days 8–14)`,
         slice: outlook.daily_outlook.slice(7, 14),
         type: "Blended Live",
       },
       {
-        label: "Week 3 (Days 15–21)",
+        label: `${t.forecast.week} 3 (Days 15–21)`,
         slice: outlook.daily_outlook.slice(14, 21),
         type: "Transition",
       },
       {
-        label: "Week 4 (Days 22–30)",
+        label: `${t.forecast.week} 4 (Days 22–30)`,
         slice: outlook.daily_outlook.slice(21, 30),
         type: "Climatology",
       },
@@ -264,12 +267,12 @@ export function RainfallOutlookPanel() {
       const lowCount = w.slice.filter((d) => d.source_agreement === "LOW").length;
       const agreementSummary =
         w.type === "Climatology"
-          ? "Baseline Normal"
+          ? t.forecast.normalStatus
           : lowCount > 2
-            ? "Low Agreement"
+            ? t.outlook.lowAgreement
             : lowCount > 0
-              ? "Moderate Agreement"
-              : "High Agreement";
+              ? t.outlook.modAgreement
+              : t.outlook.highAgreement;
 
       return {
         label: w.label,
@@ -278,7 +281,7 @@ export function RainfallOutlookPanel() {
         agreementSummary,
       };
     });
-  }, [outlook]);
+  }, [outlook, t]);
 
   return (
     <Card className="border border-border/70 bg-card/75 shadow-xl backdrop-blur-xl transition-all">
@@ -290,20 +293,17 @@ export function RainfallOutlookPanel() {
                 <CloudRain className="size-4" />
               </div>
               <CardTitle className="font-display text-lg font-semibold tracking-tight text-foreground sm:text-xl">
-                7–30 Day Rainfall Outlook (mm)
+                {t.outlook.title}
               </CardTitle>
               <Badge
                 variant="outline"
                 className="border-signal/40 bg-signal/10 font-mono text-[10px] text-signal uppercase"
               >
-                Quantitative Amount
+                {t.outlook.rainfallMm}
               </Badge>
             </div>
             <p className="text-xs text-muted-foreground sm:text-sm">
-              Complementary rainfall volume outlook — 70/30 multi-model blend (Days 1–16) and
-              climatology baseline (Days 17–30). Answers{" "}
-              <em>&quot;how much rain is expected?&quot;</em> alongside the 13-target event
-              probability grid.
+              {t.outlook.subtitle}
             </p>
           </div>
 
@@ -316,7 +316,7 @@ export function RainfallOutlookPanel() {
               className="h-8 border-border/80 bg-glass/60 text-xs font-mono"
             >
               <RefreshCw className={`mr-1.5 size-3 ${isLoading ? "animate-spin" : ""}`} />
-              Refresh
+              {t.common.refresh}
             </Button>
           </div>
         </div>
@@ -326,7 +326,7 @@ export function RainfallOutlookPanel() {
           <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3 pt-2 border-t border-border/40 font-mono text-xs">
             <div className="rounded-md border border-border/50 bg-background/50 p-2.5">
               <span className="text-[11px] text-muted-foreground block font-sans">
-                30-Day Cumulative
+                {t.outlook.cumulative30d}
               </span>
               <span className="text-sm font-bold text-foreground sm:text-base">
                 {outlook.summary.total_expected_precip_mm.toFixed(1)}{" "}
@@ -335,7 +335,7 @@ export function RainfallOutlookPanel() {
             </div>
             <div className="rounded-md border border-border/50 bg-background/50 p-2.5">
               <span className="text-[11px] text-muted-foreground block font-sans">
-                Daily Normal Mean
+                {t.outlook.normalRainfall}
               </span>
               <span className="text-sm font-bold text-foreground sm:text-base">
                 {outlook.summary.mean_daily_precip_mm.toFixed(1)}{" "}
@@ -344,20 +344,20 @@ export function RainfallOutlookPanel() {
             </div>
             <div className="rounded-md border border-border/50 bg-background/50 p-2.5">
               <span className="text-[11px] text-muted-foreground block font-sans">
-                Days 1–16 (Blended)
+                Days 1–16 ({t.outlook.meanForecast})
               </span>
               <span className="text-sm font-semibold text-signal sm:text-base flex items-center gap-1.5">
                 <span className="inline-block size-2 rounded-full bg-signal" />
-                {outlook.summary.blended_days} Days Live
+                {outlook.summary.blended_days} {t.common.days}
               </span>
             </div>
             <div className="rounded-md border border-border/50 bg-background/50 p-2.5">
               <span className="text-[11px] text-muted-foreground block font-sans">
-                Days 17–30 (Climatology)
+                Days 17–30 ({t.forecast.climatologyPlusML})
               </span>
               <span className="text-sm font-semibold text-purple-400 sm:text-base flex items-center gap-1.5">
                 <span className="inline-block size-2 rounded-full bg-purple-400" />
-                {outlook.summary.climatology_days} Days Baseline
+                {outlook.summary.climatology_days} {t.common.days}
               </span>
             </div>
           </div>

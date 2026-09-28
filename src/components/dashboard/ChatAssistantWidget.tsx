@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDashboard } from "@/context/DashboardContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { sendChatMessage } from "@/lib/chat-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircleMore, X, Send, Bot, User, Loader2, Sparkles, HelpCircle } from "lucide-react";
+import { X, Send, Bot, User, Loader2, Sparkles } from "lucide-react";
 
 interface ChatMessage {
   id: string;
@@ -13,21 +14,16 @@ interface ChatMessage {
   timestamp: string;
 }
 
-const SUGGESTED_PROMPTS = [
-  "Will it rain in the next 7 days?",
-  "Is it safe to apply fertilizer today?",
-  "How do soil buffer days affect my irrigation?",
-];
-
 export function ChatAssistantWidget() {
   const { location, forecast, cropType, cropStage } = useDashboard();
+  const { t } = useLanguage();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       id: "welcome",
       sender: "assistant",
-      text: "Namaskara! I am your Varsha Setu agricultural intelligence assistant. Ask me anything about rainfall outlook, sowing windows, or soil moisture for your taluk.",
+      text: t.assistant.welcomeMsg,
       timestamp: "Just now",
     },
   ]);
@@ -36,11 +32,34 @@ export function ChatAssistantWidget() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Sync initial welcome message when language changes
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0]?.id === "welcome") {
+        return [
+          {
+            id: "welcome",
+            sender: "assistant",
+            text: t.assistant.welcomeMsg,
+            timestamp: "Just now",
+          },
+        ];
+      }
+      return prev;
+    });
+  }, [t.assistant.welcomeMsg]);
+
   useEffect(() => {
     if (isOpen) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isOpen]);
+
+  const suggestedPrompts = [
+    t.assistant.suggested1,
+    t.assistant.suggested2,
+    t.assistant.suggested3,
+  ];
 
   const handleSendMessage = async (textToSend?: string) => {
     const query = (textToSend || inputText).trim();
@@ -79,7 +98,7 @@ export function ChatAssistantWidget() {
         {
           id: `err-${Date.now()}`,
           sender: "assistant",
-          text: "Sorry, I encountered an error connecting to the advisory assistant.",
+          text: t.common.error,
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
       ]);
@@ -98,7 +117,7 @@ export function ChatAssistantWidget() {
             onClick={() => setIsOpen(true)}
             size="lg"
             className="group relative h-14 w-14 rounded-full bg-signal p-0 text-signal-foreground shadow-lg shadow-signal/30 hover:scale-105 hover:bg-signal/90 transition-all duration-300"
-            aria-label="Open AI Assistant"
+            aria-label={t.assistant.title}
           >
             <Bot className="size-7 transition-transform group-hover:rotate-6" />
             <span className="absolute -top-1 -right-1 flex h-4 w-4">
@@ -120,16 +139,16 @@ export function ChatAssistantWidget() {
               </span>
               <div>
                 <div className="flex items-center gap-1.5 font-display text-sm font-semibold text-foreground">
-                  <span>Agro-Assistant</span>
+                  <span>{t.assistant.title}</span>
                   <Badge
                     variant="outline"
                     className="border-signal/30 bg-signal/10 px-1.5 py-0 text-[9px] font-mono text-signal"
                   >
-                    Scaffold
+                    AI
                   </Badge>
                 </div>
                 <div className="text-[10px] text-muted-foreground">
-                  Context: {location.taluk || "Karnataka"} · {cropType}
+                  {location.taluk || "Karnataka"} · {cropType}
                 </div>
               </div>
             </div>
@@ -201,10 +220,10 @@ export function ChatAssistantWidget() {
           {/* Quick Prompts */}
           <div className="border-t border-border/40 bg-background/40 px-3 py-2">
             <div className="flex items-center gap-1 mb-1.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
-              <Sparkles className="size-3 text-signal" /> Suggested questions
+              <Sparkles className="size-3 text-signal" /> {t.assistant.suggestedQueries}
             </div>
             <div className="flex flex-wrap gap-1.5">
-              {SUGGESTED_PROMPTS.map((prompt, i) => (
+              {suggestedPrompts.map((prompt, i) => (
                 <button
                   key={i}
                   type="button"
@@ -227,7 +246,7 @@ export function ChatAssistantWidget() {
           >
             <Input
               type="text"
-              placeholder="Ask advisory question..."
+              placeholder={t.assistant.placeholder}
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               disabled={isTyping}
