@@ -2,6 +2,7 @@ import { CloudRain, User, LogOut, ChevronDown, Sliders, MapPin } from "lucide-re
 import { type ReactNode, useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -20,6 +21,7 @@ interface AppHeaderProps {
 export function AppHeader({ children, showProgress = true }: AppHeaderProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const { user, isAuthenticated, logout } = useAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!showProgress) return;
@@ -58,13 +60,13 @@ export function AppHeader({ children, showProgress = true }: AppHeaderProps) {
                 <CloudRain className="size-5 text-signal" />
               </span>
               <span className="font-display text-lg font-semibold tracking-tight text-foreground">
-                Varsha Setu
+                {t.header.title}
               </span>
             </Link>
 
             <div className="hidden items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground md:flex">
               <span className="size-1.5 animate-pulse rounded-full bg-success" />
-              Karnataka network live
+              {t.header.networkLive}
             </div>
           </div>
 

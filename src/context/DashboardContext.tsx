@@ -10,6 +10,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ForecastResponse, SupportedLanguage } from "@/lib/types";
 import { apiClient, ApiError } from "@/lib/api-client";
 import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 export interface LocationState {
   lat: number;
@@ -21,9 +22,13 @@ export interface LocationState {
 }
 
 interface DashboardContextType {
-  // Location
+  // Global Authoritative Location
   location: LocationState;
   setLocation: (loc: LocationState) => void;
+  hasOnboardedLocation: boolean;
+  setHasOnboardedLocation: (val: boolean) => void;
+  isLocationSetupOpen: boolean;
+  setIsLocationSetupOpen: (open: boolean) => void;
 
   // Language
   language: SupportedLanguage;
@@ -50,6 +55,9 @@ interface DashboardContextType {
   loadAdvisory: () => Promise<void>;
 }
 
+export const LOCATION_STORAGE_KEY = "varsha_selected_location";
+export const ONBOARDED_LOCATION_STORAGE_KEY = "varsha_location_onboarded";
+
 const DEFAULT_LOCATION: LocationState = {
   lat: 14.7336,
   lon: 74.7788,
@@ -59,11 +67,42 @@ const DEFAULT_LOCATION: LocationState = {
   scaleTag: "Administrative Taluk Node",
 };
 
+function getInitialLocation(): LocationState {
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem(LOCATION_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.lat && parsed.lon && parsed.district && parsed.taluk) {
+          return parsed;
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
+  return DEFAULT_LOCATION;
+}
+
+function getInitialOnboarded(): boolean {
+  if (typeof window !== "undefined") {
+    try {
+      return localStorage.getItem(ONBOARDED_LOCATION_STORAGE_KEY) === "true";
+    } catch {
+      return false;
+    }
+  }
+  return false;
+}
+
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
-  const [location, setLocationState] = useState<LocationState>(DEFAULT_LOCATION);
-  const [language, setLanguageState] = useState<SupportedLanguage>("en");
+  const [location, setLocationState] = useState<LocationState>(getInitialLocation);
+  const [hasOnboardedLocation, setHasOnboardedLocationState] = useState<boolean>(getInitialOnboarded);
+  const [isLocationSetupOpen, setIsLocationSetupOpen] = useState<boolean>(false);
+
+  const { language, setLanguage } = useLanguage();
   const [cropType, setCropType] = useState<string>("Finger Millet (Ragi)");
   const [cropStage, setCropStage] = useState<string>("Sowing & Germination");
 
@@ -75,36 +114,55 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
-  // Pre-fill user default location & language when authenticated
+  const setHasOnboardedLocation = useCallback((val: boolean) => {
+    setHasOnboardedLocationState(val);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(ONBOARDED_LOCATION_STORAGE_KEY, String(val));
+      } catch {
+        // ignore
+      }
+    }
+  }, []);
+
+  // Pre-fill user default location when authenticated
   useEffect(() => {
     if (!user) return;
-
-    if (user.preferred_language && user.preferred_language !== language) {
-      setLanguageState(user.preferred_language);
-    }
 
     if (user.default_taluk && user.default_taluk !== location.taluk) {
       apiClient
         .resolveLocation(user.default_taluk)
         .then((res) => {
           if (res.selected) {
-            setLocationState({
+            const loc: LocationState = {
               lat: res.selected.lat,
               lon: res.selected.lon,
               district: res.selected.district,
               taluk: res.selected.taluk,
               locationName: res.selected.label,
               scaleTag: res.scale_tag,
-            });
+            };
+            setLocationState(loc);
+            setHasOnboardedLocationState(true);
+            if (typeof window !== "undefined") {
+              localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(loc));
+              localStorage.setItem(ONBOARDED_LOCATION_STORAGE_KEY, "true");
+            }
           }
         })
         .catch(() => {
-          setLocationState((prev) => ({
-            ...prev,
-            taluk: user.default_taluk || prev.taluk,
-            district: user.default_district || prev.district,
+          const loc: LocationState = {
+            ...location,
+            taluk: user.default_taluk || location.taluk,
+            district: user.default_district || location.district,
             locationName: `${user.default_taluk} Taluk HQ`,
-          }));
+          };
+          setLocationState(loc);
+          setHasOnboardedLocationState(true);
+          if (typeof window !== "undefined") {
+            localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(loc));
+            localStorage.setItem(ONBOARDED_LOCATION_STORAGE_KEY, "true");
+          }
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -133,7 +191,6 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       location.taluk,
       cropType,
       cropStage,
-      language,
     ],
     queryFn: async ({ signal }) => {
       return apiClient.computeForecast(
@@ -146,14 +203,14 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
           scale_tag: location.scaleTag,
           crop_type: cropType,
           crop_stage: cropStage,
-          language: language,
+          language: "en",
         },
         signal,
       );
     },
     staleTime: 1000 * 60 * 30, // 30 minutes in-memory freshness
     gcTime: 1000 * 60 * 60 * 24, // 24 hours persistent cache retention
-    placeholderData: (previousData) => previousData, // Instant smooth rendering without layout jumps
+    placeholderData: (previousData) => previousData,
     retry: (failureCount, error) => {
       if (error instanceof ApiError && error.isRateLimited()) {
         const waitSec = error.retryAfterSeconds || 5;
@@ -184,13 +241,19 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   // Load forecast on-demand / manual refresh
   const loadForecast = useCallback(
     async (overrideLoc?: LocationState, overrideLang?: SupportedLanguage) => {
-      if (overrideLoc) setLocationState(overrideLoc);
-      if (overrideLang) setLanguageState(overrideLang);
+      if (overrideLoc) {
+        setLocationState(overrideLoc);
+        if (typeof window !== "undefined") {
+          localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(overrideLoc));
+          localStorage.setItem(ONBOARDED_LOCATION_STORAGE_KEY, "true");
+        }
+      }
+      if (overrideLang) setLanguage(overrideLang);
       await queryClient.invalidateQueries({
         queryKey: ["forecast"],
       });
     },
-    [queryClient],
+    [queryClient, setLanguage],
   );
 
   // Load agronomic advisory on demand
@@ -229,13 +292,14 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const setLocation = useCallback(
     (newLoc: LocationState) => {
       setLocationState(newLoc);
-    },
-    [],
-  );
-
-  const setLanguage = useCallback(
-    (newLang: SupportedLanguage) => {
-      setLanguageState(newLang);
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(newLoc));
+          localStorage.setItem(ONBOARDED_LOCATION_STORAGE_KEY, "true");
+        } catch {
+          // ignore
+        }
+      }
     },
     [],
   );
@@ -245,6 +309,10 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       value={{
         location,
         setLocation,
+        hasOnboardedLocation,
+        setHasOnboardedLocation,
+        isLocationSetupOpen,
+        setIsLocationSetupOpen,
         language,
         setLanguage,
         cropType,
@@ -275,4 +343,3 @@ export function useDashboard() {
   }
   return context;
 }
-

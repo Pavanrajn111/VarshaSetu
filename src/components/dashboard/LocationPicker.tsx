@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDashboard, type LocationState } from "@/context/DashboardContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { apiClient } from "@/lib/api-client";
 import type { CandidateLocation, DistrictTaluks } from "@/lib/types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -25,6 +26,7 @@ let cachedDistricts: DistrictTaluks[] | null = null;
 
 export function LocationPicker() {
   const { location, setLocation } = useDashboard();
+  const { t } = useLanguage();
   const { isAuthenticated, user, updatePreferences } = useAuth();
   const [isSavingDefault, setIsSavingDefault] = useState(false);
 
@@ -85,9 +87,9 @@ export function LocationPicker() {
         default_taluk: location.taluk,
         default_district: location.district,
       });
-      toast.success(`Saved ${location.taluk} as your default location.`);
+      toast.success(`${t.header.savedAsDefault} (${location.taluk})`);
     } catch {
-      toast.error("Failed to save default location.");
+      toast.error(t.common.error);
     } finally {
       setIsSavingDefault(false);
     }
@@ -145,7 +147,6 @@ export function LocationPicker() {
     }
   };
 
-
   // Village search handler
   const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -178,19 +179,15 @@ export function LocationPicker() {
         if (res.candidates && res.candidates.length > 0) {
           setCandidates(res.candidates);
         } else {
-          setSearchError(
-            `Multiple potential matches found for "${query}", but no candidates could be parsed.`,
-          );
+          setSearchError(t.location.noResults);
         }
       }
       // Case C: 404 / Not found
       else {
-        setSearchError(
-          `Could not locate "${query}". Please check the spelling or switch to Administrative mode to choose by district.`,
-        );
+        setSearchError(t.location.noResults);
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Error resolving village coordinates.";
+      const msg = err instanceof Error ? err.message : t.location.noResults;
       setSearchError(msg);
     } finally {
       setIsSearching(false);
@@ -219,10 +216,10 @@ export function LocationPicker() {
             </span>
             <div>
               <CardTitle className="font-display text-lg font-semibold text-foreground">
-                Target Location Resolution
+                {t.location.title}
               </CardTitle>
               <p className="text-xs text-muted-foreground">
-                3-tier offline/OSM spatial node targeting for Karnataka
+                {t.location.subtitle}
               </p>
             </div>
           </div>
@@ -239,7 +236,7 @@ export function LocationPicker() {
               }`}
             >
               <Building2 className="size-3.5" />
-              Administrative
+              {t.location.adminHierarchy}
             </button>
             <button
               type="button"
@@ -251,7 +248,7 @@ export function LocationPicker() {
               }`}
             >
               <Search className="size-3.5" />
-              Search Village
+              {t.location.searchVillage}
             </button>
           </div>
         </div>
@@ -263,12 +260,12 @@ export function LocationPicker() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1.5 block font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                District (31 Karnataka Districts)
+                {t.location.selectDistrict}
               </label>
               {isLoadingTaluks ? (
                 <div className="flex h-10 items-center gap-2 rounded-md border border-border bg-background/50 px-3 text-sm text-muted-foreground">
                   <Loader2 className="size-4 animate-spin text-signal" />
-                  Loading districts...
+                  {t.common.loading}
                 </div>
               ) : (
                 <select
@@ -282,7 +279,7 @@ export function LocationPicker() {
                       value={d.district}
                       className="bg-popover text-foreground"
                     >
-                      {d.district} ({d.taluks.length} taluks)
+                      {d.district} ({d.taluks.length})
                     </option>
                   ))}
                 </select>
@@ -291,7 +288,7 @@ export function LocationPicker() {
 
             <div>
               <label className="mb-1.5 block font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                Taluk Headquarters
+                {t.location.selectTaluk}
               </label>
               <select
                 value={selectedTaluk}
@@ -299,13 +296,13 @@ export function LocationPicker() {
                 disabled={availableTaluks.length === 0}
                 className="w-full rounded-md border border-border/80 bg-background/80 px-3 py-2 text-sm text-foreground focus:border-signal focus:outline-none focus:ring-1 focus:ring-signal disabled:opacity-50"
               >
-                {availableTaluks.map((t) => (
+                {availableTaluks.map((tItem) => (
                   <option
-                    key={t.taluk_name}
-                    value={t.taluk_name}
+                    key={tItem.taluk_name}
+                    value={tItem.taluk_name}
                     className="bg-popover text-foreground"
                   >
-                    {t.taluk_name} ({t.lat.toFixed(3)}°N, {t.lon.toFixed(3)}°E)
+                    {tItem.taluk_name} ({tItem.lat.toFixed(3)}°N, {tItem.lon.toFixed(3)}°E)
                   </option>
                 ))}
               </select>
@@ -319,7 +316,7 @@ export function LocationPicker() {
                 <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder="Enter village, hobli, or town name (e.g. Yellapur, Banavasi, Hunsur)..."
+                  placeholder={t.location.searchPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="border-border/80 bg-background/80 pl-9 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-signal"
@@ -333,10 +330,10 @@ export function LocationPicker() {
                 {isSearching ? (
                   <>
                     <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                    Resolving
+                    {t.location.searching}
                   </>
                 ) : (
-                  "Resolve"
+                  t.common.refresh
                 )}
               </Button>
             </form>
@@ -355,12 +352,11 @@ export function LocationPicker() {
                 <div className="mb-3 flex items-center gap-2 text-warning">
                   <Compass className="size-4" />
                   <span className="font-mono text-xs font-semibold uppercase tracking-wider">
-                    Disambiguation Required — {candidates.length} Locations Found
+                    {candidates.length} {t.location.currentActiveTarget}
                   </span>
                 </div>
                 <p className="mb-3 text-xs text-muted-foreground">
-                  Multiple revenue villages or taluks match your query. Select the exact location
-                  below:
+                  {t.location.subtitle}
                 </p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {candidates.map((c, idx) => {
@@ -381,7 +377,7 @@ export function LocationPicker() {
                         <div>
                           <div className="font-semibold text-foreground">{c.label || c.name}</div>
                           <div className="mt-0.5 text-[11px] text-muted-foreground">
-                            Taluk: <span className="text-foreground">{c.taluk}</span> · District:{" "}
+                            {t.location.talukLabel}: <span className="text-foreground">{c.taluk}</span> · {t.location.districtLabel}:{" "}
                             <span className="text-foreground">{c.district}</span>
                           </div>
                           <div className="mt-1 font-mono text-[10px] text-signal">
@@ -409,7 +405,7 @@ export function LocationPicker() {
                 {location.locationName || `${location.taluk} Taluk HQ`}
               </span>
               <span className="text-muted-foreground text-xs ml-2">
-                ({location.district} District)
+                ({location.district} {t.location.districtLabel})
               </span>
             </div>
           </div>
@@ -438,12 +434,12 @@ export function LocationPicker() {
                 {isCurrentDefaultLocation ? (
                   <>
                     <CheckCircle2 className="mr-1 size-3 text-emerald-400" />
-                    Default Location
+                    {t.location.savedDefault}
                   </>
                 ) : (
                   <>
                     <Bookmark className="mr-1 size-3" />
-                    Save as Default
+                    {t.location.saveDefault}
                   </>
                 )}
               </Button>
