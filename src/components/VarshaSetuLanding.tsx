@@ -860,7 +860,7 @@ export function VarshaSetuLanding() {
               variants={fadeLeft}
               transition={{ type: "spring", stiffness: 70, damping: 18 }}
             >
-              <AnimatedMetric value={18} label="Districts covered, statewide rollout in progress" />
+              <AnimatedMetric value={31} label="Districts covered, statewide rollout in progress" />
             </motion.div>
             <motion.div
               className="impact-metric"
