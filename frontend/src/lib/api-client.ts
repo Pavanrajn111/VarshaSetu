@@ -22,9 +22,43 @@ import type {
 
 export const TOKEN_STORAGE_KEY = "varsha_setu_token";
 
-const API_BASE_URL = (
-  (import.meta.env["VITE_API_BASE_URL"] as string | undefined) || "http://localhost:8000"
-).replace(/\/+$/, "");
+const DEFAULT_DEV_API_URL = "http://localhost:8000";
+const DEFAULT_PROD_API_URL = "https://varsha-setu-backend.onrender.com";
+
+const resolveApiBaseUrl = (): string => {
+  const envUrl = (import.meta.env["VITE_API_BASE_URL"] as string | undefined)?.trim();
+
+  // If running in browser on a production domain (e.g. vercel.app), ensure requests never go to localhost
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    const isLocalhost =
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "0.0.0.0";
+
+    if (!isLocalhost) {
+      if (!envUrl || envUrl.includes("localhost") || envUrl.includes("127.0.0.1")) {
+        return DEFAULT_PROD_API_URL;
+      }
+      return envUrl.replace(/\/+$/, "");
+    }
+  }
+
+  // If envUrl is explicitly provided (e.g. in development or custom configuration)
+  if (envUrl) {
+    return envUrl.replace(/\/+$/, "");
+  }
+
+  // Development fallback for local work
+  if (import.meta.env.DEV) {
+    return DEFAULT_DEV_API_URL;
+  }
+
+  // Safe fallback for production builds
+  return DEFAULT_PROD_API_URL;
+};
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 if (import.meta.env.DEV) {
   console.log("[Varsha Setu] Active API Base URL:", API_BASE_URL);
