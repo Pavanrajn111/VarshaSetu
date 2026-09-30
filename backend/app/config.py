@@ -26,26 +26,39 @@ ADVISORY_AUDIO_API_KEY = os.getenv("ADVISORY_AUDIO_API_KEY", "")
 
 # Config-driven CORS origins
 raw_cors = os.getenv("CORS_ORIGINS")
+parsed_env_origins = []
+
 if raw_cors:
     import json
+    raw_str = raw_cors.strip()
     try:
-        CORS_ORIGINS = json.loads(raw_cors)
+        loaded = json.loads(raw_str)
+        if isinstance(loaded, list):
+            for item in loaded:
+                if isinstance(item, str) and item.strip():
+                    parsed_env_origins.append(item.strip().rstrip("/"))
+        elif isinstance(loaded, str):
+            for item in loaded.split(","):
+                if item.strip():
+                    parsed_env_origins.append(item.strip().rstrip("/"))
     except Exception:
-        CORS_ORIGINS = [orig.strip() for orig in raw_cors.split(",") if orig.strip()]
-else:
-    if APP_ENV == "production":
-        raise ValueError(
-            "CRITICAL: CORS_ORIGINS must be explicitly configured when APP_ENV=production. "
-            "Wildcards or unconfigured defaults are strictly disallowed in production."
-        )
-    CORS_ORIGINS = [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:8080",
-        "http://127.0.0.1:8080",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000"
-    ]
+        for item in raw_str.split(","):
+            if item.strip():
+                parsed_env_origins.append(item.strip().rstrip("/"))
+
+# Effective allowed origins including production Vercel URL and localhost development ports
+DEFAULT_CORS_ORIGINS = [
+    "https://varsha-setu-six.vercel.app",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+]
+
+# Merge and deduplicate while preserving order
+CORS_ORIGINS = list(dict.fromkeys(DEFAULT_CORS_ORIGINS + parsed_env_origins))
 
 if APP_ENV == "production" and "*" in CORS_ORIGINS:
     raise ValueError("CRITICAL: Wildcard CORS origin '*' is strictly prohibited in production mode.")
