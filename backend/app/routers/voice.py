@@ -9,7 +9,7 @@ from app.services.security import verify_audio_api_key
 router = APIRouter(prefix="/advisory", tags=["Voice Synthesis"])
 
 @router.post("/audio")
-@limiter.limit("60/minute")
+@limiter.limit("10/minute")
 async def stream_advisory_audio(
     request: Request,
     req: VoiceRequest,

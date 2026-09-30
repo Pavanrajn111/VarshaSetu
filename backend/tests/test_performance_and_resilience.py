@@ -12,8 +12,11 @@ from app.services.artifact_loader import load_artifacts_once
 def setup_app():
     load_artifacts_once()
 
+from app.limiter import limiter
+
 @pytest.fixture
 def client():
+    limiter.reset()
     with TestClient(app) as c:
         yield c
 

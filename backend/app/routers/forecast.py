@@ -27,7 +27,7 @@ _forecast_cache: Dict[str, Tuple[ForecastResponse, float]] = {}
 _FORECAST_CACHE_TTL = 300.0  # 5 minutes in-memory TTL
 
 @router.post("", response_model=ForecastResponse)
-@limiter.limit("60/minute")
+@limiter.limit("20/minute")
 async def compute_forecast(request: Request, req: ForecastRequest, response: Response) -> ForecastResponse:
     """
     Computes full 13-target probabilistic monsoon outlook across 4 horizons
@@ -57,9 +57,16 @@ async def compute_forecast(request: Request, req: ForecastRequest, response: Res
     lang_val = req.language.value if req.language else "English"
 
     # Fast in-memory cache lookup (<0.1ms)
+    models_clean = True
+    try:
+        if bundle.models.get("target_break_w2", {}).get("xgb").__class__.__name__ == "BrokenModel":
+            models_clean = False
+    except Exception:
+        pass
+
     cache_key = f"{round(req.lat, 3)}_{round(req.lon, 3)}_{taluk_name}_{crop_val}_{stage_val}_{lang_val}"
     now_ts = time.time()
-    if cache_key in _forecast_cache:
+    if models_clean and cache_key in _forecast_cache:
         cached_resp, expiry = _forecast_cache[cache_key]
         if now_ts < expiry:
             response.headers["Server-Timing"] = "cache;dur=0.1, total;dur=0.1"

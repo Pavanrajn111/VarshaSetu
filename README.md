@@ -15,7 +15,7 @@ Varsha Setu is a sub-seasonal to seasonal (S2S) monsoon forecasting and agronomi
   - Trilingual advisory generation (English `en`, Kannada `kn`, Hindi `hi`) with rate-limited text-to-speech voice synthesis.
   - SQLite databases (`outlook_log.db`, `users.db`) operating with Write-Ahead Logging (`PRAGMA journal_mode=WAL;`).
 
-- **Frontend Application (`src/`)**:
+- **Frontend Application (`frontend/`)**:
   - Built with TanStack Start, React 19, TypeScript, Tailwind CSS, and Framer Motion.
   - Authoritative dashboard at `/dashboard` with per-target fault isolation and dynamic health monitoring.
   - Location picker with 3-tier spatial resolution (Administrative taluk picker, verified village search, and Nominatim fallback).
@@ -47,13 +47,27 @@ Interactive Swagger API Documentation: [http://localhost:8000/docs](http://local
 ### 2. Frontend Setup (TanStack Start / Vite)
 
 ```bash
-# In the root repository:
+cd frontend
 npm install
 cp .env.example .env
 npm run dev
 ```
 
 The application runs by default on [http://localhost:8080](http://localhost:8080) (or Vite assigned port).
+
+---
+
+## Deployment Configuration
+
+- **Frontend (Vercel)**:
+  - **Important**: In the Vercel project settings, the **Root Directory** must be set to `frontend`.
+  - Build Command: `vite build` (configured in `frontend/vercel.json` with `NITRO_PRESET: "vercel"`).
+  - Environment Variables:
+    - `VITE_API_BASE_URL`: URL of the deployed FastAPI backend (e.g. `https://varsha-setu-backend.onrender.com`).
+
+- **Backend (Render)**:
+  - In Render project settings, the **Root Directory** is `backend`.
+  - Configured via `backend/render.yaml` with `dockerfilePath: Dockerfile` and `dockerContext: .`.
 
 ---
 
@@ -96,10 +110,12 @@ ENABLE_SCHEDULER=true
 
 - **Backend Test Suite**:
   ```bash
-  python -m pytest backend/tests -v
+  cd backend
+  python -m pytest tests -v
   ```
 - **Frontend Linter & Type Check**:
   ```bash
+  cd frontend
   npm run lint
   npm run build
   ```
