@@ -57,34 +57,46 @@ def fetch_single_model(
         logger.warning("Error fetching model '%s' for coords (%.3f, %.3f): %s", model_name, lat, lon, e)
         return {}
 
+import concurrent.futures
+
 def fetch_multi_source_forecast(
     lat: float,
     lon: float,
-    timeout_sec: float = 8.0
+    timeout_sec: float = 3.5
 ) -> Dict[str, Dict[str, Optional[float]]]:
     """
-    Fetches 16-day daily forecasts from 3 independent agencies:
+    Fetches 16-day daily forecasts concurrently from 3 independent agencies:
       1. NOAA GFS (gfs_seamless)
       2. DWD ICON (icon_seamless)
       3. ECMWF IFS (ecmwf_ifs04 / ifs025)
 
+    Fetches all 3 models in parallel for sub-2s latency.
     Continues if any source fails and logs the failure gracefully.
     Returns: { "YYYY-MM-DD": { "gfs_mm": val, "icon_mm": val, "ecmwf_mm": val } }
     """
     daily_results: Dict[str, Dict[str, Optional[float]]] = {}
 
-    for model_param, field_key, agency_name in MODEL_SOURCES:
-        model_data = fetch_single_model(lat, lon, model_param, timeout_sec=timeout_sec)
-        if not model_data:
-            logger.warning("Source [%s - %s] returned no data for (%.3f, %.3f). Continuing with remaining sources.", field_key, agency_name, lat, lon)
+    def _fetch_task(item):
+        m_param, f_key, a_name = item
+        data = fetch_single_model(lat, lon, m_param, timeout_sec=timeout_sec)
+        return f_key, a_name, data
 
-        for date_str, precip in model_data.items():
-            if date_str not in daily_results:
-                daily_results[date_str] = {"gfs_mm": None, "icon_mm": None, "ecmwf_mm": None}
-            daily_results[date_str][field_key] = precip
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        futures = [executor.submit(_fetch_task, item) for item in MODEL_SOURCES]
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                field_key, agency_name, model_data = future.result()
+                if not model_data:
+                    logger.warning("Source [%s - %s] returned no data for (%.3f, %.3f). Continuing.", field_key, agency_name, lat, lon)
+                for date_str, precip in model_data.items():
+                    if date_str not in daily_results:
+                        daily_results[date_str] = {"gfs_mm": None, "icon_mm": None, "ecmwf_mm": None}
+                    daily_results[date_str][field_key] = precip
+            except Exception as e:
+                logger.warning("Parallel model fetch error: %s", e)
 
     logger.info(
-        "Multi-source fetch completed for (%.3f, %.3f): %d forecast days compiled across available sources.",
+        "Parallel multi-source fetch completed for (%.3f, %.3f): %d forecast days compiled across available sources.",
         lat, lon, len(daily_results)
     )
     return daily_results

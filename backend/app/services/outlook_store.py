@@ -124,6 +124,7 @@ def get_latest_outlook(
         return []
 
     clean_name = taluk_name.strip()
+    init_db(db_path)
 
     with get_db_connection(db_path) as conn:
         conn.row_factory = sqlite3.Row

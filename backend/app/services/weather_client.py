@@ -184,7 +184,7 @@ def fetch_recent_precipitation(
     is_fallback = False
     p_s = None
     try:
-        resp = requests.get(url, timeout=1.8)
+        resp = requests.get(url, timeout=1.2)
         if resp.status_code == 200:
             data = resp.json()
             p_vals = data.get("daily", {}).get("precipitation_sum", [])

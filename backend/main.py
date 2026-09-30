@@ -47,6 +47,14 @@ async def lifespan(app: FastAPI):
             logger.info("APScheduler initialized (ENABLE_SCHEDULER=True).")
         else:
             logger.info("APScheduler disabled (ENABLE_SCHEDULER=False). Dedicated worker or cron should trigger pipeline.")
+
+        # Initialize SQLite storage for outlook tracking
+        from app.services.outlook_store import init_db
+        init_db()
+
+        # Non-blocking warm-up of risk map dataset
+        import threading
+        threading.Thread(target=risk_map.get_risk_map_data, daemon=True).start()
     except Exception as e:
         logger.critical("Fatal error loading artifacts at startup: %s", e, exc_info=True)
         raise e

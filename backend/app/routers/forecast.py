@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import logging
 import time
+from typing import Dict, Tuple
 from fastapi import APIRouter, Request, Response
 from app.limiter import limiter
 from app.models.schemas import (
@@ -21,6 +22,9 @@ from app.services.artifact_loader import get_bundle
 logger = logging.getLogger("varsha_setu.forecast_router")
 
 router = APIRouter(prefix="/forecast", tags=["Monsoon & Horizon Forecasting"])
+
+_forecast_cache: Dict[str, Tuple[ForecastResponse, float]] = {}
+_FORECAST_CACHE_TTL = 300.0  # 5 minutes in-memory TTL
 
 @router.post("", response_model=ForecastResponse)
 @limiter.limit("60/minute")
@@ -48,6 +52,18 @@ async def compute_forecast(request: Request, req: ForecastRequest, response: Res
         district_name = district_name or nearest_dist
 
     loc_title = req.location_name or taluk_name
+    crop_val = req.crop_type.value if req.crop_type else "Finger Millet (Ragi)"
+    stage_val = req.crop_stage.value if req.crop_stage else "Sowing & Germination"
+    lang_val = req.language.value if req.language else "English"
+
+    # Fast in-memory cache lookup (<0.1ms)
+    cache_key = f"{round(req.lat, 3)}_{round(req.lon, 3)}_{taluk_name}_{crop_val}_{stage_val}_{lang_val}"
+    now_ts = time.time()
+    if cache_key in _forecast_cache:
+        cached_resp, expiry = _forecast_cache[cache_key]
+        if now_ts < expiry:
+            response.headers["Server-Timing"] = "cache;dur=0.1, total;dur=0.1"
+            return cached_resp
 
     # 1. Real Weather & Teleconnections (instant non-blocking cache lookups)
     t_cache_0 = time.perf_counter()
@@ -123,7 +139,7 @@ async def compute_forecast(request: Request, req: ForecastRequest, response: Res
         f"adv;dur={t_adv_dur:.1f}, total;dur={t_total_dur:.1f}"
     )
 
-    return ForecastResponse(
+    final_result = ForecastResponse(
         location=location_profile,
         soil=soil_profile,
         teleconnections=tele_profile,
@@ -138,4 +154,7 @@ async def compute_forecast(request: Request, req: ForecastRequest, response: Res
         weather_fallback_warning=weather_data.get("fallback_warning"),
         generated_at=datetime.datetime.now(datetime.timezone.utc).isoformat()
     )
+
+    _forecast_cache[cache_key] = (final_result, time.time() + _FORECAST_CACHE_TTL)
+    return final_result
 

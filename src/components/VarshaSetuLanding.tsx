@@ -377,12 +377,13 @@ export function VarshaSetuLanding() {
           </nav>
 
           <Button
-            type="button"
-            onClick={() => setIsLocationModalOpen(true)}
+            asChild
             size="sm"
             className="bg-signal text-signal-foreground hover:bg-signal/90 font-medium h-8 text-xs shadow-signal cursor-pointer px-3"
           >
-            Live Studio <ArrowRight className="ml-1 h-3 w-3" />
+            <Link to="/dashboard">
+              Live Studio <ArrowRight className="ml-1 h-3 w-3" />
+            </Link>
           </Button>
         </div>
       </AppHeader>
@@ -458,12 +459,13 @@ export function VarshaSetuLanding() {
               className="mt-9 flex flex-wrap gap-3"
             >
               <Button
-                type="button"
-                onClick={() => setIsLocationModalOpen(true)}
+                asChild
                 size="lg"
                 className="h-12 bg-signal px-6 text-signal-foreground shadow-signal hover:bg-signal/90 cursor-pointer font-medium"
               >
-                Launch Prediction Studio <ArrowRight />
+                <Link to="/dashboard">
+                  Launch Prediction Studio <ArrowRight />
+                </Link>
               </Button>
               <Button
                 asChild
@@ -749,12 +751,13 @@ export function VarshaSetuLanding() {
 
               <div className="mt-10 flex flex-wrap items-center gap-4">
                 <Button
-                  type="button"
-                  onClick={() => setIsLocationModalOpen(true)}
+                  asChild
                   size="lg"
                   className="h-12 bg-signal px-8 text-signal-foreground shadow-signal hover:bg-signal/90 font-medium cursor-pointer"
                 >
-                  Launch Prediction Studio <ArrowRight className="ml-2 size-4" />
+                  <Link to="/dashboard">
+                    Launch Prediction Studio <ArrowRight className="ml-2 size-4" />
+                  </Link>
                 </Button>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Languages className="size-4 text-signal" />

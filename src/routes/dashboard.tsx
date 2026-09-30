@@ -55,10 +55,13 @@ const COLLAPSED_STORAGE_KEY = "varsha_sidebar_collapsed";
 
 export const Route = createFileRoute("/dashboard")({
   ssr: false,
-  validateSearch: (search: Record<string, unknown>) => {
+  validateSearch: (search: Record<string, unknown>): {
+    section?: string;
+    setup?: string | boolean;
+  } => {
     return {
-      section: (search.section as string) || undefined,
-      setup: (search.setup as string | boolean) || undefined,
+      section: (search["section"] as string) || undefined,
+      setup: (search["setup"] as string | boolean) || undefined,
     };
   },
   head: () => ({
@@ -76,7 +79,8 @@ export const Route = createFileRoute("/dashboard")({
 
 function DashboardContent() {
   const { t } = useLanguage();
-  const { location, hasOnboardedLocation, setHasOnboardedLocation, isLocationSetupOpen, setIsLocationSetupOpen } = useDashboard();
+  const { location, setHasOnboardedLocation, isLocationSetupOpen, setIsLocationSetupOpen } = useDashboard();
+  const search = Route.useSearch();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -106,6 +110,13 @@ function DashboardContent() {
     }
     return "overview";
   });
+
+  // Sync active section when search param changes
+  useEffect(() => {
+    if (search.section && DASHBOARD_SECTIONS.includes(search.section as DashboardSection)) {
+      setActiveSection(search.section as DashboardSection);
+    }
+  }, [search.section]);
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
@@ -144,9 +155,9 @@ function DashboardContent() {
 
   return (
     <div className="relative min-h-screen text-foreground">
-      {/* Location Onboarding Modal for First-time / Unset Users */}
+      {/* Location Setup Modal - shown when requested, never permanently locking the dashboard */}
       <LocationSetupModal
-        isOpen={!hasOnboardedLocation || isLocationSetupOpen}
+        isOpen={isLocationSetupOpen}
         onClose={() => {
           setHasOnboardedLocation(true);
           setIsLocationSetupOpen(false);
@@ -157,7 +168,7 @@ function DashboardContent() {
             window.history.replaceState({}, "", url.pathname + (url.search ? url.search : "") + url.hash);
           }
         }}
-        isMandatoryOnboarding={!hasOnboardedLocation}
+        isMandatoryOnboarding={false}
       />
 
       {/* 2-Minute Audio Guide Modal */}

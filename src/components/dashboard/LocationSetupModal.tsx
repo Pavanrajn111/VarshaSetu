@@ -318,7 +318,7 @@ export function LocationSetupModal({
   const handleDistrictSelect = (newDistrict: string) => {
     setSelectedDistrict(newDistrict);
     const distData = districts.find((d) => d.district === newDistrict);
-    if (distData && distData.taluks.length > 0) {
+    if (distData && distData.taluks && distData.taluks.length > 0 && distData.taluks[0]) {
       setSelectedTaluk(distData.taluks[0].taluk_name);
     } else {
       setSelectedTaluk("");
@@ -326,7 +326,7 @@ export function LocationSetupModal({
   };
 
   useEffect(() => {
-    if (availableTaluks.length > 0 && !availableTaluks.some((t) => t.taluk_name === selectedTaluk)) {
+    if (availableTaluks.length > 0 && !availableTaluks.some((t) => t.taluk_name === selectedTaluk) && availableTaluks[0]) {
       setSelectedTaluk(availableTaluks[0].taluk_name);
     }
   }, [selectedDistrict, availableTaluks, selectedTaluk]);
@@ -343,7 +343,7 @@ export function LocationSetupModal({
 
     try {
       const res = await apiClient.resolveLocation(query);
-      if (res.candidates && res.candidates.length > 0) {
+      if (res.candidates && res.candidates.length > 0 && res.candidates[0]) {
         setCandidates(res.candidates);
         setSelectedCandidate(res.candidates[0]);
       } else if (res.selected) {
@@ -483,13 +483,14 @@ export function LocationSetupModal({
             {/* Language Switcher at Top */}
             <div className="flex items-center gap-2 shrink-0">
               <LanguageSwitcher />
-              {!isMandatoryOnboarding && onClose && (
+              {onClose && (
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={onClose}
                   disabled={isUpdatingLocation}
                   className="size-8 text-muted-foreground hover:text-foreground cursor-pointer"
+                  title="Close"
                 >
                   <X className="size-4" />
                 </Button>
@@ -695,15 +696,27 @@ export function LocationSetupModal({
               <span>{t.dashboard.footerServing}</span>
             </div>
 
-            <Button
-              type="button"
-              onClick={handleUpdateLocation}
-              disabled={isLoadingTaluks || (mode === "search" && !selectedCandidate)}
-              className="w-full sm:w-auto bg-signal text-signal-foreground hover:bg-signal/90 font-mono text-xs font-semibold h-10 px-6 shadow-lg shadow-signal/20 cursor-pointer"
-            >
-              <Sparkles className="mr-1.5 size-3.5" />
-              {t.location.updateLocationBtn || "Update Location"}
-            </Button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              {onClose && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onClose}
+                  className="w-full sm:w-auto text-xs h-10 px-4 cursor-pointer border-border/80 text-muted-foreground hover:text-foreground"
+                >
+                  Explore Dashboard
+                </Button>
+              )}
+              <Button
+                type="button"
+                onClick={handleUpdateLocation}
+                disabled={isLoadingTaluks || (mode === "search" && !selectedCandidate)}
+                className="w-full sm:w-auto bg-signal text-signal-foreground hover:bg-signal/90 font-mono text-xs font-semibold h-10 px-6 shadow-lg shadow-signal/20 cursor-pointer"
+              >
+                <Sparkles className="mr-1.5 size-3.5" />
+                {t.location.updateLocationBtn || "Update Location"}
+              </Button>
+            </div>
           </CardFooter>
         )}
       </Card>

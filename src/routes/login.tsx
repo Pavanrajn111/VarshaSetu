@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { AppHeader } from "@/components/AppHeader";
 import {
@@ -52,7 +52,13 @@ function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
-  // If already logged in, show quick redirect prompt or navigate
+  // If already logged in, navigate straight to dashboard
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate({ to: "/dashboard" });
+    }
+  }, [isAuthenticated, navigate]);
+
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
@@ -70,8 +76,8 @@ function LoginPage() {
     setIsSubmitting(true);
     try {
       await login(phoneNumber, password);
-      // Open Location Setup modal directly before dashboard
-      setIsLocationModalOpen(true);
+      // Navigate directly to dashboard once logged in
+      navigate({ to: "/dashboard" });
     } catch {
       // Backend guarantees a generic 401 message; match exactly
       setErrorMsg("Invalid phone number or password.");
@@ -85,13 +91,14 @@ function LoginPage() {
       {/* Shared Unified Header */}
       <AppHeader showProgress={false}>
         <Button
-          type="button"
-          onClick={() => setIsLocationModalOpen(true)}
+          asChild
           variant="outline"
           size="sm"
           className="h-8 border-border/80 bg-glass/80 text-xs cursor-pointer"
         >
-          <Sliders className="mr-1.5 size-3.5 text-signal" /> Studio
+          <Link to="/dashboard">
+            <Sliders className="mr-1.5 size-3.5 text-signal" /> Studio
+          </Link>
         </Button>
       </AppHeader>
 

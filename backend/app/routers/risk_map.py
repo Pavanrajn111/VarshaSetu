@@ -62,6 +62,16 @@ def get_risk_map_data(force_refresh: bool = False) -> RiskMapDataResponse:
     bundle = get_bundle()
     html_risks = _extract_authoritative_break_risks(bundle.risk_map_html)
 
+    # Quick single-query batch lookup of taluks having stored outlooks
+    try:
+        from app.services.outlook_store import get_db_connection
+        with get_db_connection() as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT DISTINCT LOWER(taluk_name) FROM outlook_predictions")
+            active_outlooks = {r[0] for r in cur.fetchall()}
+    except Exception:
+        active_outlooks = set()
+
     items = []
     for _, row in bundle.taluks_df.iterrows():
         taluk_name = str(row["taluk_name"]).strip()
@@ -69,16 +79,9 @@ def get_risk_map_data(force_refresh: bool = False) -> RiskMapDataResponse:
         lat = float(row["lat"])
         lon = float(row["lon"])
 
-        # Check if live stored outlook exists for pilot taluks
-        basis = "calibrated_break_risk"
-        stored_outlook = get_latest_outlook(taluk_name)
-        if stored_outlook and len(stored_outlook) > 0:
-            basis = "outlook_blended"
-            key = (taluk_name.lower(), district.lower())
-            risk_pct = html_risks.get(key, 35.0)
-        else:
-            key = (taluk_name.lower(), district.lower())
-            risk_pct = html_risks.get(key, 35.0)
+        basis = "outlook_blended" if taluk_name.lower() in active_outlooks else "calibrated_break_risk"
+        key = (taluk_name.lower(), district.lower())
+        risk_pct = html_risks.get(key, 35.0)
 
         # Categorize based on authoritative break risk thresholds:
         # > 45%: HIGH (severe dry/break risk)
