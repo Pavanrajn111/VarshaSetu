@@ -16,6 +16,7 @@ import type {
   LocationResolveResponse,
   OutlookResponse,
   RiskMapDataResponse,
+  RiskMapGridResponse,
   SupportedLanguage,
   UserProfile,
 } from "./types";
@@ -316,6 +317,16 @@ export const apiClient = {
   async getRiskMapData(forceRefresh: boolean = false): Promise<RiskMapDataResponse> {
     return this.get<RiskMapDataResponse>(
       `/risk-map/data${forceRefresh ? "?force_refresh=true" : ""}`,
+    );
+  },
+
+  /**
+   * Fetches statewide server-interpolated regular lat/lon risk grid (0.05° resolution)
+   * for continuous choropleth surface rendering.
+   */
+  async getRiskMapGrid(forceRefresh: boolean = false): Promise<RiskMapGridResponse> {
+    return this.get<RiskMapGridResponse>(
+      `/risk-map/grid${forceRefresh ? "?force_refresh=true" : ""}`,
     );
   },
 

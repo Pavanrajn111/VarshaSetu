@@ -24,6 +24,9 @@ if APP_ENV == "production":
 # Voice API Protection (Optional external API key for server-to-server integrators)
 ADVISORY_AUDIO_API_KEY = os.getenv("ADVISORY_AUDIO_API_KEY", "")
 
+# Google Gemini API Key for Multilingual AI Assistant
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+
 # Config-driven CORS origins
 raw_cors = os.getenv("CORS_ORIGINS")
 parsed_env_origins = []

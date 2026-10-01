@@ -24,3 +24,5 @@ services:
         value: "6.0"
       - key: NOMINATIM_MAX_DISTANCE_KM
         value: "60.0"
+      - key: GEMINI_API_KEY
+        sync: false

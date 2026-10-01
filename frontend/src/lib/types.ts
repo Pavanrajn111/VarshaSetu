@@ -62,6 +62,33 @@ export interface RiskMapDataResponse {
   taluks: TalukRiskItem[];
 }
 
+export type HazardRiskCategory = "VERY_HIGH" | "HIGH" | "MEDIUM" | "LOW";
+
+export interface RiskGridCell {
+  lat: number;
+  lon: number;
+  risk_category: HazardRiskCategory;
+  risk_score_pct: number;
+  color_hex: string;
+}
+
+export interface RiskGridBounds {
+  lat_min: number;
+  lat_max: number;
+  lon_min: number;
+  lon_max: number;
+  step: number;
+}
+
+export interface RiskMapGridResponse {
+  total_cells: number;
+  resolution_deg: number;
+  bounds: RiskGridBounds;
+  generated_at: string;
+  disclaimer: string;
+  cells: RiskGridCell[];
+}
+
 /**
  * Per-target fault-isolated prediction schema.
  * All fields are nullable to handle cases where a model target fails or is offline.
@@ -240,4 +267,27 @@ export interface AuthResponse {
 export interface AuthMeResponse {
   status: string;
   user: UserProfile;
+}
+
+export interface ChatMessageHistoryItem {
+  sender: "user" | "assistant";
+  text: string;
+}
+
+export interface ChatRequest {
+  message: string;
+  language: SupportedLanguage;
+  location?: Partial<LocationProfile> & { locationName?: string };
+  crop_type?: string;
+  crop_stage?: string;
+  forecast?: ForecastResponse | null;
+  history?: ChatMessageHistoryItem[];
+}
+
+export interface ChatResponse {
+  response: string;
+  suggested_options: string[];
+  language: SupportedLanguage;
+  model_used: string;
+  grounded: boolean;
 }

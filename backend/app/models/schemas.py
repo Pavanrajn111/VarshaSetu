@@ -226,3 +226,48 @@ class RiskMapDataResponse(BaseModel):
     generated_at: str
     taluks: List[TalukRiskItem]
 
+class RiskGridCell(BaseModel):
+    lat: float
+    lon: float
+    risk_category: str
+    risk_score_pct: float
+    color_hex: str
+
+class RiskGridBounds(BaseModel):
+    lat_min: float
+    lat_max: float
+    lon_min: float
+    lon_max: float
+    step: float
+
+class RiskMapGridResponse(BaseModel):
+    total_cells: int
+    resolution_deg: float
+    bounds: RiskGridBounds
+    generated_at: str
+    disclaimer: str
+    cells: List[RiskGridCell]
+
+# ---------------------------------------------------------------------------
+# Multilingual AI Assistant Models
+# ---------------------------------------------------------------------------
+class ChatMessageHistory(BaseModel):
+    sender: str
+    text: str
+
+class ChatRequest(BaseModel):
+    message: str = Field(..., min_length=1, max_length=2000)
+    language: str = Field("en", description="Target language ('en', 'kn', 'hi')")
+    location: Optional[Dict[str, Any]] = None
+    crop_type: Optional[str] = None
+    crop_stage: Optional[str] = None
+    forecast: Optional[Dict[str, Any]] = None
+    history: Optional[List[ChatMessageHistory]] = None
+
+class ChatResponse(BaseModel):
+    response: str
+    suggested_options: List[str]
+    language: str
+    model_used: str
+    grounded: bool
+

@@ -15,7 +15,8 @@ from app.routers import (
     voice,
     risk_map,
     outlook,
-    auth
+    auth,
+    chat,
 )
 from app.services.scheduler import start_scheduler, shutdown_scheduler
 
@@ -103,6 +104,7 @@ app.include_router(voice.router)
 app.include_router(risk_map.router)
 app.include_router(outlook.router)
 app.include_router(auth.router)
+app.include_router(chat.router)
 
 @app.get("/", tags=["Root"])
 def root():

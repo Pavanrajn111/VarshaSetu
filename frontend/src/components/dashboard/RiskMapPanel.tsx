@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   MapContainer,
   TileLayer,
+  ImageOverlay,
   CircleMarker,
   Marker,
   Popup,
@@ -15,7 +16,12 @@ import "leaflet/dist/leaflet.css";
 import { apiClient } from "@/lib/api-client";
 import { useDashboard } from "@/context/DashboardContext";
 import { useLanguage } from "@/context/LanguageContext";
-import type { TalukRiskItem, RiskMapDataResponse, RiskCategory } from "@/lib/types";
+import type {
+  TalukRiskItem,
+  RiskMapDataResponse,
+  RiskMapGridResponse,
+  RiskCategory,
+} from "@/lib/types";
 import { RiskMapDetailPanel } from "@/components/dashboard/RiskMapDetailPanel";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -41,7 +47,15 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
 });
 
-// Theme-aligned colors for risk categories
+// Discrete 4-band flood/hazard color scale matching reference map
+export const HAZARD_BANDS = [
+  { key: "VERY_HIGH", label: "Very High", threshold: "≥ 48%", color: "#e63329", desc: "Critical Dry / Break Spell" },
+  { key: "HIGH", label: "High", threshold: "35% – 48%", color: "#f5a623", desc: "Elevated Break Risk" },
+  { key: "MEDIUM", label: "Medium", threshold: "20% – 35%", color: "#a8c85a", desc: "Moderate Probability" },
+  { key: "LOW", label: "Low", threshold: "< 20%", color: "#2d6a2d", desc: "Normal / Low Risk" },
+] as const;
+
+// Theme-aligned colors for taluk risk categories
 const RISK_COLORS: Record<RiskCategory, { fill: string; border: string }> = {
   HIGH: { fill: "#ef4444", border: "#f87171" },
   MODERATE: { fill: "#f59e0b", border: "#fbbf24" },
@@ -144,6 +158,8 @@ export function RiskMapPanel() {
   const { location, setLocation } = useDashboard();
   const { t } = useLanguage();
   const [riskData, setRiskData] = useState<RiskMapDataResponse | null>(null);
+  const [gridData, setGridData] = useState<RiskMapGridResponse | null>(null);
+  const [showTalukReferencePoints, setShowTalukReferencePoints] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [tileError, setTileError] = useState<boolean>(false);
@@ -155,12 +171,16 @@ export function RiskMapPanel() {
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const fetchRiskData = useCallback(async (forceRefresh = false) => {
+  const fetchMapData = useCallback(async (forceRefresh = false) => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await apiClient.getRiskMapData(forceRefresh);
+      const [data, grid] = await Promise.all([
+        apiClient.getRiskMapData(forceRefresh),
+        apiClient.getRiskMapGrid(forceRefresh),
+      ]);
       setRiskData(data);
+      setGridData(grid);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Unable to load statewide risk data.";
       setError(msg);
@@ -170,8 +190,53 @@ export function RiskMapPanel() {
   }, []);
 
   useEffect(() => {
-    fetchRiskData();
-  }, [fetchRiskData]);
+    fetchMapData();
+  }, [fetchMapData]);
+
+  // Offscreen canvas generator creating high-performance, single-DOM-node ImageOverlay
+  const choroplethOverlay = useMemo(() => {
+    if (!gridData || !gridData.cells || gridData.cells.length === 0) return null;
+
+    const { bounds, resolution_deg: step, cells } = gridData;
+    const { lat_min, lat_max, lon_min, lon_max } = bounds;
+
+    const numCols = Math.round((lon_max - lon_min) / step) + 1;
+    const numRows = Math.round((lat_max - lat_min) / step) + 1;
+
+    // Scale multiplier for sharp resolution across displays
+    const scale = 8;
+    const width = numCols * scale;
+    const height = numRows * scale;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    ctx.clearRect(0, 0, width, height);
+
+    for (let i = 0; i < cells.length; i++) {
+      const cell = cells[i];
+      const col = Math.round((cell.lon - lon_min) / step);
+      const row = Math.round((lat_max - cell.lat) / step);
+
+      const x = col * scale;
+      const y = row * scale;
+
+      ctx.fillStyle = cell.color_hex;
+      // Slight overlap (scale + 0.5) ensures completely filled, continuous surface without subpixel gaps
+      ctx.fillRect(x, y, scale + 0.5, scale + 0.5);
+    }
+
+    const dataUrl = canvas.toDataURL("image/png");
+    const leafletBounds: [[number, number], [number, number]] = [
+      [lat_min - step / 2, lon_min - step / 2],
+      [lat_max + step / 2, lon_max + step / 2],
+    ];
+
+    return { dataUrl, bounds: leafletBounds };
+  }, [gridData]);
 
   // Click on a specific taluk CircleMarker
   const handleMarkerClick = useCallback(
@@ -297,7 +362,7 @@ export function RiskMapPanel() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => fetchRiskData(true)}
+              onClick={() => fetchMapData(true)}
               disabled={isLoading}
               className="h-8 gap-1.5 border-border/80 bg-glass/80 text-xs cursor-pointer"
             >
@@ -361,14 +426,14 @@ export function RiskMapPanel() {
               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-background/80 backdrop-blur-md">
                 <Loader2 className="size-8 animate-spin text-signal" />
                 <span className="font-mono text-xs text-muted-foreground">
-                  Loading 236 taluk risk coordinates...
+                  Loading statewide risk surface...
                 </span>
               </div>
             ) : error ? (
               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 p-6 bg-background/80">
                 <AlertTriangle className="size-10 text-destructive" />
                 <p className="text-sm text-destructive">{error}</p>
-                <Button variant="outline" size="sm" onClick={() => fetchRiskData(true)}>
+                <Button variant="outline" size="sm" onClick={() => fetchMapData(true)}>
                   Try Again
                 </Button>
               </div>
@@ -406,49 +471,54 @@ export function RiskMapPanel() {
 
               <MapClickHandler onMapClick={handleCanvasClick} />
 
-              {/* 236 Taluk Micro-Region CircleMarkers */}
-              {riskData?.taluks.map((item) => {
-                const colors = RISK_COLORS[item.risk_category] ?? RISK_COLORS.LOW;
-                const isSelected =
-                  selectedTalukLower === item.taluk_name.trim().toLowerCase();
+              {/* Continuous filled choropleth surface */}
+              {choroplethOverlay && (
+                <ImageOverlay
+                  url={choroplethOverlay.dataUrl}
+                  bounds={choroplethOverlay.bounds}
+                  opacity={0.72}
+                  interactive={false}
+                  zIndex={150}
+                />
+              )}
 
-                return (
-                  <CircleMarker
-                    key={`${item.taluk_name}-${item.district}`}
-                    center={[item.lat, item.lon]}
-                    radius={isSelected ? 11 : 6}
-                    pathOptions={{
-                      color: isSelected ? "#0284c7" : colors.border,
-                      fillColor: colors.fill,
-                      fillOpacity: isSelected ? 0.9 : 0.6,
-                      weight: isSelected ? 3 : 1.2,
-                    }}
-                    eventHandlers={{
-                      click: (e) => {
-                        L.DomEvent.stopPropagation(e);
-                        handleMarkerClick(item);
-                      },
-                    }}
-                  >
-                    <Tooltip sticky direction="top" className="font-sans text-xs">
-                      <div className="font-semibold text-foreground">{item.taluk_name}</div>
-                      <div className="text-[10px] text-muted-foreground">
-                        {item.district} District
-                      </div>
-                      <div className="mt-1 font-mono text-[10px] flex items-center gap-1.5">
-                        <span>Break Risk:</span>
-                        <span className="font-bold">{item.risk_score_pct}%</span>
-                        <span
-                          className="px-1 py-0.2 rounded text-[9px]"
-                          style={{ background: `${colors.fill}25`, color: colors.fill }}
-                        >
-                          {item.risk_category}
-                        </span>
-                      </div>
-                    </Tooltip>
-                  </CircleMarker>
-                );
-              })}
+              {/* Optional: Taluk center micro-markers (hidden by default) */}
+              {showTalukReferencePoints &&
+                riskData?.taluks.map((item) => {
+                  const isSelected =
+                    selectedTalukLower === item.taluk_name.trim().toLowerCase();
+                  if (isSelected) return null; // Rendered prominently below
+
+                  return (
+                    <CircleMarker
+                      key={`taluk-ref-${item.taluk_name}-${item.district}`}
+                      center={[item.lat, item.lon]}
+                      radius={2.5}
+                      pathOptions={{
+                        color: "#ffffff",
+                        fillColor: item.risk_color_hex,
+                        fillOpacity: 0.9,
+                        weight: 1,
+                      }}
+                      eventHandlers={{
+                        click: (e) => {
+                          L.DomEvent.stopPropagation(e);
+                          handleMarkerClick(item);
+                        },
+                      }}
+                    >
+                      <Tooltip sticky direction="top" className="font-sans text-xs">
+                        <div className="font-semibold text-foreground">{item.taluk_name}</div>
+                        <div className="text-[10px] text-muted-foreground">
+                          {item.district} District
+                        </div>
+                        <div className="mt-0.5 font-mono text-[10px]">
+                          Break Risk: {item.risk_score_pct}%
+                        </div>
+                      </Tooltip>
+                    </CircleMarker>
+                  );
+                })}
 
               {/* Prominent Selected Location Pin from DashboardContext */}
               {location.lat && location.lon && (
@@ -540,28 +610,55 @@ export function RiskMapPanel() {
               })()}
             </div>
 
-            {/* Map Legend Overlay */}
-            <div className="absolute bottom-4 left-4 z-[400] rounded-xl border border-border/80 bg-background/95 p-3 shadow-xl backdrop-blur-xl pointer-events-auto">
-              <div className="font-display text-[11px] font-semibold text-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <Layers className="size-3 text-signal" />
-                <span>{t.forecast.breakSpell}</span>
+            {/* Map Legend Overlay Matching Reference Flood Hazard Map */}
+            <div className="absolute bottom-4 left-4 z-[400] rounded-xl border border-border/80 bg-background/95 p-3.5 shadow-xl backdrop-blur-xl pointer-events-auto min-w-[210px]">
+              <div className="font-display text-[11px] font-semibold text-foreground uppercase tracking-wider mb-2 flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <Layers className="size-3.5 text-signal" />
+                  <span>Hazard Gradient</span>
+                </div>
+                {gridData && (
+                  <Badge variant="outline" className="text-[9px] font-mono px-1 py-0 h-4 border-signal/30 text-signal">
+                    0.05° (~5km)
+                  </Badge>
+                )}
               </div>
+
               <div className="flex flex-col gap-1.5 font-mono text-[11px]">
-                <div className="flex items-center gap-2">
-                  <span className="size-2.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)]" />
-                  <span className="text-foreground">{t.riskMap.riskLow} (&lt; 25%)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="size-2.5 rounded-full bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.5)]" />
-                  <span className="text-foreground">{t.riskMap.riskModerate} (25–45%)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="size-2.5 rounded-full bg-rose-500 shadow-[0_0_6px_rgba(239,68,68,0.5)]" />
-                  <span className="text-foreground">{t.riskMap.riskHigh} (&gt; 45%)</span>
-                </div>
+                {HAZARD_BANDS.map((band) => (
+                  <div key={band.key} className="flex items-center justify-between gap-3 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="size-3 rounded-sm shrink-0 border border-black/20 shadow-sm"
+                        style={{ backgroundColor: band.color }}
+                      />
+                      <span className="font-sans font-medium text-foreground text-[11px]">{band.label}</span>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground font-mono">{band.threshold}</span>
+                  </div>
+                ))}
               </div>
-              <div className="mt-2 pt-2 border-t border-border/40 font-mono text-[9px] text-muted-foreground">
-                {t.riskMap.totalTaluks}: {riskData?.total_taluks ?? 236}
+
+              <div className="mt-2.5 pt-2 border-t border-border/40 flex flex-col gap-1.5">
+                <div className="flex items-center justify-between font-mono text-[9px] text-muted-foreground">
+                  <span>{t.riskMap.totalTaluks}:</span>
+                  <span className="font-bold text-foreground">{riskData?.total_taluks ?? "--"}</span>
+                </div>
+                {gridData && (
+                  <div className="flex items-center justify-between font-mono text-[9px] text-muted-foreground">
+                    <span>Interpolated Cells:</span>
+                    <span className="font-semibold text-foreground">{gridData.total_cells.toLocaleString()}</span>
+                  </div>
+                )}
+                <label className="flex items-center gap-2 mt-1 text-[10px] font-sans text-muted-foreground cursor-pointer hover:text-foreground select-none">
+                  <input
+                    type="checkbox"
+                    checked={showTalukReferencePoints}
+                    onChange={(e) => setShowTalukReferencePoints(e.target.checked)}
+                    className="size-3 rounded border-border text-signal focus:ring-signal/30 cursor-pointer"
+                  />
+                  <span>Taluk Reference Points</span>
+                </label>
               </div>
             </div>
           </div>
@@ -582,10 +679,7 @@ export function RiskMapPanel() {
         <div className="flex items-start gap-2.5 border-t border-border/40 bg-muted/20 px-5 py-3 text-xs text-muted-foreground">
           <Info className="mt-0.5 size-4 shrink-0 text-signal" />
           <span className="leading-relaxed">
-            <strong>Authoritative Risk Methodology:</strong> Map colors represent calibrated
-            statistical Break Spell Probability across all 236 Karnataka taluks. The selected
-            dashboard location (<strong>{location.taluk}</strong>) is synchronized live into the
-            map viewport.
+            <strong>Statewide Risk Surface:</strong> Interpolated from model predictions at {riskData?.total_taluks ?? 236} taluk centers; areas between points are estimated, not independently modeled. The selected location (<strong>{location.taluk}</strong>) is synchronized live into the map viewport.
           </span>
         </div>
       </CardContent>

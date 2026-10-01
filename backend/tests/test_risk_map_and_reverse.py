@@ -74,3 +74,39 @@ def test_location_reverse_edge_within_bbox_exceeding_distance_cap():
     data = response.json()
     assert data["status"] == "success"
     assert data["selected"] is not None
+
+
+def test_risk_map_grid_schema_and_palette():
+    """Verify GET /risk-map/grid returns server-interpolated cells matching reference palette."""
+    response = client.get("/risk-map/grid")
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["total_cells"] > 5000
+    assert len(data["cells"]) == data["total_cells"]
+    assert data["resolution_deg"] == 0.05
+    assert "bounds" in data
+    assert "Statewide risk surface interpolated" in data["disclaimer"]
+
+    allowed_categories = {"VERY_HIGH", "HIGH", "MEDIUM", "LOW"}
+    allowed_colors = {"#e63329", "#f5a623", "#a8c85a", "#2d6a2d"}
+
+    for cell in data["cells"][:50]:
+        assert cell["risk_category"] in allowed_categories
+        assert cell["color_hex"] in allowed_colors
+        assert 11.5 <= cell["lat"] <= 18.6
+        assert 74.0 <= cell["lon"] <= 78.6
+        assert isinstance(cell["risk_score_pct"], (int, float))
+
+
+def test_risk_map_grid_caching():
+    """Verify GET /risk-map/grid caches responses in memory within TTL."""
+    resp1 = client.get("/risk-map/grid")
+    assert resp1.status_code == 200
+    gen1 = resp1.json()["generated_at"]
+
+    resp2 = client.get("/risk-map/grid")
+    assert resp2.status_code == 200
+    gen2 = resp2.json()["generated_at"]
+
+    assert gen1 == gen2, "Cached timestamp should match on immediate subsequent call"

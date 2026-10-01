@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useDashboard } from "@/context/DashboardContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { sendChatMessage } from "@/lib/chat-service";
+import type { ChatMessageHistoryItem } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +17,7 @@ interface ChatMessage {
 
 export function ChatAssistantWidget() {
   const { location, forecast, cropType, cropStage } = useDashboard();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [messages, setMessages] = useState<ChatMessage[]>(() => [
@@ -29,13 +30,19 @@ export function ChatAssistantWidget() {
   ]);
   const [inputText, setInputText] = useState<string>("");
   const [isTyping, setIsTyping] = useState<boolean>(false);
+  const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([
+    t.assistant.suggested1,
+    t.assistant.suggested2,
+    t.assistant.suggested3,
+  ]);
+  const [activeModel, setActiveModel] = useState<string>("Gemini AI");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Sync initial welcome message when language changes
+  // Synchronize welcome message and starter suggested prompts whenever language changes
   useEffect(() => {
     setMessages((prev) => {
-      if (prev.length === 1 && prev[0]?.id === "welcome") {
+      if (prev.length <= 1) {
         return [
           {
             id: "welcome",
@@ -47,19 +54,19 @@ export function ChatAssistantWidget() {
       }
       return prev;
     });
-  }, [t.assistant.welcomeMsg]);
+
+    setSuggestedPrompts([
+      t.assistant.suggested1,
+      t.assistant.suggested2,
+      t.assistant.suggested3,
+    ]);
+  }, [language, t.assistant.welcomeMsg, t.assistant.suggested1, t.assistant.suggested2, t.assistant.suggested3]);
 
   useEffect(() => {
     if (isOpen) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isOpen]);
-
-  const suggestedPrompts = [
-    t.assistant.suggested1,
-    t.assistant.suggested2,
-    t.assistant.suggested3,
-  ];
 
   const handleSendMessage = async (textToSend?: string) => {
     const query = (textToSend || inputText).trim();
@@ -76,22 +83,37 @@ export function ChatAssistantWidget() {
     setInputText("");
     setIsTyping(true);
 
+    const history: ChatMessageHistoryItem[] = messages.slice(-6).map((m) => ({
+      sender: m.sender,
+      text: m.text,
+    }));
+
     try {
-      const response = await sendChatMessage(query, {
+      const chatRes = await sendChatMessage(query, {
         location,
         forecast,
         cropType,
         cropStage,
+        language,
+        history,
       });
 
       const assistantMsg: ChatMessage = {
         id: `assistant-${Date.now()}`,
         sender: "assistant",
-        text: response,
+        text: chatRes.response,
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
+
+      // Dynamically update prompt options in the selected language
+      if (chatRes.suggested_options && chatRes.suggested_options.length > 0) {
+        setSuggestedPrompts(chatRes.suggested_options);
+      }
+      if (chatRes.model_used && chatRes.model_used.includes("gemini")) {
+        setActiveModel("Gemini AI");
+      }
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -116,7 +138,7 @@ export function ChatAssistantWidget() {
             type="button"
             onClick={() => setIsOpen(true)}
             size="lg"
-            className="group relative h-14 w-14 rounded-full bg-signal p-0 text-signal-foreground shadow-lg shadow-signal/30 hover:scale-105 hover:bg-signal/90 transition-all duration-300"
+            className="group relative h-14 w-14 rounded-full bg-signal p-0 text-signal-foreground shadow-lg shadow-signal/30 hover:scale-105 hover:bg-signal/90 transition-all duration-300 cursor-pointer"
             aria-label={t.assistant.title}
           >
             <Bot className="size-7 transition-transform group-hover:rotate-6" />
@@ -142,9 +164,9 @@ export function ChatAssistantWidget() {
                   <span>{t.assistant.title}</span>
                   <Badge
                     variant="outline"
-                    className="border-signal/30 bg-signal/10 px-1.5 py-0 text-[9px] font-mono text-signal"
+                    className="border-signal/30 bg-signal/10 px-1.5 py-0 text-[9px] font-mono text-signal uppercase"
                   >
-                    AI
+                    {language.toUpperCase()} · {activeModel}
                   </Badge>
                 </div>
                 <div className="text-[10px] text-muted-foreground">
@@ -158,7 +180,7 @@ export function ChatAssistantWidget() {
               variant="ghost"
               size="sm"
               onClick={() => setIsOpen(false)}
-              className="size-8 rounded-full p-0 text-muted-foreground hover:bg-background/80 hover:text-foreground"
+              className="size-8 rounded-full p-0 text-muted-foreground hover:bg-background/80 hover:text-foreground cursor-pointer"
             >
               <X className="size-4" />
             </Button>
@@ -187,7 +209,7 @@ export function ChatAssistantWidget() {
                         : "border border-border/60 bg-background/80 text-foreground rounded-tl-none shadow-sm"
                     }`}
                   >
-                    <div>{m.text}</div>
+                    <div className="whitespace-pre-line">{m.text}</div>
                     <div
                       className={`mt-1 text-[9px] font-mono ${
                         isUser ? "text-signal-foreground/75 text-right" : "text-muted-foreground"
@@ -217,7 +239,7 @@ export function ChatAssistantWidget() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Prompts */}
+          {/* Quick Prompts / Options */}
           <div className="border-t border-border/40 bg-background/40 px-3 py-2">
             <div className="flex items-center gap-1 mb-1.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
               <Sparkles className="size-3 text-signal" /> {t.assistant.suggestedQueries}
@@ -228,7 +250,7 @@ export function ChatAssistantWidget() {
                   key={i}
                   type="button"
                   onClick={() => handleSendMessage(prompt)}
-                  className="rounded-full border border-border/70 bg-background/70 px-2.5 py-1 text-[10px] text-muted-foreground transition-colors hover:border-signal hover:text-foreground truncate max-w-full text-left"
+                  className="rounded-full border border-border/70 bg-background/70 px-2.5 py-1 text-[10px] text-muted-foreground transition-colors hover:border-signal hover:text-foreground truncate max-w-full text-left cursor-pointer"
                 >
                   {prompt}
                 </button>
@@ -256,7 +278,7 @@ export function ChatAssistantWidget() {
               type="submit"
               disabled={!inputText.trim() || isTyping}
               size="sm"
-              className="h-9 w-9 bg-signal p-0 text-signal-foreground hover:bg-signal/90"
+              className="h-9 w-9 bg-signal p-0 text-signal-foreground hover:bg-signal/90 cursor-pointer"
             >
               {isTyping ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
             </Button>
